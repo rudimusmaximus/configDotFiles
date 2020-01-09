@@ -1,6 +1,7 @@
 # this is where the bare clone will live
 .cfg
-
+.idea/*
+# all .idea for now as no need to share webstorm on this one and might conflict
 
 # a loose collection to clean up TODO:
 # ====== From clean react setup ======
