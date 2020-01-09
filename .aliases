@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+alias configlg='config --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias cfg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+alias cfglg = 'cfg --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 
 # Easier navigation: .., ..., ...., ....., ~ and -
 alias ..="cd .."
