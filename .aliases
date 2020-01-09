@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+alias cfg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 # Easier navigation: .., ..., ...., ....., ~ and -
 alias ..="cd .."
