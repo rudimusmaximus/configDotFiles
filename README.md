@@ -20,16 +20,21 @@ unset file;
 
 ## To use  
 These instructions include a clever approach based on this article for using a repo with clever alias to manage your changes over time.
-article:
-TODO: update instructions, resolve if you need to use bare repo if hosting on gh (i think no)
-The article says, create a .cfg directory in home and some aliases so you can manage changes.
+article: https://www.atlassian.com/git/tutorials/dotfiles
 
-Gitignore should include .cfg to avoid recursive issues
+Our source repo's Gitignore includes .cfg to avoid recursive issues.
 
-Aliases should include:
+In a fresh terminal, from your home directory use this to make an executable script and run it.
 
 ```shell script
-
+curl https://gist.githubusercontent.com/rudimusmaximus/cbb877cb5797b00d7fbb9ddc88e7f8b9/raw > cfg-install.sh &&chmod +x cfg-install.sh
 ```
-
-### save any existing ".files"
+then run it
+```shell script
+cfg-install.sh
+```
+If you have any errors that were not backed up for you, back them up and remove them and try again.
+When finsihed, you can simply remove it:  
+```shell script  
+rm cfg-install.sh
+```  
