@@ -165,3 +165,5 @@ alias path='echo -e ${PATH//:/\\n}'
 # Other
 alias now='date +"%T"'
 alias cl='curl -L'
+# Recursively answer yes while removing
+alias rmALL='yes | rm -rv '
