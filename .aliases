@@ -5,6 +5,9 @@ alias configlg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME --no-pager 
 alias cfg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias cfglg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 
+# open quicklook debugger
+alias ql='qlmanage -p '
+
 # Easier navigation: .., ..., ...., ....., ~ and -
 alias ..="cd .."
 alias ...="cd ../.."
@@ -14,15 +17,29 @@ alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
 
 # Shortcuts
+#exit terminal
+alias x="exit"
+
 #alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias p="cd ~/Projects"
 alias g="git"
 alias gs="git status"
+alias gctemplate="cat ~/.gitmessage.txt"
+#commit with signature
+alias ga="git add ."
+alias gc="git commit -S -m"
 alias gl="git log"
 alias glg="git --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all $*"
 alias c="clear"
+
+#npm shortcuts
+alias appcheck="npx npm-check --skip-unused --update"
+
+#clasp shortcuts
+alias cpush="clasp push"
+alias copen="clasp open"
 
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`
