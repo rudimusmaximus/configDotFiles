@@ -1,3 +1,5 @@
+# ignore .extra where we keep user config for git and anything else
+.extra
 # this is where the bare clone will live
 .cfg
 .idea/*
