@@ -5,7 +5,7 @@ alias configlg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME --no-pager 
 alias cfg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias cfglg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 
-# open quicklook debugger
+# open quicklook debugger to render a ql server and show a file
 alias ql='qlmanage -p '
 
 # Easier navigation: .., ..., ...., ....., ~ and -
@@ -23,7 +23,7 @@ alias x="exit"
 #alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
-alias p="cd ~/Projects"
+alias p="cd ~/projects"
 alias g="git"
 alias gs="git status"
 alias gctemplate="cat ~/.gitmessage.txt"
@@ -49,8 +49,6 @@ else # macOS `ls`
 	colorflag="-G"
 	export LSCOLORS='BxBxhxDxfxhxhxhxhxcxcx'
 fi
-
-
 
 # List all files colorized in long format
 alias l="ls -lF ${colorflag}"
@@ -78,6 +76,10 @@ alias sudo='sudo '
 
 # Get week number
 alias week='date +%V'
+
+# Fix GitKraken after updates until they announce fix for this workaround on macOS
+alias fixGitKraken="codesign --remove-signature /Applications/GitKraken.app/Contents/Frameworks/GitKraken\ Helper\ \(Renderer\).app"
+
 
 ### Get macOS Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 ##alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'

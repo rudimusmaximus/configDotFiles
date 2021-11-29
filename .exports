@@ -30,9 +30,17 @@ export LESS_TERMCAP_md="${yellow}";
 # Don’t clear the screen after quitting a manual page.
 export MANPAGER='less -X';
 
+# Deno installation
+export DENO_INSTALL="/Users/rudy/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
+
 # Avoid issues with `gpg` as installed via Homebrew.
 # https://stackoverflow.com/a/42265848/96656
 export GPG_TTY=$(tty);
+
+# nnn cli filemanger environment variables used to configure usage
+export NNN_FIFO=/tmp/nnn.fifo;
+export NNN_PLUG='f:finder;o:fzopen;p:mocplay;d:diffs;t:nmount;v:imgview';
 
 #TODO: test using these .exports overtime
 
