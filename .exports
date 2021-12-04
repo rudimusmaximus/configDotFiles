@@ -48,7 +48,3 @@ export NNN_PLUG='f:finder;o:fzopen;p:mocplay;d:diffs;t:nmount;v:imgview';
 #To update your account to use zsh, please run `chsh -s /bin/zsh`.
 #For more details, please visit https://support.apple.com/kb/HT208050.
 export BASH_SILENCE_DEPRECATION_WARNING=1
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
