@@ -34,8 +34,18 @@ alias gl="git log"
 alias glg="git --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all $*"
 alias c="clear"
 
+#n special script shortcuts for manual install, update, removal of n
+alias nup="n-update -y"
+
 #npm shortcuts
 alias appcheck="npx npm-check --skip-unused --update"
+
+#nnn shortcuts
+alias f="nnn" #start The unorthodox terminal file manager
+
+#ddgr Duck Duck Go shortcuts for bangs
+alias google="ddgr --gb --np \!google"
+alias wikipedia="ddgr --gb --np \!w"
 
 #clasp shortcuts
 alias cpush="clasp push"
