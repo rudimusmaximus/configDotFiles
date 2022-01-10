@@ -18,8 +18,8 @@ alias -- -="cd -"
 
 # Shortcuts
 #quit/exit terminal with q for quit (x is alias in nom for npm exec which replaces npx)
-alias q="exit"
-alias x="npm exec"
+alias x="exit"
+alias npx="npm exec"
 #alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
