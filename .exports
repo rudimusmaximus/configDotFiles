@@ -1,4 +1,4 @@
-##!/usr/bin/env bash
+#!/usr/bin/env bash
 #
 ## Make vim the default editor.
 #export EDITOR='vim';
@@ -37,6 +37,11 @@ export PATH="$DENO_INSTALL/bin:$PATH"
 # Avoid issues with `gpg` as installed via Homebrew.
 # https://stackoverflow.com/a/42265848/96656
 export GPG_TTY=$(tty);
+
+# nnn uses environment variables and symlinks see repo wiki for config, Environment variable NNN_BMS
+# Set environment variable NNN_BMS as a string of key_char:location pairs separated by semicolons (;):
+# Shows up in help
+export NNN_BMS="D:$HOME/Documents;d:$HOME/Downloads/;p:$HOME/projects;P:$HOME/Pictures/Temp-Last100Screenshots/"
 
 # nnn cli filemanger environment variables used to configure usage
 export NNN_FIFO=/tmp/nnn.fifo;
