@@ -40,10 +40,6 @@ alias nup="n-update -y"
 #npm shortcuts
 alias appcheck="npx npm-check --skip-unused --update"
 
-#Workaround for GitKraken Big Sur Performance Issues to be run after each update until fixed
-alias gitKrakenWorkaround="codesign --remove-signature /Applications/GitKraken.app/Contents/Frameworks/GitKraken\ Helper\ \(Renderer\).app"
-
-
 #nnn shortcuts
 alias f="nnn" #start The unorthodox terminal file manager
 
