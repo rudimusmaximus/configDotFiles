@@ -20,7 +20,7 @@ alias -- -="cd -"
 #quit/exit terminal with q for quit (x is alias in nom for npm exec which replaces npx)
 alias x="exit"
 alias pn="pnpm"
-alias npx="pnpm exec"
+alias px="pnpx"
 alias npx="npm exec"
 #alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
