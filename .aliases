@@ -37,7 +37,7 @@ alias gctemplate="cat ~/.gitmessage.txt"
 alias ga="git add ."
 alias gc="git commit -S -m"
 alias gl="git log"
-alias glg="git --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all $*"
+alias glg="git --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all --color=always $* | less -r"
 alias c="clear"
 
 #n special script shortcuts for manual install, update, removal of n
@@ -68,7 +68,7 @@ fi
 
 # List all files colorized in long format
 alias l="ls -lF ${colorflag}"
-alias ll="ls -laF ${colorflag}"
+alias ll="ls -laF ${colorflag} | less -r"
 alias la="ls -a ${colorflag}"
 
 ## List all files colorized in long format, excluding . and ..
