@@ -1,12 +1,22 @@
 #!/usr/bin/env bash
+alias sb='source ~/.bashrc'
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias configlg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias cfg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias cfglg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
+alias cfgc='cfg commit -S -m'
 
 # open quicklook debugger to render a ql server and show a file
 alias ql='qlmanage -p '
+
+# lookup a text string without the quotes in the aliases
+alias decode='alias | grep'
+# make a stated asciidoc or adoc into a pdf
+alias mapdf='asciidoctor-pdf'
+# make a pdf from readme ascii
+alias mapdfr='asciidoctor-pdf README.asciidoc'
+alias qlr='qlmanage -p README.pdf'
 
 # open lightweight Webstorm editor
 alias we="webstorm -e"
