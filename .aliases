@@ -23,7 +23,7 @@ alias -- -="cd -"
 #quit/exit terminal with q for quit (x is alias in nom for npm exec which replaces npx)
 alias x="exit"
 alias pn="pnpm"
-alias px="pnpx"
+alias px="pnpm dlx"
 alias npx="npm exec"
 #alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
@@ -36,7 +36,7 @@ alias gctemplate="cat ~/.gitmessage.txt"
 #commit with signature
 alias ga="git add ."
 alias gc="git commit -S -m"
-alias gl="git log"
+alias gl="git log --oneline"
 alias glg='/usr/bin/git --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias c="clear"
 
