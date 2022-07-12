@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
+# Reload edits to .bashrc
 alias sb='source ~/.bashrc'
+
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias configlg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'

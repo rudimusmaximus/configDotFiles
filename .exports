@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-#
-## Make vim the default editor.
-#export EDITOR='vim';
-#
+
 ## Enable persistent REPL history for `node`.
 #export NODE_REPL_HISTORY=~/.node_history;
 ## Allow 32³ entries; the default is 1000.
@@ -47,9 +44,6 @@ export NNN_BMS="D:$HOME/Documents;d:$HOME/Downloads/;p:$HOME/projects;P:$HOME/Pi
 export NNN_FIFO=/tmp/nnn.fifo;
 export NNN_PLUG='f:finder;o:fzopen;p:mocplay;d:diffs;t:nmount;v:imgview';
 
-
-#TODO: test using these .exports overtime
-
 #Hide apple's pushing The default interactive shell is now zsh.
 #To update your account to use zsh, please run `chsh -s /bin/zsh`.
 #For more details, please visit https://support.apple.com/kb/HT208050.
@@ -61,3 +55,9 @@ export PATH=$PATH:/opt/homebrew/bin
 export PNPM_HOME="/Users/rudimusmaximus/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
+
+export PROMPT_DIRTRIM=1 # Trimming path to desired directories
+
+## Make nano the default editor rather than vim
+export EDITOR="webstorm -e";
+export VISUAL="$EDITOR";
