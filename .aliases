@@ -9,16 +9,18 @@ alias cfg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias cfglg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias cfgc='cfg commit -S -m'
 
-# open quicklook debugger to render a ql server and show a file
+# opens quicklook debugger to render a ql server and show a file
 alias ql='qlmanage -p '
-
-# lookup a text string without the quotes in the aliases
-alias decode='alias | grep'
-# make a stated asciidoc or adoc into a pdf
-alias mapdf='asciidoctor-pdf'
-# make a pdf from readme ascii
-alias mapdfr='asciidoctor-pdf README.asciidoc'
+# quicklook a README.pdf if present
 alias qlr='qlmanage -p README.pdf'
+
+# Grep given phrase for returns from alias command (simarlarly you can also say 'type aliasName or functionName')
+alias decode='alias | grep';
+
+# Makes any stated .asciidoc or .adoc file into a pdf
+alias mkpdf='asciidoctor-pdf'
+# make a pdf from README.ascii if present
+alias mkpdfr='asciidoctor-pdf README.asciidoc'
 
 # open lightweight Webstorm editor
 alias we="webstorm -e"
