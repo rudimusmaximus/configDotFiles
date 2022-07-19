@@ -17,6 +17,10 @@ alias qlr='qlmanage -p README.pdf'
 # Grep given phrase for returns from alias command (simarlarly you can also say 'type aliasName or functionName')
 alias decode='alias | grep';
 
+# brew installed yt-dlp, Fork of youtube-dl with additional features and fixes
+# https://github.com/yt-dlp/yt-dlp just add a video id and the defaults are fast w lots of options
+alias yt='yt-dlp https://www.youtube.com/watch?v='
+
 # Makes any stated .asciidoc or .adoc file into a pdf
 alias mkpdf='asciidoctor-pdf'
 # make a pdf from README.ascii if present
