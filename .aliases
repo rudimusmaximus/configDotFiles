@@ -228,3 +228,5 @@ alias rmALL='yes | rm -rv '
 # rcm cli node 'run' files seeded in root of a web app must be present to run
 alias package='node --experimental-json-modules nodeRun_package.mjs'
 alias scripts='node --experimental-json-modules nodeRun_scripts.mjs'
+# expected svelt kit script run from pnpm which node not requiare run word; command expects build already
+alias pv='pnpm preview'
