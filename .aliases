@@ -49,14 +49,17 @@ alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
 alias p="cd ~/projects"
 alias s="cd ~/Library/Application\ Support/JetBrains/WebStorm2022.1/scratches/"
+
+
 alias g="git"
-alias gs="git status"
-alias gctemplate="cat ~/.gitmessage.txt"
-#commit with signature
 alias ga="git add ."
 alias gc="git commit -S -m"
+alias gctemplate="cat ~/.gitmessage.txt"
+alias gd="git diff"
 alias gl="git log --oneline"
 alias glg='/usr/bin/git --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
+alias gs="git status"
+
 alias c="clear"
 
 #n special script shortcuts for manual install, update, removal of n
@@ -221,3 +224,7 @@ alias now='date +"%T"'
 alias cl='curl -L'
 # Recursively answer yes while removing
 alias rmALL='yes | rm -rv '
+
+# rcm cli node 'run' files seeded in root of a web app must be present to run
+alias package='node --experimental-json-modules nodeRun_package.mjs'
+alias scripts='node --experimental-json-modules nodeRun_scripts.mjs'
