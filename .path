@@ -1,0 +1,20 @@
+# pnpm
+export PNPM_HOME="/Users/rudimusmaximus/Library/pnpm"
+export PATH="$PNPM_HOME:$PATH"
+# pnpm end
+
+# add for edgedb-cli
+export PATH="/Users/rudimusmaximus/Library/Application Support/edgedb/bin:$PATH"
+
+# Added by n-install (see http://git.io/n-install-repo)
+export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
+
+export BASH_HOMEBREW_HOME='/opt/homebrew/bin';
+export PATH="$BASH_HOMEBREW_HOME:$PATH";
+export PATH="$HOME/bin:$PATH";
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi

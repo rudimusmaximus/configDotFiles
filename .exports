@@ -2,8 +2,6 @@
 
 ## Enable persistent REPL history for `node`.
 #export NODE_REPL_HISTORY=~/.node_history;
-## Allow 32³ entries; the default is 1000.
-#export NODE_REPL_HISTORY_SIZE='32768';
 ## Use sloppy mode by default, matching web browsers.
 #export NODE_REPL_MODE='sloppy';
 #
@@ -27,10 +25,6 @@ export LESS_TERMCAP_md="${yellow}";
 # Don’t clear the screen after quitting a manual page.
 export MANPAGER='less -X';
 
-# Deno installation
-export DENO_INSTALL="/Users/rudy/.deno"
-export PATH="$DENO_INSTALL/bin:$PATH"
-
 # Avoid issues with `gpg` as installed via Homebrew.
 # https://stackoverflow.com/a/42265848/96656
 export GPG_TTY=$(tty);
@@ -49,18 +43,8 @@ export NNN_PLUG='f:finder;o:fzopen;p:mocplay;d:diffs;t:nmount;v:imgview';
 #For more details, please visit https://support.apple.com/kb/HT208050.
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
-export PATH=$PATH:/opt/homebrew/bin
-
-# pnpm
-export PNPM_HOME="/Users/rudimusmaximus/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"
-# pnpm end
-
 export PROMPT_DIRTRIM=1 # Trimming path to desired directories
 
 # Set the default editor
 export EDITOR="/usr/bin/open";
 export VISUAL="$EDITOR";
-
-# add for edgedb-cli
-export PATH="/Users/rudimusmaximus/Library/Application Support/edgedb/bin:$PATH"

@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Reload edits to .bashrc
 alias sb='source ~/.bashrc'
 
@@ -24,8 +23,8 @@ alias yt='yt-dlp https://youtu.be/'
 
 # Makes any stated .asciidoc or .adoc file into a pdf
 alias mkpdf='asciidoctor-pdf'
-# make a pdf from README.ascii if present
-alias mkpdfr='asciidoctor-pdf README.asciidoc'
+# make a pdf from README.adoc if present
+alias mkpdfr='asciidoctor-pdf README.adoc'
 
 # open lightweight Webstorm editor
 alias we="webstorm -e"
@@ -226,7 +225,11 @@ alias cl='curl -L'
 alias rmALL='yes | rm -rv '
 
 # rcm cli node 'run' files seeded in root of a web app must be present to run
-alias package='node --experimental-json-modules nodeRun_package.mjs'
-alias scripts='node --experimental-json-modules nodeRun_scripts.mjs'
+alias package='node nodeRun_package.mjs'
+alias scripts='node nodeRun_scripts.mjs'
 # expected svelt kit script run from pnpm which node not requiare run word; command expects build already
 alias pv='pnpm preview'
+# runs local expected npm run script 'build' using pnpm could also call 'pn build'
+alias pb='pnpm build'
+
+alias oc='open -a "Google Chrome"'
