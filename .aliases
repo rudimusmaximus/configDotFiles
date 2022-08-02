@@ -5,6 +5,7 @@ alias sb='source ~/.bashrc'
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias configlg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias cfg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+alias cfgl='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME log --oneline'
 alias cfglg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias cfgc='cfg commit -S -m'
 
@@ -37,12 +38,23 @@ alias .....="cd ../../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
 
-# Shortcuts
+# SHORTCUTS
 #quit/exit terminal with q for quit (x is alias in nom for npm exec which replaces npx)
 alias x="exit"
-alias pn="pnpm"
-alias px="pnpm dlx"
 alias npx="npm exec"
+
+# Directly open a file in chrome good for when you have a special pluggin to read like adoc/asciidoc
+# avoids having to convert to pdf for example
+alias oc='open -a "Google Chrome"'
+alias ocr='open -a "Google Chrome" README.adoc'
+
+alias pn="pnpm"
+# if installed standalone, removes global and store; likely must rebuild projects relying on the links
+alias pnUNINSTALL='rm -rf $PNPM_HOME'
+# install standalone - On POSIX systems, you may install pnpm even if you don't have Node.js installed, using the following script
+alias pnINSTALL='curl -fsSL https://get.pnpm.io/install.sh | sh -'
+alias px="pnpm dlx"
+
 #alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
