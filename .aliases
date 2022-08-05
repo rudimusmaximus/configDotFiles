@@ -48,8 +48,12 @@ alias npx="npm exec"
 # avoids having to convert to pdf for example
 alias oc='open -a "Google Chrome"'
 alias ocr='open -a "Google Chrome" README.adoc'
+# search help > bash to set syntax and edit dot files or others without opening ide
+alias ost='open -a "Sublime Text"'
 
 alias pn="pnpm"
+# log into github's npm package manager
+alias pnLogin='pnpm login --registry=https://npm.pkg.github.com'
 # if installed standalone, removes global and store; likely must rebuild projects relying on the links
 alias pnUNINSTALL='rm -rf $PNPM_HOME'
 # install standalone - On POSIX systems, you may install pnpm even if you don't have Node.js installed, using the following script

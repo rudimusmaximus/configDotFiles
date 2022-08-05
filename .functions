@@ -1,0 +1,26 @@
+install_rcm_scopes_as_npmrc () {
+  if [[ -f "$HOME/.npmrc" ]]
+  then
+  echo "$HOME/.npmrc exists on your filesystem. Remove or rename and try again."
+  else {
+  echo "@redcrowconsulting:registry=https://npm.pkg.github.com/redcrowconsulting" > ~/.npmrc
+  echo "@redcrowmethods:registry=https://npm.pkg.github.com/redcrowmethods" >> ~/.npmrc
+  echo "//npm.pkg.github.com/:_authToken=$RFJ_PAT_GH_NPM_PKG_REGISTRY" >> ~/.npmrc
+  echo "Created $HOME/.npmrc with redcrowmethods and redcrowconsulting scopes and auth"
+  # echo "You will need to log into registry with a PAT with read to use and write to develop"
+  # echo "Try pnpm login --registry=https://npm.pkg.github.com and use matching username and email"
+  }
+fi
+}
+
+file_exists () {
+
+# Using argument expansion to capture all files provided as arguments.
+for FILE in "${@}"
+do
+  if [[ ! -f $FILE ]]
+  then
+    echo "The file ${FILE} does not exist!"
+  fi
+done
+}
