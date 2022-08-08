@@ -108,6 +108,8 @@ fi
 alias l="ls -lF ${colorflag}"
 alias ll="ls -laF ${colorflag} | less -r"
 alias la="ls -a ${colorflag}"
+# this plus number of most recent files added to directory so 'lt 1' gives last file added
+alias lt="ls -Art | tail -n"
 
 ## List all files colorized in long format, excluding . and ..
 #alias la="ls -lAF ${colorflag}"
