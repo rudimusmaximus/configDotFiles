@@ -51,15 +51,6 @@ alias ocr='open -a "Google Chrome" README.adoc'
 # search help > bash to set syntax and edit dot files or others without opening ide
 alias ost='open -a "Sublime Text"'
 
-alias pn="pnpm"
-# log into github's npm package manager
-alias pnLogin='pnpm login --registry=https://npm.pkg.github.com'
-# if installed standalone, removes global and store; likely must rebuild projects relying on the links
-alias pnUNINSTALL='rm -rf $PNPM_HOME'
-# install standalone - On POSIX systems, you may install pnpm even if you don't have Node.js installed, using the following script
-alias pnINSTALL='curl -fsSL https://get.pnpm.io/install.sh | sh -'
-alias px="pnpm dlx"
-
 #alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
@@ -246,6 +237,19 @@ alias rmALL='yes | rm -rv '
 # rcm cli node 'run' files seeded in root of a web app must be present to run
 alias package='node nodeRun_package.mjs'
 alias scripts='node nodeRun_scripts.mjs'
+
+
+alias pn="pnpm"
+# log into github's npm package manager
+alias pnLogin='pnpm login --registry=https://npm.pkg.github.com'
+# if installed standalone, removes global and store; likely must rebuild projects relying on the links
+alias pnUNINSTALL='rm -rf $PNPM_HOME'
+# install standalone - On POSIX systems, you may install pnpm even if you don't have Node.js installed, using the following script
+alias pnINSTALL='curl -fsSL https://get.pnpm.io/install.sh | sh -'
+alias px="pnpm dlx"
+alias pnl='echo "pnpm ls"; pnpm ls'
+alias pnlg='echo "pnpm ls -g"; pnpm ls -g'
+
 # expected svelt kit script run from pnpm which node not requiare run word; command expects build already
 alias pv='pnpm preview'
 # runs local expected npm run script 'build' using pnpm could also call 'pn build'
