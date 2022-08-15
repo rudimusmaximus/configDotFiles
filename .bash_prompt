@@ -109,7 +109,7 @@ PS1="\[\033]0;\W\007\]";
 
 # PS1+="\[${bold}\]\n"; # newline
 
-# Define Prompt
+# Define Prompt see export PROMPT_DIRTRIM
 PS1+="\[${userStyle}\] --- \u"; # username
 PS1+="\[${white}\]@";
 PS1+="\[${hostStyle}\]\h"; # host
