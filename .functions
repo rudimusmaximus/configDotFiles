@@ -1,3 +1,5 @@
+#!/bin/bash
+# above only so we can run shellcheck on it
 install_rcm_scopes_as_npmrc () {
   if [[ -f "$HOME/.npmrc" ]]
   then
@@ -23,4 +25,20 @@ do
     echo "The file ${FILE} does not exist!"
   fi
 done
+}
+
+list () {
+  echo "ls in color with -F designations"
+  ls -F
+}
+
+recent () {
+  echo "$1 most recent file(s) added to the current directory"
+  ls -Artl | tail -n "$1"
+}
+
+go_home () {
+  echo "Welcome ~ \$HOME"
+  cd ~ || exit
+  pwd
 }
