@@ -9,10 +9,10 @@ alias   config='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias      cfg='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias     cfgl='echo "\$CONFIG_DOT_FILES_GIT_COMMAND log --oneline"; cfg log --oneline' # try adding -10 or -5 for last few
 alias     cfgs='echo "\$CONFIG_DOT_FILES_GIT_COMMAND status"; cfg status'
-alias     cfgd='cfg diff'
-alias     cfgc='cfg commit -S -m'
+alias     cfgd='echo "\$CONFIG_DOT_FILES_GIT_COMMAND diff"; cfg diff'
+alias     cfgc='echo "\$CONFIG_DOT_FILES_GIT_COMMAND commit -S -m"; cfg commit -S -m'
 alias configlg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
-alias    cfglg='configlg'
+alias    cfglg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 
 # opens quicklook debugger to render a ql server and show a file
 alias ql='qlmanage -p '
