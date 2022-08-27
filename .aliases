@@ -249,6 +249,7 @@ alias pnLogin='pnpm login --registry=https://npm.pkg.github.com'
 alias pnUNINSTALL='rm -rf $PNPM_HOME'
 # install standalone - On POSIX systems, you may install pnpm even if you don't have Node.js installed, using the following script
 alias pnINSTALL='curl -fsSL https://get.pnpm.io/install.sh | sh -'
+alias pnUPGRADE='pnpm add -g pnpm';
 alias px="pnpm dlx"
 alias pnl='echo "pnpm ls"; pnpm ls'
 alias pnlg='echo "pnpm ls -g"; pnpm ls -g'
