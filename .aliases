@@ -33,6 +33,9 @@ alias mkpdf='asciidoctor-pdf'
 # make a pdf from README.adoc if present
 alias mkpdfr='asciidoctor-pdf README.adoc'
 
+# Fills Types directory from root of project with typescript declarations; assumes correct tsconfig and other config ready
+alias mktypes='echo "pnpm tsc  --noEmit false --emitDeclarationOnly true"; pnpm tsc  --noEmit false --emitDeclarationOnly true'
+
 # open lightweight Webstorm editor
 alias we="webstorm -e"
 
