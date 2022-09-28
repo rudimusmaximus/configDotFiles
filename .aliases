@@ -39,6 +39,8 @@ alias mktypes='echo "pnpm tsc  --noEmit false --emitDeclarationOnly true"; pnpm 
 # open lightweight Webstorm editor
 alias we="webstorm -e"
 
+alias gpgl='echo "gpg --list-secret-keys --keyid-format LONG"; gpg --list-secret-keys --keyid-format LONG'
+
 # Easier navigation: .., ..., ...., ....., ~ and -
 alias ..="cd .."
 alias ...="cd ../.."
