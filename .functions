@@ -42,3 +42,8 @@ go_home () {
   cd ~ || exit
   pwd
 }
+
+function vp { 
+  echo "prerelease semVer++ in package.json";
+  npm --no-git-tag-version version prerelease --preid="$1"; 
+}
