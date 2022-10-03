@@ -256,6 +256,10 @@ alias px="pnpm dlx"
 alias pnl='echo "pnpm ls"; pnpm ls'
 alias pnlg='echo "pnpm ls -g"; pnpm ls -g'
 
+# inspect what a npm published package will include
+alias mktar='tar xf $(npm pack) && tar -xf $(ls *.tgz) --directory ~/Downloads/ && mv $(ls *.tgz) ~/Downloads/'
+
+
 # expected svelt kit script run from pnpm which node not requiare run word; command expects build already
 alias pv='pnpm preview'
 # runs local expected npm run script 'build' using pnpm could also call 'pn build'
