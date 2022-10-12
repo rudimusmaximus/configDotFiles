@@ -131,7 +131,7 @@ alias week='date +%V'
 
 # make working with package.json easier
 alias version='cat package.json | grep version'
-alias v='echo "Overwrite semVer in package.json without creating a new tag"; npm --no-git-tag-version version'
+alias v='echo "Updated semVer in package.json without creating a new tag"; npm --no-git-tag-version version'
 # see also vp function
 ### Get macOS Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 ##alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
