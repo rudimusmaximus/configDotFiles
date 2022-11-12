@@ -59,6 +59,8 @@ alias ocr='open -a "Google Chrome" README.adoc'
 # in sublime text > View > syntax > bash to set highlighting; also test with shellcheck each file
 alias ost='open -a "Sublime Text"'
 
+alias vd='echo "vimdiff opening...use :qa to quit all/close the editor"; vimdiff'
+
 #alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
@@ -133,6 +135,8 @@ alias week='date +%V'
 alias version='cat package.json | grep version'
 alias v='echo "Updated semVer in package.json without creating a new tag"; npm --no-git-tag-version version'
 # see also vp function
+
+alias frb='findAndReplaceBsd'
 ### Get macOS Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 ##alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
 #

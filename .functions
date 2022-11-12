@@ -57,3 +57,19 @@ function functions {
   mapfile -t my_array < <( compgen -A function );
   echo "${my_array[@]}";
 }
+
+function findAndReplaceBsd {
+  echo "
+   OK ---> FIND '$1' and
+   REPLACE WITH '$2' (on a BSD system like macOS or FreeBSD)...";
+  foo="$1";
+  bar="$2";
+  echo "
+   --- BEFORE ---";
+  rg "$1"
+  echo "
+   --- AFTER ---"
+  rg --files-with-matches "$foo" | xargs sed -i '' "s|$foo|$bar|g";
+  rg "$2";
+  echo "";
+}
