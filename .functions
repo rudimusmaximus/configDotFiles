@@ -33,8 +33,10 @@ list () {
 }
 
 recent () {
-  echo "$1 most recent file(s) added to the current directory"
-  ls -Artl | tail -n "$1"
+  echo "$1 most recent file(s) added to the current directory";
+  # ignore Use find instead of ls to better handle non-alphanumeric filenames.
+  # shellcheck disable=SC2012
+  ls -Artl | tail -n "$1";
 }
 
 go_home () {
@@ -68,7 +70,7 @@ function findAndReplaceBsd {
    --- BEFORE ---";
   rg "$1"
   echo "
-   --- AFTER ---"
+   --- AFTER --- RIPGREP '$2' ---"
   rg --files-with-matches "$foo" | xargs sed -i '' "s|$foo|$bar|g";
   rg "$2";
   echo "";
