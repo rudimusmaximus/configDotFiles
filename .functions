@@ -75,3 +75,19 @@ function findAndReplaceBsd {
   rg "$2";
   echo "";
 }
+
+function findAndReplaceBsdF {
+  echo "
+   OK ---> FIND Fixed String '$1' and
+   REPLACE WITH '$2' (on a BSD system like macOS or FreeBSD)...";
+  foo="$1";
+  bar="$2";
+  echo "
+   --- BEFORE ---";
+  rg -F "$1"
+  echo "
+   --- AFTER --- RIPGREP '$2' ---"
+  rg --files-with-matches -F "$foo" | xargs sed -i '' "s|$foo|$bar|g";
+  rg -F "$2";
+  echo "";
+}
