@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 # not required for sourced files here but used so we can run shellcheck on the file
 
 # Reload edits to .bashrc
@@ -51,6 +51,11 @@ alias npx="npm exec"
 # Directly open a file in chrome good for when you have a special pluggin to read like adoc/asciidoc
 alias oc='open -a "Google Chrome"' # avoids having to convert to pdf for example
 alias ocr='open -a "Google Chrome" README.adoc'
+
+# Directly open a file in chrome good for when you have a special pluggin to read like adoc/asciidoc
+alias ob='open -a "Brave Browser"' # avoids having to convert to pdf for example
+alias obr='open -a "Brave Browser" README.adoc'
+
 # in sublime text > View > syntax > bash to set highlighting; also test with shellcheck each file
 alias ost='open -a "Sublime Text"'
 
@@ -127,6 +132,7 @@ alias sudo='sudo '
 alias week='date +%V'
 
 # make working with package.json easier
+alias semver='version && rg -F "// d Month yyyy"'
 alias version='cat package.json | grep version'
 alias v='echo "Updated semVer in package.json without creating a new tag"; npm --no-git-tag-version version'
 # see also vp function
