@@ -132,10 +132,9 @@ alias sudo='sudo '
 alias week='date +%V'
 
 # make working with package.json easier
-alias semver='version && rg -F "// d Month yyyy"'
 alias version='cat package.json | grep version'
 alias v='echo "Updated semVer in package.json without creating a new tag"; npm --no-git-tag-version version'
-# see also vp function
+# see also vp, semver functions
 
 alias fr='findAndReplaceBsd'
 alias frf='findAndReplaceBsdF'

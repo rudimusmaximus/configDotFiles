@@ -45,9 +45,9 @@ go_home () {
   pwd
 }
 
-function vp { 
+function vp {
   echo "prerelease semVer++ in package.json";
-  npm --no-git-tag-version version prerelease --preid="$1"; 
+  npm --no-git-tag-version version prerelease --preid="$1";
 }
 
 function aliases {
@@ -90,4 +90,10 @@ function findAndReplaceBsdF {
   rg --files-with-matches -F "$foo" | xargs sed -i '' "s|$foo|$bar|g";
   rg -F "$2";
   echo "";
+}
+
+function semver() {
+    version;
+    rg -F "// d Month yyyy";
+    rg -F "WHATS_NEW_DATE:";
 }
