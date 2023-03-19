@@ -92,6 +92,7 @@ function findAndReplaceBsdF {
   echo "";
 }
 
+# assumes version alias and tries two ways to find local date in files
 function semver() {
     version;
     rg -F "// d Month yyyy";
