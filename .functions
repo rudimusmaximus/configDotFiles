@@ -91,6 +91,7 @@ function findAndReplaceBsdF {
   rg -F "$2";
   echo "";
 }
+<<<<<<< HEAD
 
 # assumes version alias and tries two ways to find local date in files
 function semver() {
@@ -98,3 +99,23 @@ function semver() {
     rg -F "// d Month yyyy";
     rg -F "WHATS_NEW_DATE:";
 }
+||||||| 735ce90
+=======
+
+
+# initiates a FaceTime call to a phone number using the open command
+# with the tel protocol.
+#
+# The open command opens a file or URL with the default
+# application associated with it
+# The -a option specifies the application to open the file or URL with.
+# In this case, we're specifying FaceTime as the application to open.
+# The tel protocol followed by the phone number is passed as the argument
+# to the open command.
+# When the call function is called with a phone number,
+# it opens FaceTime and initiates a call to the phone number specified.
+# calls with iphone if setup or to person if they are a messages user
+function call {
+    open -a FaceTime "tel://$1"
+}
+>>>>>>> 2091e543c2b8fb1fa7be0ef1494dd5928c9a7272
