@@ -91,7 +91,6 @@ function findAndReplaceBsdF {
   rg -F "$2";
   echo "";
 }
-<<<<<<< HEAD
 
 # assumes version alias and tries two ways to find local date in files
 function semver() {
@@ -99,9 +98,6 @@ function semver() {
     rg -F "// d Month yyyy";
     rg -F "WHATS_NEW_DATE:";
 }
-||||||| 735ce90
-=======
-
 
 # initiates a FaceTime call to a phone number using the open command
 # with the tel protocol.
@@ -118,4 +114,3 @@ function semver() {
 function call {
     open -a FaceTime "tel://$1"
 }
->>>>>>> 2091e543c2b8fb1fa7be0ef1494dd5928c9a7272
