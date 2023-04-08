@@ -67,10 +67,7 @@ function findAndReplaceBsd {
   foo="$1";
   bar="$2";
   echo "
-   --- BEFORE ---";
-  rg "$1"
-  echo "
-   --- AFTER --- RIPGREP '$2' ---"
+   --- AFTER CHANGES --- RIPGREP '$2' ---"
   rg --files-with-matches "$foo" | xargs sed -i '' "s|$foo|$bar|g";
   rg "$2";
   echo "";
@@ -83,10 +80,7 @@ function findAndReplaceBsdF {
   foo="$1";
   bar="$2";
   echo "
-   --- BEFORE ---";
-  rg -F "$1"
-  echo "
-   --- AFTER --- RIPGREP '$2' ---"
+   --- AFTER CHANGES --- RIPGREP '$2' ---"
   rg --files-with-matches -F "$foo" | xargs sed -i '' "s|$foo|$bar|g";
   rg -F "$2";
   echo "";
