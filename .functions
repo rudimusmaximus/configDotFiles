@@ -108,3 +108,8 @@ function semver() {
 function call {
     open -a FaceTime "tel://$1"
 }
+
+function crypto() {
+  echo "Checking my favorite crypto using api.coingecko.com..."
+  curl -s -H 'Accept: application/json' 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,cardano&vs_currencies=usd' | jq .
+}
