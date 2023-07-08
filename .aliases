@@ -76,6 +76,7 @@ alias gd="git diff"
 alias gl="git log --oneline"
 alias glg='/usr/bin/git --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias gs="git status"
+alias gt="git tag -l -n1"
 
 alias c="clear"
 
@@ -261,7 +262,9 @@ alias pnUPGRADE='pnpm add -g pnpm';
 alias px="pnpm dlx"
 alias pnl='echo "pnpm ls"; pnpm ls'
 alias pnlg='echo "pnpm ls -g"; pnpm ls -g'
-
+# open nvim from my nvim-config repo where i might be trying out something (does not effect next nvim open)
+alias nvimConfig='NVIM_APPNAME=nvim-config nvim'
+alias db='echo "edgedb"; edgedb'
 # inspect what a npm published package will include
 alias mktar='tar xf $(npm pack) && tar -xf $(ls *.tgz) --directory ~/Downloads/ && mv $(ls *.tgz) ~/Downloads/'
 
