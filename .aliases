@@ -67,6 +67,7 @@ alias dt="cd ~/Desktop"
 alias p="cd ~/projects"
 alias s="cd ~/Library/Application\ Support/JetBrains/WebStorm2022.1/scratches/"
 
+alias e="edgedb"
 
 alias g="git"
 alias ga="git add ."
