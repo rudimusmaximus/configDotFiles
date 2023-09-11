@@ -21,3 +21,18 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
+
+# for java open sdk for running google closure compiler from jar file (brew caveats as apple installs similar files so take care of install instructions)
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
+
+# Go best practice to setup workspace after brew update&& brew install golang
+# mkdir -p $HOME/go/{bin,src,pkg}
+# setup environemnt to work with this workspace for go (start any project under ~/go/src)
+export GOPATH=$HOME/go
+export GOROOT="$(brew --prefix golang)/libexec"
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH=$BUN_INSTALL/bin:$PATH

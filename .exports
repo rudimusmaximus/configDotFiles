@@ -50,7 +50,3 @@ export CONFIG_DOT_FILES_GIT_COMMAND="/usr/bin/git --git-dir=$HOME/.cfg/ --work-t
 # Set the default editor
 export EDITOR="/usr/bin/open";
 export VISUAL="$EDITOR";
-
-# for java open sdk for running google closure compiler from jar file (brew caveats as apple installs similar files so take care of install instructions)
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
