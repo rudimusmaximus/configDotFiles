@@ -55,11 +55,12 @@ alias -- -='echo "Now in previous location"; cd -' # back to previous directory
 alias x="exit"
 alias npx="npm exec"
 
-# Directly open a file in chrome good for when you have a special pluggin to read like adoc/asciidoc
+# Directly open a file in chrome based browser good for when you have a special pluggin to read like adoc/asciidoc
 alias oc='open -a "Google Chrome"' # avoids having to convert to pdf for example
 alias ocr='open -a "Google Chrome" README.adoc'
+alias ot='open -a "Thorium"' # avoids having to convert to pdf for example
+alias otr='open -a "Thorium" README.adoc'
 
-# Directly open a file in chrome good for when you have a special pluggin to read like adoc/asciidoc
 alias ob='open -a "Brave Browser"' # avoids having to convert to pdf for example
 alias obr='open -a "Brave Browser" README.adoc'
 
