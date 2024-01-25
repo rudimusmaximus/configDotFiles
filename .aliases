@@ -54,6 +54,7 @@ alias -- -='echo "Now in previous location"; cd -' # back to previous directory
 # SHORTCUTS
 alias x="exit"
 alias npx="npm exec"
+alias zl="zellij --layout "
 
 # Directly open a file in chrome based browser good for when you have a special pluggin to read like adoc/asciidoc
 alias oc='open -a "Google Chrome"' # avoids having to convert to pdf for example
@@ -279,3 +280,7 @@ alias pv='pnpm preview'
 alias pb='pnpm build'
 
 alias oc='open -a "Google Chrome"'
+
+# for raspberry pi os (starting with out 3b+)
+alias picheck='vcgencmd version; vcgencmd get_throttled; vcgencmd measure_volts; vcgencmd measure_temp; vcgencmd get_mem arm; vcgencmd get_mem gpu'
+

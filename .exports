@@ -47,6 +47,7 @@ export PROMPT_DIRTRIM=2 # Trimming path to desired directories
 
 export CONFIG_DOT_FILES_GIT_COMMAND="/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME"
 
-# Set the default editor
-export EDITOR="/usr/bin/open";
+# Set the default editor to Neovim, assuming nvim is in our path
+export EDITOR="nvim";
 export VISUAL="$EDITOR";
+

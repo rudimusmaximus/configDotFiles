@@ -6,6 +6,9 @@ export PNPM_HOME="$HOME/Library/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
 
+# for MIT Scheme
+export PATH="$PATH:$HOME/projects/mit-scheme-12.1/src/mit-scheme.app/Contents/Resources"
+
 # add for edgedb-cli
 export PATH="$HOME/Library/Application Support/edgedb/bin:$PATH"
 
