@@ -32,13 +32,6 @@ list () {
   ls -F
 }
 
-recent () {
-  echo "$1 most recent file(s) added to the current directory";
-  # ignore Use find instead of ls to better handle non-alphanumeric filenames.
-  # shellcheck disable=SC2012
-  ls -Artl | tail -n "$1";
-}
-
 go_home () {
   echo "Welcome ~ \$HOME"
   cd ~ || exit
