@@ -6,7 +6,11 @@ for file in ~/.{path,bash_prompt,exports,aliases,functions,extra}; do
 done;
 unset file;
 
+# Disable iterm integration when running warp as interferes when using PS1 prompt
+if [[ $TERM_PROGRAM != "WarpTerminal" ]]; then
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
+fi
+
 
 # display diagnostic as greeting
 neofetch;
@@ -16,3 +20,4 @@ neofetch;
 # (in ~/.cargo/bin) will take precedence because items earlier in the PATH are
 # checked first when a command is invoked from the terminal.
 . "$HOME/.cargo/env"
+

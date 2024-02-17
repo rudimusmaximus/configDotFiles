@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Shell prompt based on the Solarized Dark theme.
 # Screenshot: http://i.imgur.com/EkEtphC.png
 # Heavily inspired by @necolas’s prompt: https://github.com/necolas/dotfiles
@@ -10,57 +12,58 @@ elif infocmp xterm-256color >/dev/null 2>&1; then
 fi;
 
 prompt_git() {
-	local s='';
-	local branchName='';
+    local s='';
+    local branchName='';
+    local uncommittedCount=0;
 
-	# Check if the current directory is in a Git repository.
-	git rev-parse --is-inside-work-tree &>/dev/null || return;
+    # Check if the current directory is in a Git repository.
+    git rev-parse --is-inside-work-tree &>/dev/null || return;
 
-	# Check for what branch we’re on.
-	# Get the short symbolic ref. If HEAD isn’t a symbolic ref, get a
-	# tracking remote branch or tag. Otherwise, get the
-	# short SHA for the latest commit, or give up.
-	branchName="$(git symbolic-ref --quiet --short HEAD 2> /dev/null || \
-		git describe --all --exact-match HEAD 2> /dev/null || \
-		git rev-parse --short HEAD 2> /dev/null || \
-		echo '(unknown)')";
+    # Determine the project name from the Git remote URL
+    local projectName
+    projectName="$(basename -s .git "$(git config --get remote.origin.url)")";
 
-	# Early exit for Chromium & Blink repo, as the dirty check takes too long.
-	# Thanks, @paulirish!
-	# https://github.com/paulirish/dotfiles/blob/dd33151f/.bash_prompt#L110-L123
-	repoUrl="$(git config --get remote.origin.url)";
-	if grep -q 'chromium/src.git' <<< "${repoUrl}"; then
-		s+='*';
-	else
-		# Check for uncommitted changes in the index.
-		if ! $(git diff --quiet --ignore-submodules --cached); then
-			s+='+';
-		fi;
-		# Check for unstaged changes.
-		if ! $(git diff-files --quiet --ignore-submodules --); then
-			s+='!';
-		fi;
-		# Check for untracked files.
-		if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-			s+='?';
-		fi;
-		# Check for stashed files.
-		if $(git rev-parse --verify refs/stash &>/dev/null); then
-			s+='$';
-		fi;
-	fi;
+    # Determine branch name
+    # Check for what branch we’re on.
+    # Get the short symbolic ref. If HEAD isn’t a symbolic ref, get a
+    # tracking remote branch or tag. Otherwise, get the
+    # short SHA for the latest commit, or give up.
+    branchName="$(git symbolic-ref --quiet --short HEAD 2> /dev/null || \
+        git describe --all --exact-match HEAD 2> /dev/null || \
+        git rev-parse --short HEAD 2> /dev/null || \
+        echo '(unknown)')";
 
-	[ -n "${s}" ] && s=" [${s}]";
+    # Check for uncommitted changes in the index.
+    if ! $(git diff --quiet --ignore-submodules --cached); then
+        s+='+';
+    fi;
+    # Check for unstaged changes.
+    if ! $(git diff-files --quiet --ignore-submodules --); then
+        s+='!';
+    fi;
+    # Count untracked files.
+    uncommittedCount=$(git status --porcelain | wc -l | tr -d ' ');
+    if [ "${uncommittedCount}" -gt 0 ]; then
+        s+="?${uncommittedCount}";
+    fi;
+    # Check for stashed files.
+    if $(git rev-parse --verify refs/stash &>/dev/null); then
+        s+='$';
+    fi;
 
-	echo -e "${1}${branchName}${2}${s}";
+    [ -n "${s}" ] && s=" [${s}]";
+
+    echo -e "${1}${projectName} -> ${branchName}${2}${s}";
 }
+
 
 if tput setaf 1 &> /dev/null; then
 	tput sgr0; # reset colors
 	bold=$(tput bold);
 	reset=$(tput sgr0);
-	# Solarized colors, taken from http://git.io/solarized-colors.
-	# blue, green, yeallo taken from selections https://commons.wikimedia.org/wiki/File:Xterm_256color_chart.svg
+	# Solarized colors, taken from http://git.io/solarized-colors
+        # blue, green, yellow taken from selections
+	# https://commons.wikimedia.org/wiki/File:Xterm_256color_chart.svg
 	black=$(tput setaf 0);
 	blue=$(tput setaf 33);
 	cyan=$(tput setaf 37);
@@ -100,24 +103,32 @@ else
 	hostStyle="${blue}";
 fi;
 
-# # function that incorporates last exit code
-# PromptFunc(){ echo '%0.3d: ' $?; }
-# PROMPT_COMMAND='PromptFunc';
+# Adjusted PS1 without an explicit new line at the beginning
+PS1=""; # Start with an empty string to build the prompt
 
-# Set the terminal title with working directory base name
-PS1="\[\033]0;\W\007\]";
-
-# PS1+="\[${bold}\]\n"; # newline
-
-# Define Prompt see export PROMPT_DIRTRIM
-PS1+="\[${userStyle}\] --- \u"; # username
-PS1+="\[${white}\]@";
+# Username and host
+PS1+="\[${userStyle}\]\u"; # username
+PS1+="\[${white}\]@"; 
 PS1+="\[${hostStyle}\]\h"; # host
+
+# Working directory
 PS1+="\[${white}\] in ";
 PS1+="\[${violet}\]\w"; # working directory
-PS1+="\$(prompt_git \"\[${white}\] on \[${blue}\]\" \"\[${blue}\]\")"; # Git repository details
-PS1+="\[${blue}\] ---\n";
-PS1+="\[${white}\]\$ \[${reset}\]"; # `$` (and reset color)
+
+# Git repository details
+PS1+="\$(prompt_git \"\[${white}\] project \[${blue}\]\" \"\[${blue}\]\")";
+
+# Space before the `$` prompt symbol and ensure it's on the same line
+PS1+=" "; # Add a space before the prompt symbol
+
+# Conditional newline for any non warp terminal
+if [[ $TERM_PROGRAM != "WarpTerminal" ]]; then
+  PS1+="\n";
+fi
+
+# `$` prompt symbol
+PS1+="\[${white}\]\$ \[${reset}\]"; # `$` (with a space before it) and reset color
+
 export PS1;
 
 PS2="\[${yellow}\]→ \[${reset}\]";
