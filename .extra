@@ -15,3 +15,8 @@ git config --global user.email "$GIT_AUTHOR_EMAIL"
 # which we like to add to projects that use bun to install and update packages
 git config --global diff.lockb.textconv bun
 git config --global diff.lockb.binary true
+
+# You may also want to setup signing using gpg2
+# git config --global user.signingkey <your-key-id>
+# git config --global commit.gpgsign true
+# so git commit -S -m "commit text" will also sign
