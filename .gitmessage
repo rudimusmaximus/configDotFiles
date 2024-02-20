@@ -1,0 +1,39 @@
+subjectLineType: vSemVerIteration_oneSpace_ShortTitle
+
+# Types are { feat fix docs style refactor test chore } with
+# an empty line after the subject line
+#
+# Further paragraphs come after blank lines.
+#
+# More detailed explanatory text, if necessary. Wrap it to about 72
+# characters or so.
+#
+# Explain the problem that this commit is solving. Focus on why you
+# are making this change as opposed to how (the code explains that).
+# Are there side effects or other non-intuitive consequences of this
+# change? Here's the place to explain them.
+#
+# - Bullet points are okay, too
+#
+# - Typically a hyphen or asterisk is used for the bullet, preceded
+#  by a single space, with blank lines in between, but conventions
+#  vary here
+#
+# If you use an issue tracker, put references to them at the bottom,
+# like this and auto close if applicable using a close word
+# {"closeWord #issueNum" - close, closes, closed, fixes, fixed}
+#
+# Partial #123, fixes #222, fixes #333
+# In this example, partial would not get closed.
+#
+# TIP - GitHub issue close language anywhere in commit message
+# will close only once the commit is merged into the default branch
+# (usually main or master). Also, when merged into non default branch,
+# the issue will be marked with a tooltip in GitHub. Because we practice
+# 'git flow', feature branches go into a 'develop' branch, so we can
+# use this auto-close language while moving issues into a review/QA
+# pipeline/column. WHEN creating releases, check review items so
+# they can safely auto close on merge to main.
+#
+# See also #number, #anotherIssue OR no line at all
+
