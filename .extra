@@ -17,6 +17,8 @@ git config --global diff.lockb.textconv bun
 git config --global diff.lockb.binary true
 
 # You may also want to setup signing using gpg2
-# git config --global user.signingkey <your-key-id>
-# git config --global commit.gpgsign true
 # so git commit -S -m "commit text" will also sign
+# git config --global user.signingkey <your-key-id>
+# git config --global gpg.program gpg2
+# git config --global commit.gpgsign true
+# git config --global commit.template ~/.gitmessage
