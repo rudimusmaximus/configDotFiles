@@ -8,6 +8,7 @@ alias sb='source ~/.bashrc'
 alias   config='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias      cfg='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias     cfgl='echo "\$CONFIG_DOT_FILES_GIT_COMMAND log --oneline"; cfg log --oneline' # try adding -10 or -5 for last few
+alias    cfgls='cfg ls-tree --full-tree -r --name-only HEAD' #list files in cconfigDotFiles repo
 alias     cfgs='echo "\$CONFIG_DOT_FILES_GIT_COMMAND status"; cfg status'
 alias     cfgd='echo "\$CONFIG_DOT_FILES_GIT_COMMAND diff"; cfg diff'
 alias     cfgc='echo "\$CONFIG_DOT_FILES_GIT_COMMAND commit -S -m"; cfg commit -S -m'
@@ -78,6 +79,7 @@ alias gctemplate="cat ~/.gitmessage.txt"
 alias gd="git diff"
 alias gl="git log --oneline"
 alias glg='/usr/bin/git --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
+alias gls='git ls-tree --full-tree -r --name-only HEAD' # list files in this project
 alias gs="git status"
 alias gt="git tag -l -n1"
 
