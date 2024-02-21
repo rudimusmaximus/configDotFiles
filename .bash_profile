@@ -6,8 +6,7 @@ for file in ~/.{path,bash_prompt,exports,aliases,functions,extra}; do
 done;
 unset file;
 
-# Disable iterm integration when running warp as interferes when using PS1 prompt
-if [[ $TERM_PROGRAM != "WarpTerminal" ]]; then
+if [[ $TERM_PROGRAM = "iTerm.app" ]]; then
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
 fi
 

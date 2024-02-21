@@ -1,41 +1,59 @@
-# shell scripts path for jetbrains toolbox
-export PATH="$PATH:$HOME/bin"
+# shellcheck shell=bash
 
-# pnpm
-export PNPM_HOME="$HOME/Library/pnpm"
-export PATH="$PNPM_HOME:$PATH"
-# pnpm end
+# COMMON CONFIGURATION
+# ====================
 
-# for MIT Scheme
-export PATH="$PATH:$HOME/projects/mit-scheme-12.1/src/mit-scheme.app/Contents/Resources"
+# Bun (see https://bun.sh/)
+export BUN_INSTALL="$HOME/.bun" 
+export PATH=$BUN_INSTALL/bin:$PATH
 
-# add for edgedb-cli
-export PATH="$HOME/Library/Application Support/edgedb/bin:$PATH"
+# Jetbrains toolbox - shell scripts path
+export PATH="$HOME/bin:$PATH"
 
-# Added by n-install (see http://git.io/n-install-repo)
+# N Added by n-install for n-update, n-uninstall (see http://git.io/n-install-repo)
 export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
 
-export BASH_HOMEBREW_HOME='/opt/homebrew/bin';
-export PATH="$BASH_HOMEBREW_HOME:$PATH";
-export PATH="$HOME/bin:$PATH";
-
+# Pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
 
-# for java open sdk for running google closure compiler from jar file (brew caveats as apple installs similar files so take care of install instructions)
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
-export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
+# OS SPECIFIC CONFIGURATION
+# =========================
 
-# Go best practice to setup workspace after brew update&& brew install golang
-# mkdir -p $HOME/go/{bin,src,pkg}
-# setup environemnt to work with this workspace for go (start any project under ~/go/src)
-export GOPATH=$HOME/go
-export GOROOT="$(brew --prefix golang)/libexec"
-export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+# Darwin (macOS)-specific items
+if [[ "$(uname)" == "Darwin" ]]; then
+    # edgedb-cli
+    export PATH="$HOME/Library/Application Support/edgedb/bin:$PATH"
 
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH=$BUN_INSTALL/bin:$PATH
+    # Golang
+    # best practice to setup workspace after brew update&& brew install golang
+    # mkdir -p $HOME/go/{bin,src,pkg}
+    # setup environemnt to work with this workspace for go (start any project under ~/go/src)
+    export GOPATH=$HOME/go
+    GOROOT="$(brew --prefix golang)/libexec"
+    export GOROOT
+    export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+
+    # Homebrew
+    export BASH_HOMEBREW_HOME='/opt/homebrew/bin';
+    export PATH="$BASH_HOMEBREW_HOME:$PATH";
+    export PATH="$HOME/bin:$PATH";
+
+    # Java OpenJDK
+    # for running google closure compiler from jar file (brew caveats as apple
+    # installs similar files so take care of install instructions)
+    export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+    export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
+
+    # MIT Scheme
+    export PATH="$PATH:$HOME/projects/mit-scheme-12.1/src/mit-scheme.app/Contents/Resources"
+fi
+
+# Fedora Linux-specific items
+if [ -f /etc/os-release ] && grep -q 'ID=fedora' /etc/os-release; then
+    : # Placeholder for future Fedora-specific configurations
+fi
+
