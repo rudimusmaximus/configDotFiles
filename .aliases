@@ -7,6 +7,7 @@ alias sb='source ~/.bashrc'
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias   config='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias      cfg='$CONFIG_DOT_FILES_GIT_COMMAND';
+alias     cfgb='cp ~/.extra ~/backup.extra';
 alias     cfgl='echo "\$CONFIG_DOT_FILES_GIT_COMMAND log --oneline"; cfg log --oneline' # try adding -10 or -5 for last few
 alias    cfgls='cfg ls-tree --full-tree -r --name-only HEAD' #list files in cconfigDotFiles repo
 alias     cfgs='echo "\$CONFIG_DOT_FILES_GIT_COMMAND status"; cfg status'
