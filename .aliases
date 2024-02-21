@@ -7,6 +7,7 @@ alias sb='source ~/.bashrc'
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias   config='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias      cfg='$CONFIG_DOT_FILES_GIT_COMMAND';
+alias     cfga='cfg commit --amend -S -m';
 alias     cfgb='cp ~/.extra ~/backup.extra';
 alias     cfgf='echo "Stop tracking .extra file"; config update-index --assume-unchanged .extra' # cfg forget .extra
 alias     cfgl='echo "\$CONFIG_DOT_FILES_GIT_COMMAND log --oneline"; cfg log --oneline' # try adding -10 or -5 for last few
