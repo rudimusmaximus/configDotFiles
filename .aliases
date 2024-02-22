@@ -2,7 +2,7 @@
 # not required for sourced files here but used so we can run shellcheck on the file
 
 # Reload edits to .bashrc
-alias sb='source ~/.bashrc'
+alias sb='source ~/.bash_profile'
 
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias   config='$CONFIG_DOT_FILES_GIT_COMMAND';

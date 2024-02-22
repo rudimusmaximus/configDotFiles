@@ -5,7 +5,7 @@
 
 # Bun (see https://bun.sh/)
 export BUN_INSTALL="$HOME/.bun" 
-export PATH=$BUN_INSTALL/bin:$PATH
+export PATH="$BUN_INSTALL/bin:$PATH"
 
 # Jetbrains toolbox - shell scripts path
 export PATH="$HOME/bin:$PATH"
@@ -32,7 +32,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
     # best practice to setup workspace after brew update&& brew install golang
     # mkdir -p $HOME/go/{bin,src,pkg}
     # setup environemnt to work with this workspace for go (start any project under ~/go/src)
-    export GOPATH=$HOME/go
+    export GOPATH="$HOME/go"
     GOROOT="$(brew --prefix golang)/libexec"
     export GOROOT
     export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
