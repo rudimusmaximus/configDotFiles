@@ -25,8 +25,15 @@ export LESS_TERMCAP_md="${yellow}";
 # Don’t clear the screen after quitting a manual page.
 export MANPAGER='less -X';
 
-# Avoid issues with `gpg` as installed via Homebrew.
+# Avoid issues with `gpg` as installed via Homebrew and otherwise.
 # https://stackoverflow.com/a/42265848/96656
+# ensure that GnuPG (gpg) can interact with the terminal correctly when used in scripts or
+# other non-interactive contexts
+# important when using GPG for operations that require passphrase input, such as signing
+# commits with Git. The GPG_TTY environment variable tells GPG which terminal device to use
+# for prompting for passphrases. The $(tty) command outputs the file name of the terminal
+# connected to standard input, which is typically what you want GPG to use for passphrase
+# prompts.
 export GPG_TTY=$(tty);
 
 # nnn uses environment variables and symlinks see repo wiki for config, Environment variable NNN_BMS
