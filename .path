@@ -28,6 +28,24 @@ if [[ "$(uname)" == "Darwin" ]]; then
     # edgedb-cli
     export PATH="$HOME/Library/Application Support/edgedb/bin:$PATH"
 
+    # Check for Intel iMac
+    if [[ "$(uname -m)" == "x86_64" ]]; then
+        # Intel-specific configurations
+        export BASH_HOMEBREW_HOME='/usr/local/bin';
+        export PATH="$BASH_HOMEBREW_HOME:$PATH";
+        # Other Intel-specific configurations can go here
+    fi
+
+    # Check for Apple Silicon
+    if [[ "$(uname -m)" == "arm64" ]]; then
+        # Apple Silicon-specific configurations
+        export BASH_HOMEBREW_HOME='/opt/homebrew/bin';
+        export PATH="$BASH_HOMEBREW_HOME:$PATH";
+        # export PATH="$HOME/bin:$PATH";
+
+        # Other Apple Silicon-specific configurations can go here
+    fi
+
     # Golang
     # best practice to setup workspace after brew update&& brew install golang
     # mkdir -p $HOME/go/{bin,src,pkg}
@@ -37,10 +55,6 @@ if [[ "$(uname)" == "Darwin" ]]; then
     export GOROOT
     export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
 
-    # Homebrew
-    export BASH_HOMEBREW_HOME='/opt/homebrew/bin';
-    export PATH="$BASH_HOMEBREW_HOME:$PATH";
-    export PATH="$HOME/bin:$PATH";
 
     # Java OpenJDK
     # for running google closure compiler from jar file (brew caveats as apple
