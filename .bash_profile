@@ -5,7 +5,6 @@
 declare -a profile_config_files=(
     "${HOME}/.path"
     "${HOME}/.extra"
-    "${HOME}/.bash_prompt"
     "${HOME}/.exports"
 )
 
@@ -31,5 +30,6 @@ command -v neofetch >/dev/null && neofetch;
 source "${HOME}/.cargo/env"
 
 # Esure sourced in both interactive and non-interactive shells, including SSH sessions
+# Prompt, alias, functions
+# shellcheck source=/dev/null
 source "${HOME}/.bashrc"
-
