@@ -30,9 +30,6 @@ command -v neofetch >/dev/null && neofetch;
 # shellcheck source=/dev/null
 source "${HOME}/.cargo/env"
 
-# Source .bashrc for interactive shells
-if [ -n "$PS1" ]; then
-    # shellcheck source=/dev/null
-    source "${HOME}/.bashrc"
-fi
+# Esure sourced in both interactive and non-interactive shells, including SSH sessions
+source "${HOME}/.bashrc"
 

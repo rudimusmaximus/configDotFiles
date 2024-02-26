@@ -55,7 +55,7 @@ prompt_git() {
 
     echo -e "${1}${projectName} -> ${branchName}${2}${s}";
 }
-
+export -f prompt_git;
 
 if tput setaf 1 &> /dev/null; then
 	tput sgr0; # reset colors
