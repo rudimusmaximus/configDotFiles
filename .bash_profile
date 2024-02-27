@@ -29,7 +29,7 @@ command -v neofetch >/dev/null && neofetch;
 # shellcheck source=/dev/null
 source "${HOME}/.cargo/env"
 
-# Esure sourced in both interactive and non-interactive shells, including SSH sessions
+# Ensure sourced in both interactive and non-interactive shells, including SSH sessions
 # Prompt, alias, functions
 # shellcheck source=/dev/null
 source "${HOME}/.bashrc"
