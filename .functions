@@ -94,3 +94,9 @@ function crypto() {
   echo "Checking my favorite crypto using api.coingecko.com..."
   curl -s -H 'Accept: application/json' 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,cardano&vs_currencies=usd' | jq .
 }
+
+function md() {
+  pandoc $1 --highlight-style=tango -o /tmp/${1%.md}.html
+  xdg-open /tmp/${1%.md}.html
+}
+
