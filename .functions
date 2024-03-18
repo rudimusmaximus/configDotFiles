@@ -100,3 +100,8 @@ function md() {
   xdg-open /tmp/${1%.md}.html
 }
 
+function forget.extra() {
+  echo "forgetting extra dot file changes by assuming unchanged";
+  cfg update-index --assume-unchanged .extra;
+}
+
