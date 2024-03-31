@@ -4,6 +4,10 @@
 # Reload edits to .bashrc
 alias sb='source ~/.bash_profile'
 
+# updates for users of homebrew and one for homebrew and neovim nightly
+alias brewup='brew update && brew upgrade';
+alias brewupnvim='brew update && brew upgrade && brew upgrade --fetch-HEAD neovim';
+
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias   config='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias      cfg='$CONFIG_DOT_FILES_GIT_COMMAND';
