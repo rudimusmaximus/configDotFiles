@@ -9,7 +9,7 @@
  * @author rudimusmaximus (https://github.com/rudimusmaximus) raul@raulfloresjr.com
  */
 import fs from 'fs';
-import path from 'path'; // Added for path manipulation
+import path from 'path';
 
 const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
 console.log(`
@@ -21,8 +21,24 @@ Synchronizing package.json's version: "${version}"
 const fileToUpdate = path.join(process.cwd(), './src/about/', 'a_semantic_version.js');
 
 const code =
-`/** @type {string} - semantic version programmatically set to package.json's version */
-const SEMANTIC_VERSION = '${version}';
+`/**
+ * @file a_semantic_version.js
+ * @description Automatically generated file that contains the semantic version of the
+ * Google Apps Script Editor add-on. This file is updated as part of the development
+ * workflow using a Bun script that synchronizes the version number from package.json.
+ * Do not manually edit this file to change the version number.
+ */
+
+/**
+ * The semantic version of the Google Apps Script Editor add-on, synchronized with the
+ * version number specified in package.json. This value is updated automatically by the
+ * Bun script as part of the development workflow.
+ * @type {string}
+ */
+const SEMANTIC_VERSION = (function() {
+  const version = '${version}';
+  return version;
+})();
 `;
 
 fs.writeFileSync(fileToUpdate, code);
