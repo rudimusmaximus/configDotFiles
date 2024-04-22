@@ -35,7 +35,7 @@ const code =
  * @description Automatically generated file that contains the semantic version of the
  * Google Apps Script Editor add-on. This file is updated as part of the development
  * workflow using a Bun script that synchronizes the version number from package.json
- * and provides a day of change timestamp. These can be used by the add-on.
+ * and provides a day of change time stamp. These can be used by the add-on.
  * Do not manually edit this file!
  */
 
@@ -51,7 +51,7 @@ const SEMANTIC_VERSION = (function() {
 })();
 
 /**
- * The last updated timestamp reflects the day the version was automatically updated.
+ * The last updated time stamp reflects the day the version was automatically updated.
  * @type {string}
  */
 const LAST_UPDATED = (function() {
