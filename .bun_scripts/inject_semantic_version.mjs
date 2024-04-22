@@ -12,21 +12,31 @@ import fs from 'fs';
 import path from 'path';
 
 const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
-console.log(`
-Synchronizing package.json's version: "${version}"
- into about/a_semantic_version.js
- as SEMANTIC_VERSION constant.
-`);
+const lastUpdated = new Date().toLocaleDateString('en-US', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+});
+
 // Get the script file path (modify as needed)
 const fileToUpdate = path.join(process.cwd(), './src/about/', 'a_semantic_version.js');
+
+console.log(`
+Synchronizing package.json's version: "${version}"
+ and last updated timestamp: "${lastUpdated}"
+ into "${fileToUpdate}"
+ as SEMANTIC_VERSION and LAST_UPDATED constants.
+
+`);
 
 const code =
 `/**
  * @file a_semantic_version.js
  * @description Automatically generated file that contains the semantic version of the
  * Google Apps Script Editor add-on. This file is updated as part of the development
- * workflow using a Bun script that synchronizes the version number from package.json.
- * Do not manually edit this file to change the version number.
+ * workflow using a Bun script that synchronizes the version number from package.json
+ * and provides a day of change timestamp. These can be used by the add-on.
+ * Do not manually edit this file!
  */
 
 /**
@@ -38,6 +48,15 @@ const code =
 const SEMANTIC_VERSION = (function() {
   const version = '${version}';
   return version;
+})();
+
+/**
+ * The last updated timestamp reflects the day the version was automatically updated.
+ * @type {string}
+ */
+const LAST_UPDATED = (function() {
+  const lastUpdated = '${lastUpdated}';
+  return lastUpdated;
 })();
 `;
 
