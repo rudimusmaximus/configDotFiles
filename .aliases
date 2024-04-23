@@ -145,7 +145,8 @@ alias sudo='sudo '
 alias week='date +%V'
 
 # make working with package.json easier
-alias version='cat package.json | grep version'
+alias version='echo "import data from \"./package.json\"; console.log(data.version);" > temp.js && ver=$(br temp.js) && echo $ver && echo $ver | pbcopy && rm temp.js'
+
 alias v='echo "Updated semVer in package.json without creating a new tag"; npm --no-git-tag-version version'
 # see also vp, semver functions
 

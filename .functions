@@ -66,12 +66,10 @@ function findAndReplaceBsdF {
 
 # assumes version alias and tries two ways to find local date in files
 function semver() {
-    date;
     echo "Checking package.json";
     jq -r .version package.json;
-    echo "Checking src/ files";
-    rg "SEMANTIC_VERSION: '";
-    rg -F "WHATS_NEW_DATE: '";
+    echo "Checking src file";
+    bat ./src/about/a_semantic_version.js;
 }
 
 # initiates a FaceTime call to a phone number using the open command
