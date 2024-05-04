@@ -144,11 +144,10 @@ alias sudo='sudo '
 # Get week number
 alias week='date +%V'
 
-# make working with package.json easier
-alias version='echo "import data from \"./package.json\"; console.log(data.version);" > temp.js && ver=$(br temp.js) && echo $ver && echo $ver | pbcopy && rm temp.js'
-
-alias v='echo "Updated semVer in package.json without creating a new tag"; npm --no-git-tag-version version'
-# see also vp, semver functions
+# make working with package.json version and semver easier (all will copy result of action to clipboard)
+alias version='br ~/.bun_scripts/list_and_copy_version_from_package_json.mjs'
+alias vp='br ~/.bun_scripts/establish_or_increment_prerelease_version.mjs' # pass with preid string to establish prerelease or blank to increment existing if present already
+alias v='br ~/.bun_scripts/directly_set_version_string.mjs'
 
 alias fr='findAndReplaceBsd'
 alias frf='findAndReplaceBsdF'

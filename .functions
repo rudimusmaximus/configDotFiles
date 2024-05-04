@@ -23,11 +23,6 @@ go_home () {
   pwd
 }
 
-function vp {
-  echo "prerelease semVer++ in package.json";
-  npm --no-git-tag-version version prerelease --preid="$1";
-}
-
 function aliases {
   mapfile -t my_array < <( compgen -A alias );
   echo "${my_array[@]}";

@@ -33,3 +33,8 @@ source "${HOME}/.cargo/env"
 # Prompt, alias, functions
 # shellcheck source=/dev/null
 source "${HOME}/.bashrc"
+
+# Configure asdf last (see https://asdf-vm.com/guide/getting-started.html)
+source "${HOME}/.asdf/asdf.sh"
+source "${HOME}/.asdf/completions/asdf.bash"
+

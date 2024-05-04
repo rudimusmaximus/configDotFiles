@@ -1,6 +1,14 @@
 import { readdir, stat } from 'fs/promises';
 import path from 'path';
 
+// Parse command line arguments for -r and number
+const args = process.argv.slice(2);
+const recursive = args.includes('-r');
+const nArgIndex = args.findIndex(arg => !isNaN(parseInt(arg)) && arg !== '-r');
+const n = nArgIndex !== -1 ? parseInt(args[nArgIndex], 10) : 1;
+
+listRecentFilesDetailed(n, recursive).catch(console.error);
+
 // Helper to format file size
 function formatSize(bytes) {
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -56,12 +64,4 @@ async function listRecentFilesDetailed(n = 1, recursive = false) {
   // Print details using console.table
   console.table(recentFiles);
 }
-
-// Parse command line arguments for -r and number
-const args = process.argv.slice(2);
-const recursive = args.includes('-r');
-const nArgIndex = args.findIndex(arg => !isNaN(parseInt(arg)) && arg !== '-r');
-const n = nArgIndex !== -1 ? parseInt(args[nArgIndex], 10) : 1;
-
-listRecentFilesDetailed(n, recursive).catch(console.error);
 
