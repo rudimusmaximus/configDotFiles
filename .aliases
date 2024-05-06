@@ -295,4 +295,5 @@ alias scripts="(echo 'import data from \"./package.json\"; console.log({scripts:
 alias package="(echo 'import data from \"./package.json\"; console.log({[\"from ./package.json\"]: data});' > temp.js && br temp.js && rm temp.js)"
 alias recent='bun -b run ~/.bun_scripts/list_most_recent_files.mjs'
 alias b='bun' # simple without br options so can run a package script with just b plusNameOfScript
+alias keymaps='bun -b run ~/.bun_scripts/list_keymap_tips.mjs'
 
