@@ -23,7 +23,12 @@ if [[ $TERM_PROGRAM == "iTerm.app" ]]; then
 fi
 
 # Display diagnostic as greeting if neofetch is available
-command -v neofetch >/dev/null && neofetch;
+# Check if fastfetch is available
+if command -v fastfetch >/dev/null; then
+    fastfetch;
+else
+    echo "Fastfetch is not installed; install with homebrew on macOS or fnd on Fedora.";
+fi
 
 # Exports for Rust's package manager Cargo
 # shellcheck source=/dev/null
