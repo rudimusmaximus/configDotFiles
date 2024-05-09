@@ -20,6 +20,7 @@ async function listAndCopyPackageVersion() {
 
     await copyToClipboard(`v${version}`);
     console.log(`\n  v${version} from package.json copied to clipboard.\n`);
+    process.exit(0);
   } catch (error) {
     console.error('Error:', error);
     process.exit(1); // Exit with error code

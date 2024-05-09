@@ -30,7 +30,7 @@ Synchronizing package.json's version: "${version}"
 `);
 
 const code =
-`/**
+  `/**
  * @file a_semantic_version.js
  * @description Automatically generated file that contains the semantic version of the
  * Google Apps Script Editor add-on. This file is updated as part of the development
@@ -61,4 +61,5 @@ const LAST_UPDATED = (function() {
 `;
 
 fs.writeFileSync(fileToUpdate, code);
+process.exit(0);
 

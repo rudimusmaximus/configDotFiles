@@ -1,4 +1,5 @@
 await listKeymapTips();
+process.exit(0);
 
 async function listKeymapTips() {
   console.log('\nSelected Keymap tips for my Neovim setup:\n');

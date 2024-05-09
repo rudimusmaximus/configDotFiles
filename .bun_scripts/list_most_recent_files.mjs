@@ -8,6 +8,7 @@ const nArgIndex = args.findIndex(arg => !isNaN(parseInt(arg)) && arg !== '-r');
 const n = nArgIndex !== -1 ? parseInt(args[nArgIndex], 10) : 1;
 
 listRecentFilesDetailed(n, recursive).catch(console.error);
+process.exit(0);
 
 // Helper to format file size
 function formatSize(bytes) {

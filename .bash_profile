@@ -27,7 +27,8 @@ fi
 if command -v fastfetch >/dev/null; then
     fastfetch;
 else
-    echo "Fastfetch is not installed; install with homebrew on macOS or fnd on Fedora.";
+    echo "\nFastfetch is not installed. https://github.com/fastfetch-cli/fastfetch\n
+    Please install to start with diagnostics.";
 fi
 
 # Exports for Rust's package manager Cargo
