@@ -3,9 +3,10 @@
  * package.json and copies the new version to the clipboard.
  */
 
-import { readFile } from 'fs/promises';
-import { $ } from 'zx';
-import { copy } from 'copy-paste';
+// import { readFile } from 'fs/promises';
+import { $ } from 'bun';
+import { copyToClipboard } from './m_copy_to_clipboard';
+import { getVersion } from './m_get_version_from_package_json';
 
 try {
   if (process.argv.length > 3) {
@@ -34,29 +35,10 @@ async function establishOrIncrementPrereleaseVersion(preid) {
   try {
     // Run npm version command to establish or increment the prerelease version
     await $`npm --no-git-tag-version version prerelease --preid=${preid}`;
-    return JSON.parse(await readFile('./package.json')).version;
-  } catch (error) { console.error('Error:', error); process.exit(1); }
-}
-
-/**
- * Copies text to the clipboard.
- * @param {string} text - The text to copy.
- */
-async function copyToClipboard(text) {
-  // Check if copy-paste module is available
-  let copyPasteAvailable = false;
-  try {
-    require('copy-paste');
-    copyPasteAvailable = true;
+    // return JSON.parse(await readFile('./package.json')).version;
+    return (await getVersion());
   } catch (error) {
-    console.error(
-      'Error: copy-paste module not available. Install using npm install copy-paste or yarn add copy-paste.\n',
-      'Refer to the repository for more information: https://github.com/sindresorhus/copy-paste'
-    );
-    process.exit(1); // Exit with error code
-  }
-
-  if (copyPasteAvailable) {
-    await copy(text);
+    console.error('Error:', error);
+    process.exit(1);
   }
 }

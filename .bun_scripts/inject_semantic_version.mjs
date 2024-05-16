@@ -9,9 +9,11 @@
  * @author rudimusmaximus (https://github.com/rudimusmaximus) raul@raulfloresjr.com
  */
 import fs from 'fs';
-import path from 'path';
+import { readFile } from 'fs/promises'; // Use for security-conscious approach
 
-const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
+const packagePath = Bun.resolveSync('./package.json', process.cwd());
+const data = await readFile(packagePath); // securely read the file content
+const version = JSON.parse(data).version;
 const lastUpdated = new Date().toLocaleDateString('en-US', {
   day: '2-digit',
   month: 'long',
@@ -19,10 +21,9 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 });
 
 // Get the script file path (modify as needed)
-const fileToUpdate = path.join(process.cwd(), './src/about/', 'a_semantic_version.js');
-
+const fileToUpdate = Bun.resolveSync('./src/about/a_semantic_version.js', process.cwd());
 console.log(`
-Synchronizing package.json's version: "${version}"
+Synchronized package.json's version: "${version}"
  and last updated timestamp: "${lastUpdated}"
  into "${fileToUpdate}"
  as SEMANTIC_VERSION and LAST_UPDATED constants.
