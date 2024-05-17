@@ -5,7 +5,7 @@
 
 // import { readFile } from 'fs/promises';
 import { $ } from 'bun';
-import { copyToClipboard } from './m_copy_to_clipboard';
+import clipboard from 'clipboardy';
 import { getVersion } from './m_get_version_from_package_json';
 
 try {
@@ -18,7 +18,7 @@ try {
   // Use an empty string if no argument is provided
   const preid = (process.argv[2] || '');
   const newVersion = await establishOrIncrementPrereleaseVersion(preid);
-  await copyToClipboard(`v${newVersion}`);
+  await clipboard.write(`v${newVersion}`);
   console.log(`\n  v${newVersion} Copied to clipboard from updated version in package.json\n`);
   process.exit(0);
 } catch (error) {

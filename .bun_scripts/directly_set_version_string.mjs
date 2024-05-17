@@ -3,7 +3,7 @@
  * and copies the new version to the clipboard.
  */
 import { $ } from 'bun';
-import { copyToClipboard } from './m_copy_to_clipboard.mjs';
+import clipboard from 'clipboardy';
 
 try {
   if (process.argv.length === 2) {
@@ -15,7 +15,7 @@ try {
   const version = (process.argv[2]);
   await $`npm --no-git-tag-version version ${version}`;
   // console.log("npm --no-git-tag-version version ${version}")
-  await copyToClipboard(`v${version}`);
+  await clipboard.write(`v${version}`);
   console.log(`\n  v${version} Copied to clipboard from updated version in package.json\n`);
   process.exit(0);
 } catch (error) {
