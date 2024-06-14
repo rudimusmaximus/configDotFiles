@@ -22,13 +22,12 @@ if [[ $TERM_PROGRAM == "iTerm.app" ]]; then
         source "${HOME}/.iterm2_shell_integration.bash"
 fi
 
-# Display diagnostic as greeting if neofetch is available
+# Display diagnostic as greeting if available
 # Check if fastfetch is available
 if command -v fastfetch >/dev/null; then
     fastfetch;
 else
-    echo "\nFastfetch is not installed. https://github.com/fastfetch-cli/fastfetch\n
-    Please install to start with diagnostics.";
+    printf "\nFastfetch is not installed. https://github.com/fastfetch-cli/fastfetch\nPlease install to start with diagnostics.\n"
 fi
 
 # Exports for Rust's package manager Cargo
@@ -44,3 +43,4 @@ source "${HOME}/.bashrc"
 source "${HOME}/.asdf/asdf.sh"
 source "${HOME}/.asdf/completions/asdf.bash"
 
+export PATH="/opt/homebrew/opt/node@20/bin:$PATH"
