@@ -13,5 +13,11 @@ for file in "${rc_config_files[@]}"; do
         source "${file}"
     fi
 done
+
+# Set up fzf key bindings and fuzzy completion
+# see https://github.com/junegunn/fzf
+# change for other shells
+eval "$(fzf --bash)"
+
 unset file
 
