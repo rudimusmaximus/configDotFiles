@@ -19,5 +19,15 @@ done
 # change for other shells
 eval "$(fzf --bash)"
 
+# Check if fzf-git.sh exists and source it, otherwise prompt the user to clone the repository
+if [ -f "${HOME}/fzf-git.sh/fzf-git.sh" ]; then
+    source "${HOME}/fzf-git.sh/fzf-git.sh"
+else
+    echo "fzf-git.sh not found. Please clone the repository and re-source your .bash_profile to enable better git integration with fzf. see repo for additional key commands"
+    echo "Run the following commands:"
+    echo "git clone https://github.com/junegunn/fzf-git.sh.git ~/fzf-git.sh"
+    echo "source ~/.bash_profile"
+fi
+
 unset file
 
