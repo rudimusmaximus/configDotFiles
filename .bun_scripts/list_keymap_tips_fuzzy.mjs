@@ -2,7 +2,7 @@ await listKeymapTips();
 process.exit(0);
 
 async function listKeymapTips() {
-  console.log('Tip: use ":KeymapTips_completion" for our nvim completion integrations (inside nvim)');
+  console.log('Tip: use ":KeymapTipsCodeCompletion" for our nvim completion integrations (inside nvim)');
   console.log('\nFUZZY FIND: Terminal fzf keybindings see https://github.com/junegunn/fzf');
   console.table([
     {
@@ -38,63 +38,63 @@ Or with direcotry commands like:  cd, pushd, rmdir, (remember if you pushd you c
     {
       shell: 'bash',
       Keymap: 'Control + g + ',
-      ['key']: 'F',
+      ['key']: 'f',
       ['git object']: 'Files',
       cancel: 'Esc',
     },
     {
       shell: 'bash',
       Keymap: 'Control + g + ',
-      ['key']: 'B',
+      ['key']: 'b',
       ['git object']: 'Branches',
       cancel: 'Esc',
     },
     {
       shell: 'bash',
       Keymap: 'Control + g + ',
-      ['key']: 'T',
+      ['key']: 't',
       ['git object']: 'Tags',
       cancel: 'Esc',
     },
     {
       shell: 'bash',
       Keymap: 'Control + g + ',
-      ['key']: 'R',
+      ['key']: 'r',
       ['git object']: 'Remotes',
       cancel: 'Esc',
     },
     {
       shell: 'bash',
       Keymap: 'Control + g + ',
-      ['key']: 'H',
+      ['key']: 'h',
       ['git object']: 'Hashes',
       cancel: 'Esc',
     },
     {
       shell: 'bash',
       Keymap: 'Control + g + ',
-      ['key']: 'S',
+      ['key']: 's',
       ['git object']: 'Stashes',
       cancel: 'Esc',
     },
     {
       shell: 'bash',
       Keymap: 'Control + g + ',
-      ['key']: 'L',
+      ['key']: 'l',
       ['git object']: 'reflogs',
       cancel: 'Esc',
     },
     {
       shell: 'bash',
       Keymap: 'Control + g + ',
-      ['key']: 'W',
+      ['key']: 'w',
       ['git object']: 'Worktrees',
       cancel: 'Esc',
     },
     {
       shell: 'bash',
       Keymap: 'Control + g + ',
-      ['key']: 'E',
+      ['key']: 'e',
       ['git object']: 'Each ref (git fore-each-ref)',
       cancel: 'Esc',
     },
