@@ -81,7 +81,8 @@ alias s="cd ~/Library/Application\ Support/JetBrains/WebStorm2022.1/scratches/"
 alias e="edgedb"
 
 alias g="git"
-alias ga='echo "Stage all new, modified, and deleted files in the current directory and all sub directories."; git add .'
+alias ga="git add"
+alias gall='echo "Stage all new, modified, and deleted files in the current directory and all sub directories."; git add .'
 alias gc="git commit -S -m"
 alias gctemplate="cat ~/.gitmessage.txt"
 alias gd="git diff"
