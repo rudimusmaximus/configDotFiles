@@ -46,7 +46,7 @@ const code =
  * Bun script as part of the development workflow.
  * @type {string}
  */
-const SEMANTIC_VERSION = (function() {
+const SEMANTIC_VERSION = (function () {
   const version = '${version}';
   return version;
 })();
