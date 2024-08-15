@@ -98,3 +98,49 @@ function forget.extra() {
   cfg update-index --assume-unchanged .extra;
 }
 
+# lists the prefixed with a v semver from the local package.json
+# and copies it to the clipboard
+# eg. v1.0.0
+# uses pbcopy on macOS and xclip on Linux
+function version() {
+  version=$(jq -r ".version" package.json | awk '{print "v"$1}')
+  echo "$version" | tee >(if [[ "$OSTYPE" == "darwin"* ]]; then pbcopy; else xclip -selection clipboard; fi)
+}
+
+# increments or sets the prerelease version and copies it to the clipboard
+# eg. v1.0.0-beta.0
+# uses pbcopy on macOS and xclip on Linux
+function vp() {
+  # Check if preid is provided
+  if [ -n "$1" ]; then
+    preid="$1"
+    new_version=$(npm --no-git-tag-version version prerelease --preid="$preid" 2>/dev/null)
+  else
+    new_version=$(npm --no-git-tag-version version prerelease 2>/dev/null)
+  fi
+
+  # Prefix with 'v' and remove the 'v' added by npm
+  new_version="v${new_version#v}"
+
+  # Output the new version and copy it to the clipboard
+  echo "$new_version" | tee >(if [[ "$OSTYPE" == "darwin"* ]]; then pbcopy; else xclip -selection clipboard; fi)
+}
+
+# directly sets the version string (you must dictate a valid semver string)
+# and copies it to the clipboard with a prefix v
+function v() {
+  if [ -z "$1" ]; then
+    echo "Usage: v <version>"
+    return 1
+  fi
+
+  # Set the version using npm
+  new_version=$(npm --no-git-tag-version version "$1" 2>/dev/null)
+
+  # Prefix with 'v' and remove the 'v' added by npm
+  new_version="v${new_version#v}"
+
+  # Output the new version and copy it to the clipboard
+  echo "$new_version" | tee >(if [[ "$OSTYPE" == "darwin"* ]]; then pbcopy; else xclip -selection clipboard; fi)
+}
+
