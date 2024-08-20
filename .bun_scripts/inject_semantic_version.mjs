@@ -55,7 +55,7 @@ const SEMANTIC_VERSION = (function () {
  * The last updated time stamp reflects the day the version was automatically updated.
  * @type {string}
  */
-const LAST_UPDATED = (function() {
+const LAST_UPDATED = (function () {
   const lastUpdated = '${lastUpdated}';
   return lastUpdated;
 })();
