@@ -17,7 +17,9 @@ done
 # Set up fzf key bindings and fuzzy completion
 # see https://github.com/junegunn/fzf
 # change for other shells
-eval "$(fzf --bash)"
+if command -v fzf > /dev/null 2>&1; then
+    eval "$(fzf --bash)"
+fi
 
 # Check if fzf-git.sh exists and source it, otherwise prompt the user to clone the repository
 if [ -f "${HOME}/fzf-git.sh/fzf-git.sh" ]; then
