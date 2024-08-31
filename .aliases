@@ -104,6 +104,7 @@ alias appcheck="npx npm-check --skip-unused --update"
 alias f="nnn" #start The unorthodox terminal file manager
 
 #ddgr Duck Duck Go shortcuts for bangs
+alias ddg="ddgr -n 7"
 alias google="ddgr --gb --np \!google"
 alias wikipedia="ddgr --gb --np \!w"
 
