@@ -20,6 +20,9 @@ if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
 
+# tmuxifier for session layouts (installed via TPM in .tmux.conf) see $HOME/.tmux/plugins
+export PATH="$HOME/.tmux/plugins/tmuxifier/bin:$PATH"
+
 # OS SPECIFIC CONFIGURATION
 # =========================
 

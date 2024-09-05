@@ -43,4 +43,6 @@ source "${HOME}/.bashrc"
 source "${HOME}/.asdf/asdf.sh"
 source "${HOME}/.asdf/completions/asdf.bash"
 
+eval "$(tmuxifier init -)"
+
 export PATH="/opt/homebrew/opt/node@20/bin:$PATH"
