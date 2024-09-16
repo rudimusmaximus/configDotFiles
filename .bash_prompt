@@ -5,14 +5,17 @@
 # Heavily inspired by @necolas’s prompt: https://github.com/necolas/dotfiles
 # iTerm → Profiles → Text → use 13pt Monaco with 1.1 vertical spacing.
 
-# Avoid overwrite by checking if we are in a tmux session; if we are .tmux.conf will take care of it
+# Check if inside a tmux session; see also .tmux.conf
 if [[ -z "$TMUX" ]]; then
-	if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
-		export TERM='gnome-256color';
-	elif infocmp xterm-256color >/dev/null 2>&1; then
-		export TERM='xterm-256color';
-	fi;
+    if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+        export TERM='gnome-256color'
+    elif infocmp xterm-256color >/dev/null 2>&1; then
+        export TERM='xterm-256color'
+    fi
+else
+    export TERM='screen-256color'
 fi
+
 prompt_git() {
     local s='';
     local branchName='';

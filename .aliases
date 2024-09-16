@@ -19,6 +19,11 @@ alias txls='tmuxifier list-sessions'
 alias txlw='tmuxifier list-windows'
 alias txla='tmuxifier list'
 
+# lazygit
+alias lg='lazygit'
+alias lgcfg='GIT_DIR=$HOME/.cfg GIT_WORK_TREE=$HOME lazygit'
+alias configDotFiles='GIT_DIR=$HOME/.cfg GIT_WORK_TREE=$HOME lazygit'
+
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias   config='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias      cfg='$CONFIG_DOT_FILES_GIT_COMMAND';
@@ -120,7 +125,7 @@ alias google="ddgr --gb --np \!google"
 alias wikipedia="ddgr --gb --np \!w"
 
 #clasp shortcuts
-alias cpush="clasp push"
+alias cpush="echo 'Did you mean to bun run push with the prepush package scripts? OR If you meant clasp push alone, then enter that.'"
 alias copen="clasp open"
 # TODO test simplified color on linux, return to use of LSCOLORS
 # see also https://www.cyberciti.biz/faq/apple-mac-osx-terminal-color-ls-output-option/
