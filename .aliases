@@ -1,6 +1,15 @@
 #!/bin/bash
 # not required for sourced files here but used so we can run shellcheck on the file
 
+alias cloud='cd "$CLOUD"'
+alias cld='cd "$CLOUD"'
+alias rcc_root='cd "$RCC_ROOT"'
+alias rcm_root='cd "$RCM_ROOT"'
+alias rcc_my='cd "$RCC_MY"'
+alias rcm_my='cd "$RCM_MY"'
+alias rcc_shared='cd "$RCC_SHARED"'
+alias rcm_shared='cd "$RCM_SHARED"'
+
 # Reload edits to .bashrc
 alias sb='source ~/.bash_profile'
 
@@ -21,8 +30,8 @@ alias txla='tmuxifier list'
 
 # lazygit
 alias lg='lazygit'
-alias lgcfg='GIT_DIR=$HOME/.cfg GIT_WORK_TREE=$HOME lazygit'
-alias configDotFiles='GIT_DIR=$HOME/.cfg GIT_WORK_TREE=$HOME lazygit'
+alias lgcfg='cd $HOME/configDotFilesWorktree && lazygit'
+alias configDotFiles='cd $HOME/configDotFilesWorktree && lazygit'
 
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias   config='$CONFIG_DOT_FILES_GIT_COMMAND';
@@ -38,6 +47,7 @@ alias     cfgc='echo "\$CONFIG_DOT_FILES_GIT_COMMAND commit -S -m"; cfg commit -
 alias configlg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias    cfglg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias     cfgu='echo "Stage changes to tracked cfg dot files"; cfg add --update';
+alias cfgstash='cfg stash push -m "dot_wip"'
 
 # opens quicklook debugger to render a ql server and show a file
 alias ql='qlmanage -p '
