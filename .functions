@@ -153,7 +153,7 @@ function v() {
 # Usage:
 #   Simply type `cfgstash` in the terminal to execute the stash and backup operations.
 
-cfgstash() {
+function cfgstash() {
     # ----------------------------
     # Configuration Variables
     # ----------------------------
