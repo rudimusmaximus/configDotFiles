@@ -143,4 +143,96 @@ function v() {
   # Output the new version and copy it to the clipboard
   echo "$new_version" | tee >(if [[ "$OSTYPE" == "darwin"* ]]; then pbcopy; else xclip -selection clipboard; fi)
 }
+# Function: cfgstash
+# Description:
+#   - Stashes current changes in the configured Git repository with a predefined message.
+#   - Creates a timestamped backup of the `.extra` file by copying it to `.extra.backup.YYYYMMDD_HHMMSS`.
+#   - Logs all operations, including successes and errors, to ~/cfgstash.log.
+#   - Provides feedback on the success or failure of each operation.
+#
+# Usage:
+#   Simply type `cfgstash` in the terminal to execute the stash and backup operations.
+
+cfgstash() {
+    # ----------------------------
+    # Configuration Variables
+    # ----------------------------
+
+    # Stash Message
+    local STASH_MESSAGE="dot_wip"
+
+    # Paths for .extra and its backup
+    local EXTRA_FILE="$HOME/.extra"
+
+    # Timestamp format: YYYYMMDD_HHMMSS
+    local TIMESTAMP
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+
+    # Backup File with Timestamp
+    local BACKUP_FILE="$HOME/.extra.backup.$TIMESTAMP"
+
+    # Log File Path
+    local LOG_FILE="$HOME/cfgstash.log"
+
+    # ----------------------------
+    # Logging Function
+    # ----------------------------
+
+    log_message() {
+        local MESSAGE="$1"
+        echo "$(date +"%Y-%m-%d %H:%M:%S") - $MESSAGE" >> "$LOG_FILE"
+    }
+
+    # ----------------------------
+    # Start of cfgstash Operations
+    # ----------------------------
+
+    # Log the start of the operation
+    log_message "Starting cfgstash operation."
+
+    # Attempt to stash changes with the specified message using the cfg alias
+    cfg stash push -m "$STASH_MESSAGE"
+    local STASH_STATUS=$?
+
+    # Check if the stash command was successful
+    if [ $STASH_STATUS -eq 0 ]; then
+        log_message "Git stash successful with message: \"$STASH_MESSAGE\"."
+
+        # Check if .extra exists before attempting to copy
+        if [ -f "$EXTRA_FILE" ]; then
+            # Attempt to copy .extra to the timestamped backup file
+            cp "$EXTRA_FILE" "$BACKUP_FILE"
+            local COPY_STATUS=$?
+
+            if [ $COPY_STATUS -eq 0 ]; then
+                echo ".extra has been successfully backed up to $BACKUP_FILE."
+                log_message "Successfully backed up .extra to $BACKUP_FILE."
+            else
+                echo "Error: Failed to create backup of .extra. Please check file permissions and paths."
+                log_message "Error: Failed to create backup of .extra to $BACKUP_FILE."
+            fi
+        else
+            echo "Warning: .extra file does not exist. No backup created."
+            log_message "Warning: .extra file does not exist at $EXTRA_FILE. No backup created."
+        fi
+    else
+        echo "Error: Git stash failed. Backup of .extra was not created."
+        log_message "Error: Git stash failed with exit status $STASH_STATUS. Backup of .extra was not created."
+    fi
+
+    # ----------------------------
+    # Final Logging and Feedback
+    # ----------------------------
+
+    if [ "$STASH_STATUS" -eq 0 ] && [ "$COPY_STATUS" -eq 0 ]; then
+        echo "cfgstash operation completed successfully."
+        log_message "cfgstash operation completed successfully."
+    elif [ "$STASH_STATUS" -eq 0 ] && [ "$COPY_STATUS" -ne 0 ]; then
+        echo "cfgstash operation completed with errors during backup."
+        log_message "cfgstash operation completed with errors during backup."
+    elif [ "$STASH_STATUS" -ne 0 ]; then
+        echo "cfgstash operation failed during stash."
+        log_message "cfgstash operation failed during stash."
+    fi
+}
 

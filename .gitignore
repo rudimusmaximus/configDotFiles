@@ -1,5 +1,9 @@
 # ignore .extra where we keep user config for git and anything else
+# and also backups and loggin fromt he function cfgstash
 .extra
+.extra.backup.*
+cfgstash.log
+
 # this is where the bare clone will live
 .cfg
 .idea/*
