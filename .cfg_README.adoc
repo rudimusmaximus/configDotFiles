@@ -1,21 +1,29 @@
-# configDotFiles  
+= configDotFiles - my personal dot files
+:toc: left
+:icons: font
+:toclevels: 4
+:imagesdir: .adoc_images
+:source-highlighter: rouge
+:source-linenums-option: true
+
+= configDotFiles
 
 If already installed, this file is from the bare repo installed in .cfg folder in your $HOME directory. The parent repo is on [github](https://github.com/rudimusmaximus/configDotFiles). Read the **To Use** section for installation instructions.
 
-## Intent
+== Intent
 
-Have a repo from which to setup any new MacOS or Linux shell environment with familiar cli experience.
+Have a repo from which to setup any new macOS or Linux shell environment with familiar cli experience.
 
-### How it works
+=== How it works
 
 Run the script under To Use section. The files from the repo are copied to your $HOME directory.
 
 Most importantly, a `.bash_profile` sources the `.path`, `.extra`, `.exports` and makes a few other settings before also sourcing the `.bashrc` which itself sources the `.prompt`, `.aliases`, and `.functions` to ensure a consistent experience across interactive and non-interactive shells including SSH sessions.
 
-These various .files and folders, divide settings/configurations into logical groups.
+These various '.files' and folders, divide settings/configurations into logical groups.
 This sort of repo is comonly called a dot files repo - hence the repo name, but you will see other variations.
 
-## To use  
+== To use
 
 In a fresh terminal, from your home directory:
 
@@ -29,9 +37,9 @@ After you restart the terminal, type 'alias' to see our shortcuts. The cursor no
 
 The script creates a starter .extra by copying .extra.template to .extra. This file is not committed to the repo.
 
-## Further Considerations
+== Further Considerations
 
-### Assumed installed
+=== Assumed installed
 
 Review the aliases for hints on tools assumed installed. On macOS, prefere Homebrew, download directly from source, or build when necessary after cloning project into a dictory under $HOME/projects. On Fedora, prefer dnf package manager, clone and build in similar directory, or use flatpack as last resort avoiding sources other than say RPM free and non-free.
 
@@ -39,14 +47,14 @@ Review the aliases for hints on tools assumed installed. On macOS, prefere Homeb
 
 - nnn as alias `f` for file manager inside terminal
 - n directly to then install node and npm lts to start, use n-update to update
-- nvim and it's required prerequisits (see kickstart.nvim or make your own neovim)
+- nvim, and it's required prerequisites (see kickstart.nvim or make your own Neovim)
 - bun.sh
 
 **AFTER** confDotFiles installation
 
 - complete `.extra` items for ssh, and GitHub AND setup gpg for signing
 
-### Additional background
+=== Additional background
 
 See Atlassian's git tutorials for dot files last known (https://www.atlassian.com/git/tutorials/dotfiles) for using a bare cloned repo with a clever alias to manage your changes over time.
 
@@ -55,16 +63,16 @@ Our source repo's `.gitignore` includes .cfg to avoid recursive issues and does 
 **TIP** Two aliases are included in the repo to make a git command; type `config` or `cfg` and see the `.aliases` file for
 more cfg commands.
 
-TODO: add links and compare to private lists  
+TODO: add links and compare to private lists
 
 TODO: make public after cleaning up commented code 
 
-### Using with tmux and making changes
+=== Using with tmux and making changes
 
 Currently, a clean way to work with changes besides the cli aliases is to use lazygit. You
 can use either approach or switch between. Here is a workflow:
 
-**tmux workflow using aliases from  this repo**
+**tmux workflow using aliases from this repo**
 
 Name it what you like, we use this name for the worktree.
 
@@ -93,11 +101,23 @@ lgcfg
 cfg pull
 ----
 
-### .extra file
+=== '.extra' file
 
-.extra.template is a template for .extra file. This avoids overwrites of changing local
-.extra file.
+'.extra.template' is a template for creating the '.extra' file. This avoids overwrites of changing local
+'.extra' file over time.
 
 TODO we need to update the install script and the notes here for treating .extra as a template
 so making those changes now.
+
+== LEGAL NOTE
+
+**We're Using GitHub Under Protest**
+For our organization, we only use GitHub for private repositories.  We do not recommend it for public or open source work.
+
+We urge you to read about the https://give_up_github.org[Give up GitHub campaign] from https://sfconservancy.org[the Software Freedom Conservancy] to understand
+some reasons why GitHub is not a good place to host FOSS projects.
+
+We are considering https://about.gitlab.com[GitLab] for any open source work we might do in the future.
+
+image::give_up_git_hub.png[caption="Figure 1: ", title="Logo of the GiveUpGitHub campaign", alt="GitHub character holding bag of money and crushing the words 'user rights'", width="300", height="200", link="http://www.flickr.com/photos/javh/5448336655"]
 
