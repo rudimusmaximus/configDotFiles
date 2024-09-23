@@ -1,0 +1,9 @@
+# https://github.com/jesseduffield/lazygit/blob/master/docs/configuration.md
+# basically start lazygit and from it's status window 1, paste the config below
+# save and reload lazygit. If you have installed delta, you can also use delta as pager
+# plus with this config click on a line number in the diff to open your lazygit editor
+git:
+    paging:
+        colorArg: always
+        pager: delta --dark --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+
