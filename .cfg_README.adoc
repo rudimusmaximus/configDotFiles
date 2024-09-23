@@ -21,7 +21,7 @@ Run the script under To Use section. The files from the repo are copied to your 
 Most importantly, a `.bash_profile` sources the `.path`, `.extra`, `.exports` and makes a few other settings before also sourcing the `.bashrc` which itself sources the `.prompt`, `.aliases`, and `.functions` to ensure a consistent experience across interactive and non-interactive shells including SSH sessions.
 
 These various '.files' and folders, divide settings/configurations into logical groups.
-This sort of repo is comonly called a dot files repo - hence the repo name, but you will see other variations.
+This sort of repository is commonly called a "dot files repository" - hence the name, but you will see other variations, services, and non bare repository approaches.
 
 == To use
 
@@ -32,19 +32,20 @@ curl -sSf https://gist.githubusercontent.com/rudimusmaximus/cbb877cb5797b00d7fbb
 ```
 The script lives in [this gist](https://gist.github.com/rudimusmaximus/cbb877cb5797b00d7fbb9ddc88e7f8b9). Review first if you like.
 
-Any backups of .files that would have been overwritten can be found in .cfg-install.sh
-After you restart the terminal, type 'alias' to see our shortcuts. The cursor now has magic powers in git repos. And, nvm is assumed installed. 
+Any backups of `.files` that would have been overwritten can be found in `.cfg-backup` folder.
+After you restart the terminal, type 'alias' or 'aliases' to see our shortcuts. The cursor now has magic powers in git repos. Some aliases assume certain tools are installed.
 
-The script creates a starter .extra by copying .extra.template to .extra. This file is not committed to the repo.
+The script creates a starter .extra by copying .extra.template to .extra. This file is not committed and should be modified with your own settings.
 
 == Further Considerations
 
 === Assumed installed
 
-Review the aliases for hints on tools assumed installed. On macOS, prefere Homebrew, download directly from source, or build when necessary after cloning project into a dictory under $HOME/projects. On Fedora, prefer dnf package manager, clone and build in similar directory, or use flatpack as last resort avoiding sources other than say RPM free and non-free.
+Review the aliases for hints on tools assumed installed. On macOS, prefer Homebrew, download directly from source, or build when necessary after cloning project into a directory under $HOME(I use ~/project). On Fedora, prefer dnf package manager, clone and build in similar directory, or use flatpack as last resort avoiding sources other than say RPM free and non-free.
 
 **Preferred tools**
 
+TOOD these tools need to be reviewed and updated; previous list included below.
 - nnn as alias `f` for file manager inside terminal
 - n directly to then install node and npm lts to start, use n-update to update
 - nvim, and it's required prerequisites (see kickstart.nvim or make your own Neovim)
@@ -52,7 +53,7 @@ Review the aliases for hints on tools assumed installed. On macOS, prefere Homeb
 
 **AFTER** confDotFiles installation
 
-- complete `.extra` items for ssh, and GitHub AND setup gpg for signing
+- complete `.extra` items for ssh, and GitHub AND setup gpg for signing if you sign that way.
 
 === Additional background
 
@@ -63,11 +64,7 @@ Our source repo's `.gitignore` includes .cfg to avoid recursive issues and does 
 **TIP** Two aliases are included in the repo to make a git command; type `config` or `cfg` and see the `.aliases` file for
 more cfg commands.
 
-TODO: add links and compare to private lists
-
-TODO: make public after cleaning up commented code 
-
-=== Using with tmux and making changes
+=== Using with tmux and making changes (see cfgstash in .functions)
 
 Currently, a clean way to work with changes besides the cli aliases is to use lazygit. You
 can use either approach or switch between. Here is a workflow:
@@ -101,23 +98,27 @@ lgcfg
 cfg pull
 ----
 
+The included ./.lazygit_config_template.yml is a template for lazygit and has instructions via comment inside that file. The cool part for this is that in diff view inside lazygit you can click on a file's line number and edit the file at that location in your configured $EDITOR.
+
 === '.extra' file
 
 '.extra.template' is a template for creating the '.extra' file. This avoids overwrites of changing local
 '.extra' file over time.
 
-TODO we need to update the install script and the notes here for treating .extra as a template
-so making those changes now.
-
 == LEGAL NOTE
 
-**We're Using GitHub Under Protest**
-For our organization, we only use GitHub for private repositories.  We do not recommend it for public or open source work.
+Any use of this project's code by GitHub Copilot, past or present, is done
+without our permission.  We do not consent to GitHub's use of this project's
+code in Copilot.
 
-We urge you to read about the https://give_up_github.org[Give up GitHub campaign] from https://sfconservancy.org[the Software Freedom Conservancy] to understand
+**We're Using GitHub Under Protest.** For our organization, we mostly use GitHub for private repositories.  We do not recommend it for public or open source work. This project is currently hosted on GitHub.  This is not ideal; GitHub is a
+proprietary, trade-secret system that is not Free and Open Souce Software(FOSS).  We are deeply concerned about using a proprietary system like GitHub
+to develop our FOSS projects.
+
+We urge you to read about the https://GiveUpGitHub.org[Give up GitHub campaign] from https://sfconservancy.org[the Software Freedom Conservancy] to understand
 some reasons why GitHub is not a good place to host FOSS projects.
 
-We are considering https://about.gitlab.com[GitLab] for any open source work we might do in the future.
+We are considering other options for any open source work we might do in the future.
 
 image::give_up_git_hub.png[caption="Figure 1: ", title="Logo of the GiveUpGitHub campaign", alt="GitHub character holding bag of money and crushing the words 'user rights'", width="300", height="200", link="http://www.flickr.com/photos/javh/5448336655"]
 
