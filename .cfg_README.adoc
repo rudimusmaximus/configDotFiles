@@ -28,7 +28,7 @@ This sort of repository is commonly called a "dot files repository" - hence the 
 In a fresh terminal, from your home directory:
 
 ```shell script will execute and delete itself
-curl -sSf https://gist.githubusercontent.com/rudimusmaximus/cbb877cb5797b00d7fbb9ddc88e7f8b9/raw | bash
+curl -sSf https://gist.githubusercontent.com/rudimusmaximus/cbb877cb5797b00d7fbb9ddc88e7f8b9/raw | bash -s -- -v -h
 ```
 The script lives in [this gist](https://gist.github.com/rudimusmaximus/cbb877cb5797b00d7fbb9ddc88e7f8b9). Review first if you like.
 
