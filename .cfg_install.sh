@@ -11,7 +11,7 @@ function output_help() {
     printf "Options:\n"
     printf "  -h       Display this message\n"
     printf "  -v       Display script version\n"
-    printf "  -d       Run rsync with --dry-run for test\n"
+    printf "  -r       Remove exisitng dotfiles if .cfg is local aready. Otherwise, they are backed up during installls.\n"
     printf "  -p       Prepare for reinstall. Remove existing configDotFilesWorktree and .cfg directories.\n"
     printf "           Run without option flag to install\n"
 }
@@ -87,7 +87,6 @@ function run() {
     local rsync_opts=(-avz --delete)
     __ScriptVersion="2.0.4"
     local flags_passed=false
-    local dry_run=false
 
     # Check if required commands are available first
     command -v rsync >/dev/null 2>&1 || {
@@ -96,7 +95,7 @@ function run() {
     }
 
     # Parse options using getopts
-    while getopts ":hvdp" opt; do
+    while getopts ":hvrp" opt; do
         flags_passed=true  # Mark that at least one flag has been passed
         case $opt in
             h)
@@ -105,10 +104,6 @@ function run() {
                 ;;
             v)
                 printf " -- Gist Script Version %s\n -- %s installing rudimusmaximus/configDotFiles\n" "$__ScriptVersion" "$0"
-                ;;
-            d)
-                dry_run=true
-                rsync_opts+=(--dry-run)
                 ;;
             p)
                 printf "Preparing for reinstall. Removing existing configDotFilesWorktree and .cfg directories.\n"
@@ -121,6 +116,13 @@ function run() {
                     rm -rf "$HOME"/.cfg
                 fi
                 ;;
+            r)
+                if [ ! -d "$HOME"/.cfg ]; then
+                    printf "Error: .cfg directory does not exist. Cannot remove files.\n"
+                    exit 1
+                fi
+                cfgls | xargs rm
+                ;;
             *)
                 printf "\n  Option does not exist: %s\n\n" "$OPTARG"
                 output_help
@@ -131,18 +133,13 @@ function run() {
 
     shift $((OPTIND - 1))
 
-    # print Dry run if dry_run is true
-    if [ "$dry_run" = true ]; then
-        printf "Dry run.\n"
-    fi
     # Run installWithWorktree if:
     # 1. No flags are passed
-    # 2. Only the -d (dry run) flag is passed
-    if [ "$flags_passed" = false ] || [ "$dry_run" = true ]; then
+    if [ "$flags_passed" = false ]; then
         printf "Running installWithWorktree...\n"
         installWithWorktree "${rsync_opts[@]}"
     else
-        printf "Flags other than -d were passed, not running installWithWorktree.\n"
+      printf "Install will not run if flags are passed.\n"
     fi
 
     printf "Done\n"
