@@ -6,60 +6,56 @@
 # x - output each line (debug)
 set -euo pipefail
 
-# Error handling function
-function error_exit() {
-    printf "%s\n" "$1" >&2
-    exit 1
-}
-
-# Display usage information
 function output_help() {
     printf "Usage: %s [options] [--]\n\n" "$0"
     printf "Options:\n"
     printf "  -h       Display this message\n"
     printf "  -v       Display script version\n"
-    printf "  -r       Remove existing dotfiles if .cfg is local already. Otherwise, they are backed up during installs.\n"
+    printf "  -r       Remove exisitng dotfiles if .cfg is local aready. Otherwise, they are backed up during installls.\n"
     printf "  -p       Prepare for reinstall. Remove existing configDotFilesWorktree and .cfg directories.\n"
     printf "           Run without option flag to install\n"
 }
-
-# Use 'config' function as a substitute for the 'git' command, scoped to this specific repository setup
-function config() {
-    /usr/bin/git --git-dir="$HOME/.cfg/" --work-tree="$HOME" "$@"
+# use 'config` function as a substitute for the `git` command, but scoped to this specific repository setup.
+function config {
+    /usr/bin/git --git-dir="$HOME"/.cfg/ --work-tree="$HOME" "$@"
 }
 
-# Backup conflicting dot files
 function backup_conflicting_dot_files() {
     local files=("$@")
-    printf "Backing up any pre-existing dot files that match the file names we install.\n"
+    printf "Back up any pre-existing dot files that match the file names we install.\n"
     mkdir -p "$HOME/.cfg-backup"
     for file in "${files[@]}"; do
         if [ -e "$HOME/$file" ]; then  # Check if the file exists
+            # echo "Processing file: $file"  # Debug information
             dir="$(dirname "$file")"
+            # echo "Creating directory: $HOME/.cfg-backup/$dir"  # Debug information
             mkdir -p "$HOME/.cfg-backup/$dir"
-            printf " - Moving existing file to %s/.cfg-backup/%s\n" "$HOME" "$file"  # Debug information
-            mv "$HOME/$file" "$HOME/.cfg-backup/$file" || error_exit "Failed to move file: $HOME/$file"
+            printf " - Moving existing file to $HOME/.cfg-backup/$file\n"  # Debug information
+            mv "$HOME/$file" "$HOME/.cfg-backup/$file" || { echo "Failed to move file: $HOME/$file" >&2; exit 1; }
+        # else
+        #     echo "File does not exist: $HOME/$file"  # Debug information
         fi
     done
     printf "Clear for checkout.\n"
 }
 
-# Install configuration with worktree
 function installWithWorktree() {
     printf "rudimusmaximus says hi there,\nCreating bare repo clone of configDotFiles.git into %s/.cfg\n" "$HOME"
 
-    if ! git clone --bare git@github.com:rudimusmaximus/configDotFiles.git "$HOME/.cfg"; then
-        error_exit "Error: Failed to clone repository."
+    if ! git clone --bare git@github.com:rudimusmaximus/configDotFiles.git "$HOME"/.cfg; then
+        printf "Error: Failed to clone repository.\n"
+        exit 1
     fi
 
-    # Pass list of files in the repository to backup if they already exist
-    mapfile -t files_to_backup < <(config ls-tree --full-tree -r --name-only HEAD)
+    # pass list of files in the repository to backup if they already exist
+    files_to_backup=($(config ls-tree --full-tree -r --name-only HEAD))
     backup_conflicting_dot_files "${files_to_backup[@]}"
 
     if config checkout; then
         printf "Checked out config from bare clone of configDotFiles in %s/.cfg\n" "$HOME"
     else
-        error_exit "Error: Failed to check out configuration files even after moving existing files."
+        printf "Error: Failed to check out configuration files even after moving existing files.\n"
+        exit 1
     fi
 
     config config status.showUntrackedFiles no
@@ -73,32 +69,30 @@ function installWithWorktree() {
             cp .extra.template .extra
             printf "Making starter .extra file; please update with your information. This file is ignored.\n"
         else
-            error_exit "Error: Expected .extra.template not found.\n"
+            printf "Warning: .extra.template not found.\n"
         fi
     fi
 
     printf "Adding worktree in configDotFilesWorktree/\n"
-    if config worktree add "$HOME/configDotFilesWorktree"; then
-        printf "Successfully added worktree at %s\n" "$HOME/configDotFilesWorktree"
-    else
-        error_exit "Error: Failed to add worktree at $HOME/configDotFilesWorktree."
-    fi
+    config worktree add "$HOME"/configDotFilesWorktree
 
     printf "Please review the readme file - .cfg_README.adoc\n"
     printf "Remember some tools are assumed installed.\n"
-    printf "Start a new tab or run 'source %s/.bash_profile' to use the new tools. This is alias 'sb' for future reference.\n" "$HOME"
+    printf "Start a new tab or run 'source $HOME/.bash_profile' to use the new tools. This is alias 'sb' for future reference.\n"
     printf "Finished.\n"
     printf "Enjoy!\n"
 }
 
-# Main function to run the script
 function run() {
     local rsync_opts=(-avz --delete)
-    cfg_installScriptVersion="2.0.5"
+    __ScriptVersion="2.0.4"
     local flags_passed=false
 
     # Check if required commands are available first
-    command -v rsync >/dev/null 2>&1 || error_exit "rsync is required but it's not installed. Aborting."
+    command -v rsync >/dev/null 2>&1 || {
+        printf >&2 "rsync is required but it's not installed. Aborting.\n"
+        exit 1
+    }
 
     # Parse options using getopts
     while getopts ":hvrp" opt; do
@@ -108,20 +102,26 @@ function run() {
                 output_help
                 exit 0
                 ;;
+            v)
+                printf " -- Gist Script Version %s\n -- %s installing rudimusmaximus/configDotFiles\n" "$__ScriptVersion" "$0"
+                ;;
             p)
                 printf "Preparing for reinstall. Removing existing configDotFilesWorktree and .cfg directories.\n"
                 # Remove the directories if they are present
-                [ -d "$HOME/configDotFilesWorktree" ] && rm -rf "$HOME/configDotFilesWorktree"
-                [ -d "$HOME/.cfg" ] && rm -rf "$HOME/.cfg"
+                if [ -d "$HOME"/configDotFilesWorktree ]; then
+                    rm -rf "$HOME"/configDotFilesWorktree
+                fi
+
+                if [ -d "$HOME"/.cfg ]; then
+                    rm -rf "$HOME"/.cfg
+                fi
                 ;;
             r)
-                if [ ! -d "$HOME/.cfg" ]; then
-                    error_exit "Error: .cfg directory does not exist. Cannot remove files."
+                if [ ! -d "$HOME"/.cfg ]; then
+                    printf "Error: .cfg directory does not exist. Cannot remove files.\n"
+                    exit 1
                 fi
                 cfgls | xargs rm
-                ;;
-            v)
-                printf " -- Gist Script Version %s\n -- %s installing rudimusmaximus/configDotFiles\n" "$cfg_installScriptVersion" "$0"
                 ;;
             *)
                 printf "\n  Option does not exist: %s\n\n" "$OPTARG"
@@ -133,12 +133,13 @@ function run() {
 
     shift $((OPTIND - 1))
 
-    # Run installWithWorktree if no flags are passed
+    # Run installWithWorktree if:
+    # 1. No flags are passed
     if [ "$flags_passed" = false ]; then
         printf "Running installWithWorktree...\n"
         installWithWorktree "${rsync_opts[@]}"
     else
-        printf "Install will not run if flags are passed.\n"
+      printf "Install will not run if flags are passed.\n"
     fi
 
     printf "Done\n"
