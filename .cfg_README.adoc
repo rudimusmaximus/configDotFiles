@@ -67,7 +67,17 @@ more cfg commands.
 === Using with tmux and making changes (see cfgstash in .functions)
 
 Currently, a clean way to work with changes besides the cli aliases is to use lazygit. You
-can use either approach or switch between. Here is a workflow:
+can use either approach or switch between. The install script creates a directory which is a worktree at $HOME/configDotFilesWorktree. Here is info on setting up and using tmux long with workflow notes for reference.
+
+==== tmux
+
+Install tmux with brew on macOS or dnf on Fedora. Then clone it's package manager and source the tmux configuration file we installed with these dot files.
+
+[source,bash]
+----
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+tmux source ~/.tmux.conf
+----
 
 **tmux workflow using aliases from this repo**
 
@@ -86,19 +96,23 @@ $CONFIG_DOT_FILES_GIT_COMMAND worktree remove $HOME/configDotFilesWorktree
 cfgstash
 
 # Then you can open lazygit in the worktree with either of these aliases
+# additionally you can learn about tmuxifier for tmux layouts
 configDotFiles
 lgcfg
 
 # USING LAZYGIT - it will look like a branch 'configDotFilesWorktree'
 # Pop the stash
 # Commit and push to 'origin main' using semver (you may have to set the upstream)
+# TODO verify best way to sync with remote and local .cfg and home directories
 
 # When done, move to your home directory
 # and pull to get the latest from origin main
 cfg pull
+
 ----
 
 The included ./.lazygit_config_template.yml is a template for lazygit and has instructions via comment inside that file. The cool part for this is that in diff view inside lazygit you can click on a file's line number and edit the file at that location in your configured $EDITOR.
+TODO include setting up Delta in lazygit
 
 === '.extra' file
 
