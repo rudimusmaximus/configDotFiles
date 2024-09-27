@@ -48,6 +48,11 @@ alias configlg='echo "config log graph (run type or decode on configlg for more)
 alias    cfglg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias     cfgu='echo "Stage changes to tracked cfg dot files"; cfg add --update';
 
+# configDotFiles install script help
+# you can use this to also remove files and prepare for reinstall as you like
+# please read the .cfg_README.adoc
+alias cfgScript='curl -sSf https://gist.githubusercontent.com/rudimusmaximus/cbb877cb5797b00d7fbb9ddc88e7f8b9/raw | bash -s -- -v -h'
+
 # opens quicklook debugger to render a ql server and show a file
 alias ql='qlmanage -p '
 
