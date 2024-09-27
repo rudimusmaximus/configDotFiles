@@ -114,6 +114,52 @@ cfg pull
 The included ./.lazygit_config_template.yml is a template for lazygit and has instructions via comment inside that file. The cool part for this is that in diff view inside lazygit you can click on a file's line number and edit the file at that location in your configured $EDITOR.
 TODO include setting up Delta in lazygit
 
+=== Setting Upstream
+
+Make sure your worktree is tracking `main` properly. Follow these steps to set up the upstream:
+
+1. Go to the worktree directory and check out the `main` branch.
+2. Run a fetch to get the `main` branch from `origin`.
+
+[source,bash]
+----
+
+git checkout main
+# Fetch the `main` branch from the remote
+git fetch origin main:origin/main
+
+----
+
+3. Set the upstream for the `main` branch.
+
+[source,bash]
+----
+
+# Set the upstream for the `main` branch
+git branch --set-upstream-to=origin/main main
+
+----
+
+4. Confirm the upstream has been set correctly.
+
+[source,bash]
+----
+
+# Verify the upstream tracking
+git status -sb
+
+----
+
+You should see the following output to confirm proper tracking:
+
+[source,bash]
+----
+
+## main...origin/main
+
+----
+
+
 === '.extra' file
 
 '.extra.template' is a template for creating the '.extra' file. This avoids overwrites of changing local
