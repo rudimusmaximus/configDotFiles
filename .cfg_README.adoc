@@ -159,6 +159,14 @@ You should see the following output to confirm proper tracking:
 
 ----
 
+If you have any issues pushing from inside lazygit, try using this command after committing locally to your main branch inside the worktree.
+
+[source,bash]
+----
+
+git push -u origin main
+
+----
 
 === '.extra' file
 
