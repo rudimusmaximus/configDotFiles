@@ -16,11 +16,12 @@ function error_exit() {
 function output_help() {
     printf "Usage: %s [options] [--]\n\n" "$0"
     printf "Options:\n"
+    printf "  -b       Basic install of bare repo into .cfg\n"
+    printf "  -c       Clone configDotFiles repo into ~/configDotFiles for traditional workflow\n"
     printf "  -h       Display this message\n"
     printf "  -v       Display script version\n"
     printf "  -r       Remove existing dotfiles if .cfg is local already. Otherwise, they are backed up during installs.\n"
-    printf "  -p       Prepare for reinstall. Remove existing configDotFilesWorktree and .cfg directories.\n"
-    printf "           Run without option flag to install\n"
+    printf "  -p       Prepare for reinstall. Remove existing clone directories (.cfg and configDotFiles) if present.\n"
 }
 
 # Use 'config' function as a substitute for the 'git' command, scoped to this specific repository setup
@@ -45,7 +46,7 @@ function backup_conflicting_dot_files() {
 }
 
 # Install configuration with worktree
-function installWithWorktree() {
+function basicBareRepoInstall() {
     printf "rudimusmaximus says hi there,\nCreating bare repo clone of configDotFiles.git into %s/.cfg\n" "$HOME"
 
     if ! git clone --bare git@github.com:rudimusmaximus/configDotFiles.git "$HOME/.cfg"; then
@@ -77,13 +78,6 @@ function installWithWorktree() {
         fi
     fi
 
-    printf "Adding worktree in configDotFilesWorktree/\n"
-    if config worktree add "$HOME/configDotFilesWorktree"; then
-        printf "Successfully added worktree at %s\n" "$HOME/configDotFilesWorktree"
-    else
-        error_exit "Error: Failed to add worktree at $HOME/configDotFilesWorktree."
-    fi
-
     printf "Please review the readme file - .cfg_README.adoc\n"
     printf "Remember some tools are assumed installed.\n"
     printf "Start a new tab or run 'source %s/.bash_profile' to use the new tools. This is alias 'sb' for future reference.\n" "$HOME"
@@ -94,16 +88,26 @@ function installWithWorktree() {
 # Main function to run the script
 function run() {
     local rsync_opts=(-avz --delete)
-    cfg_installScriptVersion="2.0.6"
+    cfg_installScriptVersion="2.0.7"
     local flags_passed=false
 
     # Check if required commands are available first
     command -v rsync >/dev/null 2>&1 || error_exit "rsync is required but it's not installed. Aborting."
 
     # Parse options using getopts
-    while getopts ":hvrp" opt; do
+    while getopts ":bchprv" opt; do
         flags_passed=true  # Mark that at least one flag has been passed
         case $opt in
+            b)
+                printf "Running basicBareRepoInstall...\n"
+                basicBareRepoInstall "${rsync_opts[@]}"
+                ;;
+            c)
+                if ! git clone git@github.com:rudimusmaximus/configDotFiles.git "$HOME/configDotFiles"; then
+                  error_exit "Error: Failed to clone repository."
+                fi
+                printf 'Cloned repository into %s/configDotFiles\n' "$HOME"
+                ;;
             h)
                 output_help
                 exit 0
@@ -111,17 +115,19 @@ function run() {
             p)
                 printf "Preparing for reinstall. Removing existing configDotFilesWorktree and .cfg directories.\n"
                 # Remove the directories if they are present
-                [ -d "$HOME/configDotFilesWorktree" ] && rm -rf "$HOME/configDotFilesWorktree"
+                [ -d "$HOME/configDotFiles" ] && rm -rf "$HOME/configDotFiles"
                 [ -d "$HOME/.cfg" ] && rm -rf "$HOME/.cfg"
                 ;;
             r)
+                printf "Checking for tracked files.\n"
                 if [ ! -d "$HOME/.cfg" ]; then
                     error_exit "Error: .cfg directory does not exist. Cannot remove files."
                 fi
                 config ls-tree --full-tree -r --name-only HEAD | xargs rm
+                printf "Removed tracked files from $HOME based on existing .cfg.\n"
                 ;;
             v)
-                printf " -- Gist Script Version %s\n -- %s installing rudimusmaximus/configDotFiles\n" "$cfg_installScriptVersion" "$0"
+                printf " -- Gist Script Version %s -- %s installing rudimusmaximus/configDotFiles\n" "$cfg_installScriptVersion" "$0"
                 ;;
             *)
                 printf "\n  Option does not exist: %s\n\n" "$OPTARG"
@@ -133,15 +139,7 @@ function run() {
 
     shift $((OPTIND - 1))
 
-    # Run installWithWorktree if no flags are passed
-    if [ "$flags_passed" = false ]; then
-        printf "Running installWithWorktree...\n"
-        installWithWorktree "${rsync_opts[@]}"
-    else
-        printf "Install will not run if flags are passed.\n"
-    fi
-
-    printf "Done\n"
+    printf "See you next time!\n"
     exit 0
 }
 

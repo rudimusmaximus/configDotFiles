@@ -67,7 +67,7 @@ more cfg commands.
 === Using with tmux and making changes (see cfgstash in .functions)
 
 Currently, a clean way to work with changes besides the cli aliases is to use lazygit. You
-can use either approach or switch between. The install script creates a directory which is a worktree at $HOME/configDotFilesWorktree. Here is info on setting up and using tmux long with workflow notes for reference.
+can use either approach or switch between. The install script has flages for -b and -c for bare repo in home and optionally clone of configDotFiles repo.
 
 ==== tmux
 
@@ -79,26 +79,28 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 tmux source ~/.tmux.conf
 ----
 
+Run tmux and use the conf by leader + capital I which is <ctrl> + S followed by pressing shift + I. This will install the plugins in the .tmux.conf file.
+
 **tmux workflow using aliases from this repo**
 
-Name it what you like, we use this name for the worktree.
+If you want to use lazy git, run the install -c to install the actual repo in HOME/configDotFiles so you can use any tool you like. Just push to remote when done
+and cfg pull to get the updates.
+
+Take care between working via cli cfg alias or in the actual repo. Obviously don't work in .cfg bare clone.
+
+`cfgstash` is included in .functions for saving work if any in HOME dir and also backing up the local .extra file.
 
 [source,bash]
 ----
-# Create a worktree
-$CONFIG_DOT_FILES_GIT_COMMAND worktree add $HOME/configDotFilesWorktree
-
-# Remove worktree (also removes directory)
-$CONFIG_DOT_FILES_GIT_COMMAND worktree remove $HOME/configDotFilesWorktree
 
 # Now when you are ready to make changes; stash your work from home
 # directory with the alias; it also backs up .extra to .extra.backup
 cfgstash
 
-# Then you can open lazygit in the worktree with either of these aliases
+# Then you can open lazygit in the actual repository with either of these aliases
 # additionally you can learn about tmuxifier for tmux layouts
+# if you have tmux setup you can run these aliases to open tmuxifier layout
 configDotFiles
-lgcfg
 
 # USING LAZYGIT - it will look like a branch 'configDotFilesWorktree'
 # Pop the stash
@@ -114,64 +116,10 @@ cfg pull
 The included ./.lazygit_config_template.yml is a template for lazygit and has instructions via comment inside that file. The cool part for this is that in diff view inside lazygit you can click on a file's line number and edit the file at that location in your configured $EDITOR.
 TODO include setting up Delta in lazygit
 
-=== Setting Upstream
-
-Make sure your worktree is tracking `main` properly. Follow these steps to set up the upstream:
-
-1. Go to the worktree directory and check out the `main` branch.
-2. Run a fetch to get the `main` branch from `origin`.
-
-[source,bash]
-----
-
-git checkout main
-# Fetch the `main` branch from the remote
-git fetch origin main:origin/main
-
-----
-
-3. Set the upstream for the `main` branch.
-
-[source,bash]
-----
-
-# Set the upstream for the `main` branch
-git branch --set-upstream-to=origin/main main
-
-----
-
-4. Confirm the upstream has been set correctly.
-
-[source,bash]
-----
-
-# Verify the upstream tracking
-git status -sb
-
-----
-
-You should see the following output to confirm proper tracking:
-
-[source,bash]
-----
-
-## main...origin/main
-
-----
-
-If you have any issues pushing from inside lazygit, try using this command after committing locally to your main branch inside the worktree.
-
-[source,bash]
-----
-
-git push -u origin main
-
-----
-
 === '.extra' file
 
 '.extra.template' is a template for creating the '.extra' file. This avoids overwrites of changing local
-'.extra' file over time.
+'.extra' file over time. Use `cfgstash` to backup '.extra' and stash any current uncommitted changes in the home directory.
 
 == LEGAL NOTE
 
