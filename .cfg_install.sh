@@ -20,8 +20,8 @@ function output_help() {
     printf "  -c       Clone configDotFiles repo into ~/configDotFiles for traditional workflow\n"
     printf "  -h       Display this message\n"
     printf "  -v       Display script version\n"
-    printf "  -r       Remove existing dotfiles if .cfg is local already. Otherwise, they are backed up during installs.\n"
-    printf "  -p       Prepare for reinstall. Remove existing clone directories (.cfg and configDotFiles) if present.\n"
+    printf "  -r       Remove existing dotfiles if .cfg is local - otherwise backed up during installs.\n"
+    printf "  -p       Prepare for reinstall. Remove existing cloned directories if present.\n"
 }
 
 # Use 'config' function as a substitute for the 'git' command, scoped to this specific repository setup
@@ -45,7 +45,7 @@ function backup_conflicting_dot_files() {
     printf "Clear for checkout.\n"
 }
 
-# Install configuration with worktree
+# Install repositories
 function basicBareRepoInstall() {
     printf "rudimusmaximus says hi there,\nCreating bare repo clone of configDotFiles.git into %s/.cfg\n" "$HOME"
 
@@ -88,7 +88,7 @@ function basicBareRepoInstall() {
 # Main function to run the script
 function run() {
     local rsync_opts=(-avz --delete)
-    cfg_installScriptVersion="2.0.7"
+    cfg_installScriptVersion="2.0.8"
     local flags_passed=false
 
     # Check if required commands are available first
@@ -113,10 +113,25 @@ function run() {
                 exit 0
                 ;;
             p)
-                printf "Preparing for reinstall. Removing existing configDotFilesWorktree and .cfg directories.\n"
-                # Remove the directories if they are present
-                [ -d "$HOME/configDotFiles" ] && rm -rf "$HOME/configDotFiles"
-                [ -d "$HOME/.cfg" ] && rm -rf "$HOME/.cfg"
+                printf "Preparing for reinstall. Removing existing configDotFiles and .cfg directories if present.\n"
+                local something_was_removed=false
+
+                # Remove the directories if they are present and print a message
+                if [ -d "$HOME/configDotFiles" ]; then
+                    rm -rf "$HOME/configDotFiles"
+                    something_was_removed=true
+                    printf "configDotFiles/ was removed.\n"
+                fi
+
+                if [ -d "$HOME/.cfg" ]; then
+                    rm -rf "$HOME/.cfg"
+                    something_was_removed=true
+                    printf ".cfg/ was removed.\n"
+                fi
+
+                if [ "$something_was_removed" = false ]; then
+                    printf "Nothing removed; target directories were not present.\n"
+                fi
                 ;;
             r)
                 printf "Checking for tracked files.\n"
