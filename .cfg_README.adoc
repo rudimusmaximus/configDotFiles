@@ -28,9 +28,9 @@ This sort of repository is commonly called a "dot files repository" - hence the 
 In a fresh terminal, from your home directory:
 
 ```shell script will execute and delete itself
-curl -sSf https://gist.githubusercontent.com/rudimusmaximus/cbb877cb5797b00d7fbb9ddc88e7f8b9/raw | bash -s -- -v -h
+curl -sSf https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_install.sh | bash -s -- -v -h
 ```
-The script lives in [this gist](https://gist.github.com/rudimusmaximus/cbb877cb5797b00d7fbb9ddc88e7f8b9). Review first if you like.
+The script lives in [this repository](https://github.com/rudimusmaximus/configDotFiles/blob/main/.cfg_install.sh). Review first if you like.
 
 Any backups of `.files` that would have been overwritten can be found in `.cfg-backup` folder.
 After you restart the terminal, type 'alias' or 'aliases' to see our shortcuts. The cursor now has magic powers in git repos. Some aliases assume certain tools are installed.
