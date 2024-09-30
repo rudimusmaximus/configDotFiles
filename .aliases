@@ -162,6 +162,7 @@ alias la='echo "ls in color -a"; ls -a'
 
 # List only directories
 alias lsd="ls -d -- */"
+alias lsda='ls -d -- */ .[^.]*/'
 alias llsd='ls -lF | grep --color=never "^d"'
 
 # Always enable colored `grep` output
