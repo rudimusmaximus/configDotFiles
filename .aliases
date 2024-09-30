@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # not required for sourced files here but used so we can run shellcheck on the file
 
 alias cloud='cd "$CLOUD"'

@@ -88,15 +88,13 @@ function basicBareRepoInstall() {
 # Main function to run the script
 function run() {
     local rsync_opts=(-avz --delete)
-    cfg_installScriptVersion="2.0.8"
-    local flags_passed=false
+    cfg_installScriptVersion="2.0.9"
 
     # Check if required commands are available first
     command -v rsync >/dev/null 2>&1 || error_exit "rsync is required but it's not installed. Aborting."
 
     # Parse options using getopts
     while getopts ":bchprv" opt; do
-        flags_passed=true  # Mark that at least one flag has been passed
         case $opt in
             b)
                 printf "Running basicBareRepoInstall...\n"
@@ -139,7 +137,7 @@ function run() {
                     error_exit "Error: .cfg directory does not exist. Cannot remove files."
                 fi
                 config ls-tree --full-tree -r --name-only HEAD | xargs rm
-                printf "Removed tracked files from $HOME based on existing .cfg.\n"
+                printf "Removed tracked files from %s based on existing .cfg.\n" "{$HOME}"
                 ;;
             v)
                 printf " -- Gist Script Version %s -- %s installing rudimusmaximus/configDotFiles\n" "$cfg_installScriptVersion" "$0"

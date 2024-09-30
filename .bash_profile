@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+#!/usr/bin/env bash
 
 # * ~/.path can be used to extend `$PATH`.
 # * ~/.extra can be used for other settings you don’t want to commit.
@@ -15,7 +15,7 @@ for file in "${profile_config_files[@]}"; do
     fi
 done
 unset file
- 
+
 # shellcheck source=/dev/null
 if [[ $TERM_PROGRAM == "iTerm.app" ]]; then
     test -e "${HOME}/.iterm2_shell_integration.bash" &&
@@ -40,7 +40,9 @@ source "${HOME}/.cargo/env"
 source "${HOME}/.bashrc"
 
 # Configure asdf last (see https://asdf-vm.com/guide/getting-started.html)
+# shellcheck source=/dev/null
 source "${HOME}/.asdf/asdf.sh"
+# shellcheck source=/dev/null
 source "${HOME}/.asdf/completions/asdf.bash"
 
 eval "$(tmuxifier init -)"

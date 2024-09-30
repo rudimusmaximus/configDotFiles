@@ -1,10 +1,10 @@
-# shellcheck shell=bash
+#!/usr/bin/env bash
 
 # COMMON CONFIGURATION
 # ====================
 
 # Bun (see https://bun.sh/)
-export BUN_INSTALL="$HOME/.bun" 
+export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # Jetbrains toolbox - shell scripts path

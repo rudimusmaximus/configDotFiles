@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+#!/usr/bin/env bash
 # non-login, interactive shell
 
 declare -a rc_config_files=(
@@ -23,6 +23,7 @@ fi
 
 # Check if fzf-git.sh exists and source it, otherwise prompt the user to clone the repository
 if [ -f "${HOME}/fzf-git.sh/fzf-git.sh" ]; then
+    # shellcheck source=/dev/null
     source "${HOME}/fzf-git.sh/fzf-git.sh"
 else
     echo "fzf-git.sh not found. Please clone the repository and re-source your .bash_profile to enable better git integration with fzf. see repo for additional key commands"
