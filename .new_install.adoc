@@ -1,0 +1,175 @@
+= Journal of a fresh operating system
+
+== macOS
+
+=== So far
+
+After a fresh install. My usual setup is M1 max hardware with macOS and Fedora Asahi Remix. This log is on OCLP install of Sequioa on a late 2015 27" iMac.
+
+==== Oct 1, 2024 Fresh install
+
+TODO udpate with links
+* Fresh install va Open Core Legacy Patcher 2.0.2
+* Safari only showing video at 1080, installed Brave; test video at 4k is fine; didn't test 5k yet.
+* Installed SwitchResX for screen rotation if needed (while screen sharing will not work in portrait as intended It works but not like you want); must use on imac standalone. This is ok if using ssh
+* Using vi for this, let's fix that.
+
+==== Oct 2, 2024 - setting up my dev flow
+
+* Installed my custom font from ilovetypography.com (comic code family); see icloud > Documents Order confirmation ILT-220517-36ab215.zip; unzip and use Font Book to add folder of license name and you are done. This is the font used by my terminal kitty w bash shell and customm nvim
+* Installed homebrew; go to https://brew.sh/ for latest info; see also https://docs.brew.sh
+* Created new ssh key for this machine and add it to your github account
+  * see https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+* Install latest bash, add it to list of shells, set it as default shell
+* Install the kitty terminal
+* Install a set of apps wit brew install kitty, fastfetch, asdf, bat, fzf
+
+* Install tpm (tmux plugin manager) see https://github.com/tmux-plugins/tpm by cloning it
+* Do not clone tmuxifier (it is in our path in the dot files) as our tmux config will install it provided we install tpm and then dot files; source the dot files, run tmux and run a leader + I command.
+* install your own layouts we use tmuxi-layouts to ~/.tmuxifier_layouts
+* review but for now our .extra exports a variable telling tmuxifier where to find layouts
+* also the .extra sets some bun related info for bun's binary lock files
+
+* Install rudimusMaximusConfigDotFiles
+
+
+
+Commands
+# Homebrew The Missing Package Manager for macOS (or Linux) but we will use dnf on Fedora
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# new key
+ssh-keygen -t ed25519 -C "raul@raulfloresjr.com"
+eval "$(ssh-agent -s)"
+vi ~/.ssh/config
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+pbcopy < ~/.ssh/id_ed25519.pub
+# ues your email, see setup for the config, and use the copy for adding new ssh to github (once for ssh and once for signing)
+
+# install latest bash with brew
+brew install bash
+
+# now setup the new BUT do not use /bin/bash which is the old installed version on some intel macs
+# use the new version of bash from your homebrew install
+/usr/local/bin/bash --version
+# if you confirm then use this to add the shell ass follows first adding it to list of possible shells
+sudo sh -c 'echo "/usr/local/bin/bash" >> /etc/shells'
+# now change the default shell to Homebrew bash
+chsh -s /usr/local/bin/bash
+# restart your computer now please
+
+brew install kitty
+brew install fastfetch
+brew install asdf
+brew install bat
+brew install fzf
+brew install tmux
+brew install lazygit delta ripgrep wget
+
+# SEE ~/.lazygit_config_template.yml for how to config lazygit
+
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+git clone https://github.com/junegunn/fzf-git.sh.git ~/fzf-git.sh
+
+# your own tmuxifier layouts
+git clone git@github.com:RedCrowConsulting/tmuxi-layouts.git ~/.tmuxifier_layouts
+
+
+mkdir ~/.config/nvim
+cd ~/.config/nvim
+git clone git@github.com:RedCrowConsulting/nvim-config.git .
+# when ready go to a project like cd configDotFiles and run nvim (it will install many items)
+
+# https://github.com/oven-sh/bun install bun by cli not brew
+curl -fsSL https://bun.sh/install | bash
+
+# install the dotfiles
+curl -sSf https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_install.sh | bash -s -- -v -h
+
+# restart or source .bashrc
+
+
+== Managing runtimes
+having installed asdf
+
+=== nodejs
+see https://github.com/asdf-vm/asdf-nodejs
+install with
+asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+
+# Before checking for aliases, update nodebuild to check for newly releasead versions
+asdf nodejs update-nodebuild
+
+asdf nodejs resolve lts
+# outputs: 20.17.0
+
+# Outputs the latest version installed locally which is a LTS
+asdf nodejs resolve lts --latest-installed
+
+# Outputs the latest version available for download which is a LTS
+asdf nodejs resolve lts --latest-available
+
+Install the latest available version
+asdf global nodejs latest
+
+we determined latest lts is 20.17.0
+SO, INSTALL TO ASDF
+asdf install nodejs 20.17.0
+then set the global nodejs to 20.17.0
+asdf global nodejs 20.17.0
+
+=== asdf plugins
+
+Use this list to find right url https://github.com/asdf-vm/asdf-plugins?tab=readme-ov-file#plugin-list
+
+Then click to the pligin repository and confirm installation
+
+So we ran :checkhealth in nvim to install what we needed. We needed luarocks wich neads lua 5.1 so
+There was one for Lua and one for LuaJIT we want lua for compatibility as JIT if for performance as it converts the code to binary in realtime.
+that site gave us
+asdf plugin-add lua https://github.com/Stratus3D/asdf-lua.git
+
+THEN use the general instructions for working with asdf language plugin
+asdf list-all lua
+this lists all the versions that we can install
+
+asdf install lua 5.1
+asdf global lua 5.1
+
+do the same after adding the following plugins but use the latest if not specified otherwise by healthcheck
+will add results when done by running
+asdf plugin list --urls
+SO ADD EACH repo, then use this pattern to install latest of the language or version you need
+asdf install python latest
+then global if not local in working directory of a project
+asdf global python version you just installed
+
+NOTE the link for python says asdf plugin install python without url oddly
+asdf plugin-add php https://github.com/asdf-community/asdf-php.git
+
+note: check inside nvim :help provider-python
+make sure bat ~/.tool-versions shows you installed it globally
+it should after asdf global python 3.12.7 in our case
+Then at a terminal: "python -m pip install --user --upgrade pynvim"
+or python3 if you system doesn't see python both should -V to the version you installed
+
+
+
+
+brew install autoconf libsodium bison re2c pkg-config gd icu4c fd
+
+
+asdf install php latest
+asdf global php latest
+
+asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
+asdf install golang latest
+asdf global golang latest
+
+==== java
+
+Satisfy nvim java and javac like this
+$ asdf install java adoptopenjdk-11.0.11+9
+$ asdf install java adoptopenjdk-17.0.2+8
+$ asdf global java adoptopenjdk-17.0.2+8
+

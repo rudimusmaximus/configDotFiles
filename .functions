@@ -259,3 +259,8 @@ function cfgstash() {
     fi
 }
 
+# Print sorted environment variables
+function print_sorted_env() {
+  bun --print process.env | sort
+}
+

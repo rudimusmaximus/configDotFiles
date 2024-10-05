@@ -11,7 +11,7 @@ alias rcc_shared='cd "$RCC_SHARED"'
 alias rcm_shared='cd "$RCM_SHARED"'
 
 # Reload edits to .bashrc
-alias sb='source ~/.bash_profile'
+alias sb='clear && source ~/.bash_profile'
 
 # updates for users of homebrew and one for homebrew and neovim nightly
 alias brewup='brew update && brew upgrade';

@@ -56,3 +56,7 @@ export CONFIG_DOT_FILES_GIT_COMMAND="/usr/bin/git --git-dir=$HOME/.cfg/ --work-t
 export EDITOR="nvim";
 export VISUAL="$EDITOR";
 
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH=$BUN_INSTALL/bin:$PATH
+
