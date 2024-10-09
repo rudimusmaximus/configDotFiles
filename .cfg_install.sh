@@ -5,11 +5,16 @@
 # o pipefail - script fails if one of piped command fails
 # x - output each line (debug)
 # Script version
-SCRIPT_VERSION="2.0.10"
+SCRIPT_VERSION="2.0.11"
 
-# Determine script name for helpful output flag
-# This getsthe filename of the script even when sourced or run in various ways and provides a default fallback.
-script_name="$(basename "${BASH_SOURCE[0]}" 2>/dev/null || echo "cfg_install.sh")"
+# Determine script name based on whether the script is run locally or remotely
+if [[ -f "$0" ]]; then
+    # Running locally, use the actual script name
+    script_name="$(basename "$0")"
+else
+    # Running remotely, use a descriptive name
+    script_name="remote installation (via curl)"
+fi
 
 # Error handling function
 error_exit() {
