@@ -4,17 +4,26 @@
 # u - error if undefined variable
 # o pipefail - script fails if one of piped command fails
 # x - output each line (debug)
-set -euo pipefail
+# Script version
+SCRIPT_VERSION="2.0.10"
+
+# Determine script name for helpful output flag
+# This getsthe filename of the script even when sourced or run in various ways and provides a default fallback.
+script_name="$(basename "${BASH_SOURCE[0]}" 2>/dev/null || echo "cfg_install.sh")"
 
 # Error handling function
-function error_exit() {
+error_exit() {
     printf "%s\n" "$1" >&2
     exit 1
 }
 
 # Display usage information
-function output_help() {
-    printf "Usage: %s [options] [--]\n\n" "$0"
+output_help() {
+    printf "NOTE: RAW_CODE_URL is the GitHub SSH URL to the raw shell script.\n"
+    printf "      https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_install.sh\n\n"
+    printf "Usage:\n"
+    printf "  To run remotely: bash <(curl -sSf RAW_CODE_URL) [options]\n"
+    printf "  To run locally: bash %s [options]\n\n" "$script_name"
     printf "Options:\n"
     printf "  -b       Basic install of bare repo into .cfg\n"
     printf "  -c       Clone configDotFiles repo into ~/configDotFiles for traditional workflow\n"
@@ -25,12 +34,12 @@ function output_help() {
 }
 
 # Use 'config' function as a substitute for the 'git' command, scoped to this specific repository setup
-function config() {
-    /usr/bin/git --git-dir="$HOME/.cfg/" --work-tree="$HOME" "$@"
+config() {
+    git --git-dir="$HOME/.cfg/" --work-tree="$HOME" "$@"
 }
 
 # Backup conflicting dot files
-function backup_conflicting_dot_files() {
+backup_conflicting_dot_files() {
     local files=("$@")
     printf "Backing up any pre-existing dot files that match the file names we install.\n"
     mkdir -p "$HOME/.cfg-backup"
@@ -46,11 +55,11 @@ function backup_conflicting_dot_files() {
 }
 
 # Install repositories
-function basicBareRepoInstall() {
+basicBareRepoInstall() {
     printf "rudimusmaximus says hi there,\nCreating bare repo clone of configDotFiles.git into %s/.cfg\n" "$HOME"
 
     if ! git clone --bare git@github.com:rudimusmaximus/configDotFiles.git "$HOME/.cfg"; then
-        error_exit "Error: Failed to clone repository."
+        error_exit "Error: Failed to clone repository. Ensure that your SSH keys are set up with GitHub."
     fi
 
     # Pass list of files in the repository to backup if they already exist
@@ -66,15 +75,14 @@ function basicBareRepoInstall() {
     config config status.showUntrackedFiles no
     printf "Turned off showing untracked files\n"
 
-    # Check if .extra file exists before creating one
-    if [ -f .extra ]; then
+    if [ -f "$HOME/.extra" ]; then
         printf "Found .extra file; leaving it as is.\n"
     else
-        if [ -f .extra.template ]; then
-            cp .extra.template .extra
+        if [ -f "$HOME/.extra.template" ]; then
+            cp "$HOME/.extra.template" "$HOME/.extra"
             printf "Making starter .extra file; please update with your information. This file is ignored.\n"
         else
-            error_exit "Error: Expected .extra.template not found.\n"
+            error_exit "Error: Expected .extra.template not found in $HOME.\n"
         fi
     fi
 
@@ -85,26 +93,92 @@ function basicBareRepoInstall() {
     printf "Enjoy!\n"
 }
 
+remove_tracked_files_and_empty_directories_when_done() {
+    # Array to store directories to check
+    declare -a dirs_to_check
+
+    # Remove tracked files and accumulate directories to check
+    config ls-tree --full-tree -r --name-only HEAD | while IFS= read -r file; do
+        target="$HOME/$file"
+        rm -f "$target"
+        # Collect directories for potential cleanup
+        dir=$(dirname "$target")
+        dirs_to_check+=("$dir")
+    done
+
+    # Remove duplicate directories
+    dirs_to_check=($(printf "%s\n" "${dirs_to_check[@]}" | sort -u))
+
+    # Remove empty directories, but never delete $HOME
+    for dir in "${dirs_to_check[@]}"; do
+        if [ -d "$dir" ] && [ "$dir" != "$HOME" ]; then
+            # Remove directory if empty, along with parent directories up to $HOME
+            rmdir --ignore-fail-on-non-empty -p "$dir" 2>/dev/null || true
+        fi
+    done
+}
+
+check_for_and_remove_expected_repositories() {
+    local something_was_removed=false
+    # Remove the directories if they are present and print a message
+    if [ -d "$HOME/configDotFiles" ]; then
+        rm -rf "$HOME/configDotFiles"
+        something_was_removed=true
+        printf "configDotFiles/ was removed.\n"
+    fi
+
+    if [ -d "$HOME/.cfg" ]; then
+        rm -rf "$HOME/.cfg"
+        something_was_removed=true
+        printf ".cfg/ was removed.\n"
+    fi
+
+    if [ "$something_was_removed" = false ]; then
+        printf "Nothing removed; target directories were not present.\n"
+    fi
+}
+
+clone_configDotFiles_into_configDotFiles() {
+    # Clone configDotFiles repo into $HOME/configDotFiles
+    if ! git clone git@github.com:rudimusmaximus/configDotFiles.git "$HOME/configDotFiles"; then
+      error_exit "Error: Failed to clone repository. Ensure that your SSH keys are set up with GitHub."
+    fi
+    printf 'Cloned repository into %s/configDotFiles\n' "$HOME"
+}
+
+handle_not_a_flag_edge_cases() {
+    # If no flags are passed, suggest -vh
+    if [ "$#" -eq 0 ]; then
+        error_exit "Error: No options provided; try again with -vh"
+    fi
+    # Handle lone hyphen error case
+    if [ "$1" = "-" ] && [ "$#" -eq 1 ]; then
+        error_exit "Error: Incomplete flag (-) provided; please provide a valid flag."
+    fi
+    # Handle double hyphen (--) with no other valid options
+    if [ "$1" = "--" ] && [ "$#" -eq 1 ]; then
+        error_exit "Error: Double hyphen (--) provided without valid options."
+    fi
+    # Handle multiple hyphens (---, ----, etc.)
+    if [[ "$1" =~ ^-+$ ]]; then
+        error_exit "Error: Invalid option string ($1). Please provide valid flags."
+    fi
+}
+
 # Main function to run the script
-function run() {
-    local rsync_opts=(-avz --delete)
-    cfg_installScriptVersion="2.0.9"
-
+run() {
     # Check if required commands are available first
-    command -v rsync >/dev/null 2>&1 || error_exit "rsync is required but it's not installed. Aborting."
-
+    command -v git >/dev/null 2>&1 || error_exit "git is required but it's not installed. Aborting."
+    handle_not_a_flag_edge_cases "$@"
     # Parse options using getopts
     while getopts ":bchprv" opt; do
         case $opt in
             b)
                 printf "Running basicBareRepoInstall...\n"
-                basicBareRepoInstall "${rsync_opts[@]}"
+                basicBareRepoInstall
                 ;;
             c)
-                if ! git clone git@github.com:rudimusmaximus/configDotFiles.git "$HOME/configDotFiles"; then
-                  error_exit "Error: Failed to clone repository."
-                fi
-                printf 'Cloned repository into %s/configDotFiles\n' "$HOME"
+                clone_configDotFiles_into_configDotFiles
                 ;;
             h)
                 output_help
@@ -112,35 +186,15 @@ function run() {
                 ;;
             p)
                 printf "Preparing for reinstall. Removing existing configDotFiles and .cfg directories if present.\n"
-                local something_was_removed=false
-
-                # Remove the directories if they are present and print a message
-                if [ -d "$HOME/configDotFiles" ]; then
-                    rm -rf "$HOME/configDotFiles"
-                    something_was_removed=true
-                    printf "configDotFiles/ was removed.\n"
-                fi
-
-                if [ -d "$HOME/.cfg" ]; then
-                    rm -rf "$HOME/.cfg"
-                    something_was_removed=true
-                    printf ".cfg/ was removed.\n"
-                fi
-
-                if [ "$something_was_removed" = false ]; then
-                    printf "Nothing removed; target directories were not present.\n"
-                fi
+                check_for_and_remove_expected_repositories
                 ;;
             r)
                 printf "Checking for tracked files.\n"
-                if [ ! -d "$HOME/.cfg" ]; then
-                    error_exit "Error: .cfg directory does not exist. Cannot remove files."
-                fi
-                config ls-tree --full-tree -r --name-only HEAD | xargs rm
-                printf "Removed tracked files from %s based on existing .cfg.\n" "{$HOME}"
+                remove_tracked_files_and_empty_directories_when_done
+                printf "Removed tracked files from %s based on existing .cfg.\n" "$HOME"
                 ;;
             v)
-                printf " -- Gist Script Version %s -- %s installing rudimusmaximus/configDotFiles\n" "$cfg_installScriptVersion" "$0"
+                printf "\n -- Install Script Version %s -- %s from repo rudimusmaximus/configDotFiles\n\n" "$SCRIPT_VERSION" "$script_name"
                 ;;
             *)
                 printf "\n  Option does not exist: %s\n\n" "$OPTARG"
@@ -151,8 +205,7 @@ function run() {
     done
 
     shift $((OPTIND - 1))
-
-    printf "See you next time!\n"
+    printf "\nSee you next time!\n"
     exit 0
 }
 

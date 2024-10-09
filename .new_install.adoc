@@ -1,4 +1,10 @@
 = Journal of a fresh operating system
+:toc: left
+:icons: font
+:toclevels: 4
+:imagesdir: .adoc_images
+:source-highlighter: rouge
+:source-linenums-option: true
 
 == macOS
 
@@ -35,6 +41,9 @@ TODO udpate with links
 
 
 Commands
+[source,bash]
+----
+
 # Homebrew The Missing Package Manager for macOS (or Linux) but we will use dnf on Fedora
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
@@ -88,6 +97,8 @@ curl -sSf https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/h
 
 # restart or source .bashrc
 
+----
+
 
 == Managing runtimes
 having installed asdf
@@ -95,6 +106,9 @@ having installed asdf
 === nodejs
 see https://github.com/asdf-vm/asdf-nodejs
 install with
+[source,bash]
+----
+
 asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
 
 # Before checking for aliases, update nodebuild to check for newly releasead versions
@@ -109,14 +123,16 @@ asdf nodejs resolve lts --latest-installed
 # Outputs the latest version available for download which is a LTS
 asdf nodejs resolve lts --latest-available
 
-Install the latest available version
+# Install the latest available version
 asdf global nodejs latest
 
-we determined latest lts is 20.17.0
-SO, INSTALL TO ASDF
+# we determined latest lts is 20.17.0
+# SO, INSTALL TO ASDF
 asdf install nodejs 20.17.0
-then set the global nodejs to 20.17.0
+# then set the global nodejs to 20.17.0
 asdf global nodejs 20.17.0
+
+----
 
 === asdf plugins
 
@@ -127,25 +143,68 @@ Then click to the pligin repository and confirm installation
 So we ran :checkhealth in nvim to install what we needed. We needed luarocks wich neads lua 5.1 so
 There was one for Lua and one for LuaJIT we want lua for compatibility as JIT if for performance as it converts the code to binary in realtime.
 that site gave us
+
+[source,bash]
+----
+
 asdf plugin-add lua https://github.com/Stratus3D/asdf-lua.git
 
+----
+
 THEN use the general instructions for working with asdf language plugin
+
+[source,bash]
+----
+
 asdf list-all lua
+
+----
+
 this lists all the versions that we can install
+
+[source,bash]
+----
 
 asdf install lua 5.1
 asdf global lua 5.1
 
+----
+
 do the same after adding the following plugins but use the latest if not specified otherwise by healthcheck
 will add results when done by running
+
+[source,bash]
+----
+
 asdf plugin list --urls
+
+----
+
 SO ADD EACH repo, then use this pattern to install latest of the language or version you need
+
+[source,bash]
+----
+
 asdf install python latest
+
+----
+
 then global if not local in working directory of a project
+
+[source,bash]
+----
 asdf global python version you just installed
+----
 
 NOTE the link for python says asdf plugin install python without url oddly
+
+TODO STOP php was best simply installed with brew, unclear how many of the items installed along the way of errors in making asdf php work.
+
+[source,bash]
+----
 asdf plugin-add php https://github.com/asdf-community/asdf-php.git
+
+----
 
 note: check inside nvim :help provider-python
 make sure bat ~/.tool-versions shows you installed it globally
@@ -172,4 +231,21 @@ Satisfy nvim java and javac like this
 $ asdf install java adoptopenjdk-11.0.11+9
 $ asdf install java adoptopenjdk-17.0.2+8
 $ asdf global java adoptopenjdk-17.0.2+8
+
+== LEGAL NOTE
+
+Any use of this project's code by GitHub Copilot, past or present, is done
+without our permission.  We do not consent to GitHub's use of this project's
+code in Copilot.
+
+**We're Using GitHub Under Protest.** For our organization, we mostly use GitHub for private repositories.  We do not recommend it for public or open source work. This project is currently hosted on GitHub.  This is not ideal; GitHub is a
+proprietary, trade-secret system that is not Free and Open Souce Software(FOSS).  We are deeply concerned about using a proprietary system like GitHub
+to develop our FOSS projects.
+
+We urge you to read about the https://GiveUpGitHub.org[Give up GitHub campaign] from https://sfconservancy.org[the Software Freedom Conservancy] to understand
+some reasons why GitHub is not a good place to host FOSS projects.
+
+We are considering other options for any open source work we might do in the future.
+
+image::give_up_git_hub.png[caption="Figure 1: ", title="Logo of the GiveUpGitHub campaign", alt="GitHub character holding bag of money and crushing the words 'user rights'", width="300", height="200", link="http://www.flickr.com/photos/javh/5448336655"]
 
