@@ -5,7 +5,7 @@
 # o pipefail - script fails if one of piped command fails
 # x - output each line (debug)
 # Script version
-SCRIPT_VERSION="2.0.11"
+SCRIPT_VERSION="2.0.12"
 
 # Determine script name based on whether the script is run locally or remotely
 if [[ -f "$0" ]]; then
@@ -27,15 +27,17 @@ output_help() {
     printf "NOTE: RAW_CODE_URL is the GitHub SSH URL to the raw shell script.\n"
     printf "      https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_install.sh\n\n"
     printf "Usage:\n"
-    printf "  To run remotely: bash <(curl -sSf RAW_CODE_URL) [options]\n"
-    printf "  To run locally: bash %s [options]\n\n" "$script_name"
+    printf "  To run remotely:  bash <(curl -sSf RAW_CODE_URL) [options]\n"
+    printf "  To run locally :  bash .cfg_install.sh [options]\n\n"
     printf "Options:\n"
     printf "  -b       Basic install of bare repo into .cfg\n"
     printf "  -c       Clone configDotFiles repo into ~/configDotFiles for traditional workflow\n"
     printf "  -h       Display this message\n"
     printf "  -v       Display script version\n"
     printf "  -r       Remove existing dotfiles if .cfg is local - otherwise backed up during installs.\n"
-    printf "  -p       Prepare for reinstall. Remove existing cloned directories if present.\n"
+    printf "  -p       Prepare for reinstall. Remove existing cloned directories if present.\n\n"
+    printf "Maintenance after first install:\n"
+    printf "  cfgInstallScript       Alias for running script remotely. Just add [options].\n\n"
 }
 
 # Use 'config' function as a substitute for the 'git' command, scoped to this specific repository setup
