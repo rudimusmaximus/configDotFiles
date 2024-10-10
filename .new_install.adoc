@@ -10,20 +10,20 @@
 
 === So far
 
-After a fresh install. My usual setup is M1 max hardware with macOS and Fedora Asahi Remix. This log is on OCLP install of Sequioa on a late 2015 27" iMac.
+After a fresh install. My usual setup is for 'M1 Max' hardware with macOS and Fedora Asahi Remix. This log is on OCLP install of Sequoia on a late 2015 27" iMac.
 
 ==== Oct 1, 2024 Fresh install
 
-TODO udpate with links
-* Fresh install va Open Core Legacy Patcher 2.0.2
+TODO update with links
+* Fresh install vs Open Core Legacy Patcher 2.0.2
 * Safari only showing video at 1080, installed Brave; test video at 4k is fine; didn't test 5k yet.
-* Installed SwitchResX for screen rotation if needed (while screen sharing will not work in portrait as intended It works but not like you want); must use on imac standalone. This is ok if using ssh
+* Installed SwitchResX for screen rotation if needed (while screen sharing will not work in portrait as intended It works but not like you want); must use on iMac standalone. This is OK if using ssh
 * Using vi for this, let's fix that.
 
 ==== Oct 2, 2024 - setting up my dev flow
 
-* Installed my custom font from ilovetypography.com (comic code family); see icloud > Documents Order confirmation ILT-220517-36ab215.zip; unzip and use Font Book to add folder of license name and you are done. This is the font used by my terminal kitty w bash shell and customm nvim
-* Installed homebrew; go to https://brew.sh/ for latest info; see also https://docs.brew.sh
+* Installed my custom font from ilovetypography.com (comic code family); see iCloud > Documents Order confirmation ILT-220517-36ab215.zip; unzip and use Font Book to add folder of license name and you are done. This is the font used by my terminal kitty w bash shell and customm nvim
+* Installed Homebrew; go to https://brew.sh/ for latest info; see also https://docs.brew.sh
 * Created new ssh key for this machine and add it to your github account
   * see https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 * Install latest bash, add it to list of shells, set it as default shell
@@ -32,28 +32,27 @@ TODO udpate with links
 
 * Install tpm (tmux plugin manager) see https://github.com/tmux-plugins/tpm by cloning it
 * Do not clone tmuxifier (it is in our path in the dot files) as our tmux config will install it provided we install tpm and then dot files; source the dot files, run tmux and run a leader + I command.
-* install your own layouts we use tmuxi-layouts to ~/.tmuxifier_layouts
+* install your own layouts we use private tmuxi-layouts to ~/.tmuxifier_layouts 
 * review but for now our .extra exports a variable telling tmuxifier where to find layouts
 * also the .extra sets some bun related info for bun's binary lock files
 
-* Install rudimusMaximusConfigDotFiles
+* Install rudimusMaximus/ConfigDotFiles
 
-
-
-Commands
+=== Commands
 [source,bash]
 ----
-
 # Homebrew The Missing Package Manager for macOS (or Linux) but we will use dnf on Fedora
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # new key
 ssh-keygen -t ed25519 -C "raul@raulfloresjr.com"
+ssh-keygen -t ed25519 -C "raul@raulfloresjr.com" -f ~/.ssh/id_ed25519_imac
 eval "$(ssh-agent -s)"
 vi ~/.ssh/config
-ssh-add --apple-use-keychain ~/.ssh/id_ed25519
-pbcopy < ~/.ssh/id_ed25519.pub
-# ues your email, see setup for the config, and use the copy for adding new ssh to github (once for ssh and once for signing)
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519_imac
+pbcopy < ~/.ssh/id_ed25519_imac.pub
+
+# use your email, see setup for the config, and use the copy for adding new ssh to github (once for ssh and once for signing)
 
 # install latest bash with brew
 brew install bash
@@ -164,7 +163,7 @@ this lists all the versions that we can install
 
 [source,bash]
 ----
-
+try 5.1.5 as it's the latest 5.1 series and checkhealth wants 5.1 but doesn't specify more info
 asdf install lua 5.1
 asdf global lua 5.1
 
@@ -175,7 +174,7 @@ will add results when done by running
 
 [source,bash]
 ----
-
+asdf plugin-add python
 asdf plugin list --urls
 
 ----
@@ -186,6 +185,9 @@ SO ADD EACH repo, then use this pattern to install latest of the language or ver
 ----
 
 asdf install python latest
+asdf install python 3.12.7
+# or just install 3.12.7 watch out for experiments lik with t in the version for now
+# we just want nvim to be cool
 
 ----
 
@@ -210,27 +212,19 @@ note: check inside nvim :help provider-python
 make sure bat ~/.tool-versions shows you installed it globally
 it should after asdf global python 3.12.7 in our case
 Then at a terminal: "python -m pip install --user --upgrade pynvim"
-or python3 if you system doesn't see python both should -V to the version you installed
+or python3 if your system doesn't see python both should -V to the version you installed
 
-
-
-
-brew install autoconf libsodium bison re2c pkg-config gd icu4c fd
-
-
-asdf install php latest
-asdf global php latest
-
+be aware that brew can have openjdk and i don't think that's an issue and there is the mac one too so if you have issues study these facts.
 asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
 asdf install golang latest
 asdf global golang latest
 
 ==== java
-
+TOOD i believe we used brew's openjdk (see brew site search for java)
 Satisfy nvim java and javac like this
-$ asdf install java adoptopenjdk-11.0.11+9
-$ asdf install java adoptopenjdk-17.0.2+8
-$ asdf global java adoptopenjdk-17.0.2+8
+asdf plugin-add java https://github.com/halcyon/asdf-java.git
+asdf install java latest:adoptopenjdk-11
+asdf global java latest:adoptopenjdk-11
 
 == LEGAL NOTE
 
