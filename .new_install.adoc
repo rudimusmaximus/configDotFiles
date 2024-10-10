@@ -214,17 +214,20 @@ it should after asdf global python 3.12.7 in our case
 Then at a terminal: "python -m pip install --user --upgrade pynvim"
 or python3 if your system doesn't see python both should -V to the version you installed
 
-be aware that brew can have openjdk and i don't think that's an issue and there is the mac one too so if you have issues study these facts.
+==== golang
 asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
 asdf install golang latest
 asdf global golang latest
 
 ==== java
-TOOD i believe we used brew's openjdk (see brew site search for java)
-Satisfy nvim java and javac like this
+Be aware that brew can have openjdk and i don't think that's an issue and there is the mac one too so if you have issues study these facts.
+Let's satisfy nvim java and javac requirements like this with asdf:
+[source,bash]
+----
 asdf plugin-add java https://github.com/halcyon/asdf-java.git
 asdf install java latest:adoptopenjdk-11
 asdf global java latest:adoptopenjdk-11
+----
 
 == LEGAL NOTE
 
