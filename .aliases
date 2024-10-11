@@ -13,9 +13,9 @@ alias rcm_shared='cd "$RCM_SHARED"'
 # Reload edits to .bashrc
 alias sb='clear && source ~/.bash_profile'
 
-# updates for users of homebrew and one for homebrew and neovim nightly
-alias brewup='brew update && brew upgrade';
-alias brewupnvim='brew update && brew upgrade && brew upgrade --fetch-HEAD neovim';
+# refreshs for users of homebrew and one for homebrew and neovim nightly
+alias brewup='brew refresh && brew upgrade';
+alias brewupnvim='brew refresh && brew upgrade && brew upgrade --fetch-HEAD neovim';
 
 alias tm='tmux'
 alias tmls='tmux ls'
@@ -37,7 +37,7 @@ alias   config='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias      cfg='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias     cfgamend='echo "cfg commit --amend -S -m"; cfg commit --amend -S -m';
 alias     cfgb='cp ~/.extra ~/backup.extra';
-alias     cfgf='echo "Stop tracking .extra file"; config update-index --assume-unchanged .extra' # cfg forget .extra
+alias     cfgf='echo "Stop tracking .extra file"; config refresh-index --assume-unchanged .extra' # cfg forget .extra
 alias     cfgl='echo "\$CONFIG_DOT_FILES_GIT_COMMAND log --oneline"; cfg log --oneline' # try adding -10 or -5 for last few
 alias    cfgls='cfg ls-tree --full-tree -r --name-only HEAD' #list files in cconfigDotFiles repo
 alias     cfgs='echo "\$CONFIG_DOT_FILES_GIT_COMMAND status"; cfg status'
@@ -45,7 +45,7 @@ alias     cfgd='echo "\$CONFIG_DOT_FILES_GIT_COMMAND diff"; cfg diff'
 alias     cfgc='echo "\$CONFIG_DOT_FILES_GIT_COMMAND commit -S -m"; cfg commit -S -m'
 alias configlg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias    cfglg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
-alias     cfgu='echo "Stage changes to tracked cfg dot files"; cfg add --update';
+alias     cfgu='echo "Stage changes to tracked cfg dot files"; cfg add --refresh';
 
 # configDotFiles install script help
 # you can use this to also remove files and prepare for reinstall as you like
@@ -120,14 +120,14 @@ alias glg='/usr/bin/git --no-pager log --graph --pretty=oneline --abbrev-commit 
 alias gls='git ls-tree --full-tree -r --name-only HEAD' # list files in this project
 alias gs="git status"
 alias gt="git tag -l -n1"
-alias gu='echo "Stage changes to tracked repository files (ignores new files)."; git add --update'
+alias gu='echo "Stage changes to tracked repository files (ignores new files)."; git add --refresh'
 alias c="clear"
 
-#n special script shortcuts for manual install, update, removal of n
-alias nup="n-update -y"
+#n special script shortcuts for manual install, refresh, removal of n
+alias nup="n-refresh -y"
 
 #npm shortcuts
-alias appcheck="npx npm-check --skip-unused --update"
+alias appcheck="npx npm-check --skip-unused --refresh"
 
 #nnn shortcuts
 alias f="nnn" #start The unorthodox terminal file manager
@@ -184,8 +184,8 @@ alias spj='sort-package-json'
 alias fr='findAndReplaceBsd'
 alias frf='findAndReplaceBsdF'
 
-### Get macOS Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
-##alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
+### Get macOS Software refreshs, and update installed Ruby gems, Homebrew, npm, and their installed packages
+##alias refresh='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
 #
 ## Google Chrome
 #alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
@@ -337,4 +337,8 @@ alias recent='bun -b run ~/.bun_scripts/list_most_recent_files.mjs'
 
 # helper for keymaps related to completion in nvim and fzf usage in the terminal
 alias keymapsfuzzy='bun -b run ~/.bun_scripts/list_keymap_tips_fuzzy.mjs'
+
+# manage asdf neovim versions
+alias refresh-nvim-stable='asdf uninstall neovim stable && asdf install neovim stable'
+alias refresh-nvim-nightly='asdf uninstall neovim nightly && asdf install neovim nightly'
 

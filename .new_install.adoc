@@ -32,7 +32,7 @@ TODO update with links
 
 * Install tpm (tmux plugin manager) see https://github.com/tmux-plugins/tpm by cloning it
 * Do not clone tmuxifier (it is in our path in the dot files) as our tmux config will install it provided we install tpm and then dot files; source the dot files, run tmux and run a leader + I command.
-* install your own layouts we use private tmuxi-layouts to ~/.tmuxifier_layouts 
+* install your own layouts we use private tmuxi-layouts to ~/.tmuxifier_layouts
 * review but for now our .extra exports a variable telling tmuxifier where to find layouts
 * also the .extra sets some bun related info for bun's binary lock files
 
@@ -227,6 +227,27 @@ Let's satisfy nvim java and javac requirements like this with asdf:
 asdf plugin-add java https://github.com/halcyon/asdf-java.git
 asdf install java latest:adoptopenjdk-11
 asdf global java latest:adoptopenjdk-11
+----
+
+==== Neovim
+Use nightly and fallback is just to set the stable version to global.
+[source,bash]
+----
+asdf plugin install neovim
+
+asdf install neovim stable
+asdf install neovim nightly
+
+asdf global neovim stable
+# or
+asdf global neovim nightly
+----
+
+Also, make use of the new aliases for this.
+[source,bash]
+----
+alias update-nvim-stable='asdf uninstall neovim stable && asdf install neovim stable'
+alias update-nvim-nightly='asdf uninstall neovim nightly && asdf install neovim nightly'
 ----
 
 == LEGAL NOTE
