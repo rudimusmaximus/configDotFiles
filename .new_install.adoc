@@ -39,13 +39,13 @@ TODO update with links
 * Install rudimusMaximus/ConfigDotFiles
 
 === Commands
+
 [source,bash]
 ----
 # Homebrew The Missing Package Manager for macOS (or Linux) but we will use dnf on Fedora
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # new key
-ssh-keygen -t ed25519 -C "raul@raulfloresjr.com"
 ssh-keygen -t ed25519 -C "raul@raulfloresjr.com" -f ~/.ssh/id_ed25519_imac
 eval "$(ssh-agent -s)"
 vi ~/.ssh/config
@@ -53,6 +53,19 @@ ssh-add --apple-use-keychain ~/.ssh/id_ed25519_imac
 pbcopy < ~/.ssh/id_ed25519_imac.pub
 
 # use your email, see setup for the config, and use the copy for adding new ssh to github (once for ssh and once for signing)
+# also in your .extra add the key you created using the same key file name
+[source,bash]
+----
+# Ensure the SSH agent is running
+if [ -z "$SSH_AUTH_SOCK" ]; then
+  eval "$(ssh-agent -s)"
+fi
+
+# Add SSH key to agent using macOS Keychain
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519_imac 2>/dev/null
+# note that the same key file name does not mean same key (setup up each machines key for access and for signing)
+# include a suffix to make clear the machines are different
+----
 
 # install latest bash with brew
 brew install bash
@@ -103,11 +116,15 @@ curl -sSf https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/h
 having installed asdf
 
 === nodejs
+
+TODO make some helper functions to manage the state of lts changes and installation and
+remond curent state of node so user can manage. but make the updates and availability
+of installed lts versions smoothly automated
 see https://github.com/asdf-vm/asdf-nodejs
-install with
+
+.commands for installing nodejs (node - each version comes with it's npm but we use bun pm for that)
 [source,bash]
 ----
-
 asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
 
 # Before checking for aliases, update nodebuild to check for newly releasead versions
@@ -130,7 +147,6 @@ asdf global nodejs latest
 asdf install nodejs 20.17.0
 # then set the global nodejs to 20.17.0
 asdf global nodejs 20.17.0
-
 ----
 
 === asdf plugins
@@ -166,7 +182,6 @@ this lists all the versions that we can install
 try 5.1.5 as it's the latest 5.1 series and checkhealth wants 5.1 but doesn't specify more info
 asdf install lua 5.1
 asdf global lua 5.1
-
 ----
 
 do the same after adding the following plugins but use the latest if not specified otherwise by healthcheck
@@ -205,7 +220,6 @@ TODO STOP php was best simply installed with brew, unclear how many of the items
 [source,bash]
 ----
 asdf plugin-add php https://github.com/asdf-community/asdf-php.git
-
 ----
 
 note: check inside nvim :help provider-python
@@ -215,13 +229,18 @@ Then at a terminal: "python -m pip install --user --upgrade pynvim"
 or python3 if your system doesn't see python both should -V to the version you installed
 
 ==== golang
+[source,bash]
+----
 asdf plugin add golang https://github.com/asdf-community/asdf-golang.git
 asdf install golang latest
 asdf global golang latest
+----
 
 ==== java
+
 Be aware that brew can have openjdk and i don't think that's an issue and there is the mac one too so if you have issues study these facts.
 Let's satisfy nvim java and javac requirements like this with asdf:
+
 [source,bash]
 ----
 asdf plugin-add java https://github.com/halcyon/asdf-java.git
@@ -230,20 +249,21 @@ asdf global java latest:adoptopenjdk-11
 ----
 
 ==== Neovim
+
 Use nightly and fallback is just to set the stable version to global.
+
 [source,bash]
 ----
-asdf plugin install neovim
-
+asdf plugin add neovim
 asdf install neovim stable
 asdf install neovim nightly
-
 asdf global neovim stable
 # or
 asdf global neovim nightly
 ----
 
-Also, make use of the new aliases for this.
+Also, make use of the new aliases for this. Already in the dot files.
+
 [source,bash]
 ----
 alias update-nvim-stable='asdf uninstall neovim stable && asdf install neovim stable'

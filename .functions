@@ -264,3 +264,16 @@ function print_sorted_env() {
   bun --print process.env | sort
 }
 
+# Assumes you have .cfg AND in configDotFiles locally
+# Pulls and updates both configDotFiles and .cfg
+# Call from anywhere is fine
+function update_dotfiles() {
+  # First, run cfg pull
+  cfg pull
+  cfgl -3
+
+  # Then, navigate to the configDotFiles directory and run git pull
+  (cd "$HOME/configDotFiles" && git pull)
+  gl -3
+}
+

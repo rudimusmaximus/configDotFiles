@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # non-login, interactive shell
 
+# Enable vi mode for Bash
+set -o vi
+
 declare -a rc_config_files=(
     "${HOME}/.bash_prompt"
     "${HOME}/.aliases"
