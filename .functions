@@ -273,7 +273,33 @@ function update_dotfiles() {
   cfgl -3
 
   # Then, navigate to the configDotFiles directory and run git pull
-  (cd "$HOME/configDotFiles" && git pull)
+  cd "$HOME/configDotFiles" ||
+    { echo "Failed to change directory to $HOME/configDotFiles"; return 1; }
+
+  # Pull the latest changes from the repository
+  git pull
+
+  # Run 'gl -3' after pulling (assuming 'gl' is a custom alias/function)
   gl -3
 }
 
+# outputs a sorted, combined list of functions and aliases
+# that are in the .functions and .aliases files in the home directory
+# can be used to pipe to fzf to quickly find bash functions and aliases.
+fanda() {
+  # Define the files to read from
+  ALIAS_FILE="$HOME/.aliases"
+  FUNCTIONS_FILE="$HOME/.functions"
+
+  # Check if the files exist
+  if [[ ! -f "$ALIAS_FILE" && ! -f "$FUNCTIONS_FILE" ]]; then
+    echo "Neither .aliases nor .functions file exists in the home directory."
+    return 1
+  fi
+
+  # Output the combined and sorted content
+  {
+    [[ -f "$ALIAS_FILE" ]] && cat "$ALIAS_FILE"
+    [[ -f "$FUNCTIONS_FILE" ]] && cat "$FUNCTIONS_FILE"
+  } | sort | fzf
+}
