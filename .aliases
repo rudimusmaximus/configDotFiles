@@ -17,6 +17,7 @@ alias sb='clear && source ~/.bash_profile'
 alias brewup='brew refresh && brew upgrade';
 alias brewupnvim='brew refresh && brew upgrade && brew upgrade --fetch-HEAD neovim';
 
+alias n='nvim'
 alias tm='tmux'
 alias tmls='tmux ls'
 alias tma='tmux attach -t'
@@ -33,19 +34,19 @@ alias lg='lazygit'
 alias configDotFiles='tx s configDotFiles'
 
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
-alias   config='$CONFIG_DOT_FILES_GIT_COMMAND';
-alias      cfg='$CONFIG_DOT_FILES_GIT_COMMAND';
-alias     cfgamend='echo "cfg commit --amend -S -m"; cfg commit --amend -S -m';
-alias     cfgb='cp ~/.extra ~/backup.extra';
-alias     cfgf='echo "Stop tracking .extra file"; config refresh-index --assume-unchanged .extra' # cfg forget .extra
-alias     cfgl='echo "\$CONFIG_DOT_FILES_GIT_COMMAND log --oneline"; cfg log --oneline' # try adding -10 or -5 for last few
-alias    cfgls='cfg ls-tree --full-tree -r --name-only HEAD' #list files in cconfigDotFiles repo
-alias     cfgs='echo "\$CONFIG_DOT_FILES_GIT_COMMAND status"; cfg status'
-alias     cfgd='echo "\$CONFIG_DOT_FILES_GIT_COMMAND diff"; cfg diff'
-alias     cfgc='echo "\$CONFIG_DOT_FILES_GIT_COMMAND commit -S -m"; cfg commit -S -m'
+alias config='$CONFIG_DOT_FILES_GIT_COMMAND';
+alias cfg='$CONFIG_DOT_FILES_GIT_COMMAND';
+alias cfgamend='echo "cfg commit --amend -S -m"; cfg commit --amend -S -m';
+alias cfgb='cp ~/.extra ~/backup.extra';
+alias cfgf='echo "Stop tracking .extra file"; config refresh-index --assume-unchanged .extra' # cfg forget .extra
+alias cfgl='echo "\$CONFIG_DOT_FILES_GIT_COMMAND log --oneline"; cfg log --oneline' # try adding -10 or -5 for last few
+alias cfgls='cfg ls-tree --full-tree -r --name-only HEAD' #list files in cconfigDotFiles repo
+alias cfgs='echo "\$CONFIG_DOT_FILES_GIT_COMMAND status"; cfg status'
+alias cfgd='echo "\$CONFIG_DOT_FILES_GIT_COMMAND diff"; cfg diff'
+alias cfgc='echo "\$CONFIG_DOT_FILES_GIT_COMMAND commit -S -m"; cfg commit -S -m'
 alias configlg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
-alias    cfglg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
-alias     cfgu='echo "Stage changes to tracked cfg dot files"; cfg add --refresh';
+alias cfglg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
+alias cfgu='echo "Stage changes to tracked cfg dot files"; cfg add --refresh';
 
 # configDotFiles install script help
 # you can use this to also remove files and prepare for reinstall as you like
@@ -80,7 +81,7 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ~=go_home # see .functions
-alias -- -='echo "Now in previous location"; cd -' # back to previous directory
+alias -- -='echo "Now in previous location via cd -"; cd -' # back to previous directory
 
 # SHORTCUTS
 alias x="exit"
@@ -127,7 +128,8 @@ alias c="clear"
 alias nup="n-refresh -y"
 
 #npm shortcuts
-alias appcheck="npx npm-check --skip-unused --refresh"
+alias appcheck="bx npm-check --refresh"
+alias appup="ncu --interactive --format group" # great list of updates grouped by patch, minor, major (DON'T use npm updates) see bun update or outdated
 
 #nnn shortcuts
 alias f="nnn" #start The unorthodox terminal file manager
