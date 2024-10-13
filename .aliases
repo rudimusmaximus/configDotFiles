@@ -116,9 +116,12 @@ alias gall='echo "Stage all new, modified, and deleted files in the current dire
 alias gc="git commit -S -m"
 alias gctemplate="cat ~/.gitmessage.txt"
 alias gd="git diff"
+alias gf="git fetch"
 alias gl="git log --oneline"
 alias glg='/usr/bin/git --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias gls='git ls-tree --full-tree -r --name-only HEAD' # list files in this project
+alias gP="git push"
+alias gp="git pull"
 alias gs="git status"
 alias gt="git tag -l -n1"
 alias gu='echo "Stage changes to tracked repository files (ignores new files)."; git add --refresh'
