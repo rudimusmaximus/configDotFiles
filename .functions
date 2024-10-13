@@ -193,7 +193,7 @@ cfgstash() {
     # ----------------------------
 
     # Log the start of the operation
-    log_message "Starting cfgstash operation." LOG_FILE
+    log_message "Starting cfgstash operation." "$LOG_FILE"
 
     # ----------------------------
     # Stash Operations
@@ -205,15 +205,15 @@ cfgstash() {
 
     # Analyze stash outcome
     if [ $STASH_STATUS -eq 0 ]; then
-        log_message "Git stash successful with message: \"$STASH_MESSAGE\"." LOG_FILE
+        log_message "Git stash successful with message: \"$STASH_MESSAGE\"." "$LOG_FILE"
         echo "Git stash successful."
     elif [ $STASH_STATUS -eq 1 ]; then
         # Exit status 1 typically means there were no changes to stash
-        log_message "Git stash: No local changes to save." LOG_FILE
+        log_message "Git stash: No local changes to save." "$LOG_FILE"
         echo "No local changes to stash."
     else
         # Any other exit status indicates an error
-        log_message "Git stash failed with exit status $STASH_STATUS." LOG_FILE
+        log_message "Git stash failed with exit status $STASH_STATUS." "$LOG_FILE"
         echo "Error: Git stash failed with exit status $STASH_STATUS."
     fi
 
@@ -223,20 +223,20 @@ cfgstash() {
 
     # Check if .extra exists before attempting to copy
     if [ -f "$EXTRA_FILE" ]; then
-        # Attempt to copy .extra to the timestamped backup file
+        # Attempt to copy .extra to the time stamped backup file
         cp "$EXTRA_FILE" "$BACKUP_FILE" 2>&1
         local COPY_STATUS=$?
 
         if [ $COPY_STATUS -eq 0 ]; then
             echo ".extra has been successfully backed up to $BACKUP_FILE."
-            log_message "Successfully backed up .extra to $BACKUP_FILE." LOG_FILE
+            log_message "Successfully backed up .extra to $BACKUP_FILE." "$LOG_FILE"
         else
             echo "Error: Failed to create backup of .extra. Please check file permissions and paths."
-            log_message "Error: Failed to create backup of .extra to $BACKUP_FILE." LOG_FILE
+            log_message "Error: Failed to create backup of .extra to $BACKUP_FILE." "$LOG_FILE"
         fi
     else
         echo "Warning: .extra file does not exist. No backup created."
-        log_message "Warning: .extra file does not exist at $EXTRA_FILE. No backup created." LOG_FILE
+        log_message "Warning: .extra file does not exist at $EXTRA_FILE. No backup created." "$LOG_FILE"
     fi
 
     # ----------------------------
@@ -245,22 +245,22 @@ cfgstash() {
 
     if [ "$STASH_STATUS" -eq 0 ] && [ "$COPY_STATUS" -eq 0 ]; then
         echo "cfgstash operation completed successfully."
-        log_message "cfgstash operation completed successfully." LOG_FILE
+        log_message "cfgstash operation completed successfully." "$LOG_FILE"
     elif [ "$STASH_STATUS" -eq 0 ] && [ "$COPY_STATUS" -ne 0 ]; then
         echo "cfgstash operation completed with errors during backup."
-        log_message "cfgstash operation completed with errors during backup." LOG_FILE
+        log_message "cfgstash operation completed with errors during backup." "$LOG_FILE"
     elif [ "$STASH_STATUS" -eq 1 ] && [ "$COPY_STATUS" -eq 0 ]; then
         echo "cfgstash operation completed successfully (no changes to stash)."
-        log_message "cfgstash operation completed successfully (no changes to stash)." LOG_FILE
+        log_message "cfgstash operation completed successfully (no changes to stash)." "$LOG_FILE"
     elif [ "$STASH_STATUS" -eq 1 ] && [ "$COPY_STATUS" -ne 0 ]; then
         echo "cfgstash operation had no changes to stash and encountered errors during backup."
-        log_message "cfgstash operation had no changes to stash and encountered errors during backup." LOG_FILE
+        log_message "cfgstash operation had no changes to stash and encountered errors during backup." "$LOG_FILE"
     elif [ "$STASH_STATUS" -ne 0 ] && [ "$COPY_STATUS" -eq 0 ]; then
         echo "cfgstash operation failed during stash but backup was successful."
-        log_message "cfgstash operation failed during stash but backup was successful." LOG_FILE
+        log_message "cfgstash operation failed during stash but backup was successful." "$LOG_FILE"
     else
         echo "cfgstash operation failed during stash and backup."
-        log_message "cfgstash operation failed during stash and backup." LOG_FILE
+        log_message "cfgstash operation failed during stash and backup." "$LOG_FILE"
     fi
 }
 
@@ -273,11 +273,12 @@ print_sorted_env() {
 # Pulls and updates both configDotFiles and .cfg
 # Call from anywhere is fine
 update_dotfiles() {
+  printf "Pulling latest changes from remote for .cfg/ ...updating working directory HOME directory.\n"
   # First, run cfg pull
   cfg pull
   cfgl -3
 
-  # Then, navigate to the configDotFiles directory and run git pull
+  printf "Done.\nNow cd to ~/configDotFiles and pull latest changes\n" 
   cd "$HOME/configDotFiles" ||
     { echo "Failed to change directory to $HOME/configDotFiles"; return 1; }
 
