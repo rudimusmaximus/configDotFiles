@@ -110,11 +110,30 @@ configDotFiles
 # When done, move to your home directory
 # and pull to get the latest from origin main
 cfg pull
-
 ----
 
 The included ./.lazygit_config_template.yml is a template for lazygit and has instructions via comment inside that file. The cool part for this is that in diff view inside lazygit you can click on a file's line number and edit the file at that location in your configured $EDITOR.
-TODO include setting up Delta in lazygit
+
+As long as you brew install git-delta, the .extra file can be edited to create the recommended detla settings for your .gitconfig
+
+.Section for configuring git-delta from your .extra file
+[source,bash]
+----
+# This section makes delta the default pager for Git (expects available via brew install git-delta)
+# See https://github.com/dandavison/delta
+# Setting Git configuration for delta and related diff options
+git config --global core.pager delta
+
+git config --global interactive.diffFilter "delta --color-only"
+
+git config --global delta.navigate true       # use n and N to move between diff sections
+git config --global delta.light false         # set to true if you're in a terminal with a light background
+git config --global delta.line-numbers true
+
+git config --global merge.conflictstyle diff3
+
+git config --global diff.colorMoved default
+----
 
 === '.extra' file
 
