@@ -14,8 +14,7 @@ alias rcm_shared='cd "$RCM_SHARED"'
 alias sb='clear && source ~/.bash_profile'
 
 # refreshs for users of homebrew and one for homebrew and neovim nightly
-alias brewup='brew refresh && brew upgrade';
-alias brewupnvim='brew refresh && brew upgrade && brew upgrade --fetch-HEAD neovim';
+alias brewup='brew upgrade';
 
 alias n='nvim'
 alias tm='tmux'
