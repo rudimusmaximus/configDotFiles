@@ -278,7 +278,7 @@ update_dotfiles() {
   cfg pull
   cfgl -3
 
-  printf "Done.\nNow cd to ~/configDotFiles and pull latest changes\n" 
+  printf "Done.\nNow cd to ~/configDotFiles and pull latest changes\n"
   cd "$HOME/configDotFiles" ||
     { echo "Failed to change directory to $HOME/configDotFiles"; return 1; }
 
@@ -310,3 +310,56 @@ fna() {
   } | sort
 }
 
+# Ensure the SSH agent is running and add the SSH key (so users don't have to enter their password each time)
+# works in conjunction with git settings set in .extra
+prime_ssh() {
+    # Check if SSH_IDENTITY_FILE is set
+    if [ -z "$SSH_IDENTITY_FILE" ]; then
+        echo "Error: SSH_IDENTITY_FILE is not set."
+        echo "Please declare the SSH_IDENTITY_FILE in this computer's .extra file."
+        echo "This setting is not included in the configDotFiles repository."
+        echo "See the configDotFiles repository's README for instructions."
+        return 1
+    fi
+
+    # Check if the SSH agent is already running
+    if [ -z "$SSH_AUTH_SOCK" ]; then
+        echo "Starting SSH agent..."
+        eval "$(ssh-agent -s)"
+    else
+        echo "SSH agent is already running."
+    fi
+
+    # Detect OS and add SSH key accordingly
+    if [[ "$(uname)" == "Darwin" ]]; then
+        echo "Running on macOS, adding SSH key to macOS keychain..."
+        if ! ssh-add --apple-use-keychain "$SSH_IDENTITY_FILE"; then
+            echo "Error: Failed to add SSH key to macOS keychain."
+        fi
+    elif [[ -f /etc/os-release ]]; then
+        # Ensure /etc/os-release exists before sourcing it
+        if ! source /etc/os-release 2>/dev/null; then
+            echo "Error: Failed to source /etc/os-release."
+            return 1
+        fi
+        case "$ID" in
+            "fedora")
+                echo "Running on Fedora, adding SSH key..."
+                if ! ssh-add "$SSH_IDENTITY_FILE"; then
+                    echo "Error: Failed to add SSH key on Fedora."
+                fi
+                ;;
+            "ubuntu"|"debian")
+                echo "Running on $ID, adding SSH key..."
+                if ! ssh-add "$SSH_IDENTITY_FILE"; then
+                    echo "Error: Failed to add SSH key on $ID."
+                fi
+                ;;
+            *)
+                echo "Unrecognized Linux distribution, manual SSH setup may be required."
+                ;;
+        esac
+    else
+        echo "/etc/os-release not found. Unrecognized OS, manual SSH setup may be required."
+    fi
+}
