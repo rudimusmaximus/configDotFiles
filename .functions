@@ -337,7 +337,6 @@ prime_ssh() {
             echo "Error: Failed to add SSH key to macOS keychain."
         fi
     elif [[ -f /etc/os-release ]]; then
-        # Ensure /etc/os-release exists before sourcing it
         if ! source /etc/os-release 2>/dev/null; then
             echo "Error: Failed to source /etc/os-release."
             return 1
@@ -363,3 +362,42 @@ prime_ssh() {
         echo "/etc/os-release not found. Unrecognized OS, manual SSH setup may be required."
     fi
 }
+
+# Debug using bun using selected set of files (one or more)
+# temp file is destroyed after bun completes
+# during debut click on link to open browser in debug mode break at first line
+debug() {
+  # Check if at least one file is provided
+  if [[ $# -eq 0 ]]; then
+    echo "Please provide one or more files to debug."
+    return 1
+  fi
+
+  # Define the path to a fixed temporary file
+  local temp_file="/tmp/combined_code_debug.js"
+
+  # Concatenate the provided files into the temporary file, overwriting if it exists
+  cat "$@" > "$temp_file"
+
+  # Run Bun with --inspect-brk on the temporary file
+  bun --inspect-brk "$temp_file"
+}
+
+# better than type function name do this to see syntax highlighted function
+batfunc() {
+  # Check if a function name was provided
+  if [[ -z $1 ]]; then
+    echo "Usage: showfunc function_name"
+    return 1
+  fi
+
+  # Check if the function exists
+  if declare -F "$1" > /dev/null; then
+    # Output the function definition with syntax highlighting using bat
+    declare -f "$1" | bat -l bash
+  else
+    echo "Function '$1' not found."
+    return 1
+  fi
+}
+
