@@ -401,3 +401,32 @@ batfunc() {
   fi
 }
 
+# Function to display alias with syntax highlighting
+batalias ()
+{
+    if [[ -z $1 ]]; then
+        echo "Usage: batalias alias_name";
+        return 1;
+    fi;
+    if alias "$1" &> /dev/null; then
+        alias "$1" | bat -l bash;
+    else
+        echo "Alias '$1' not found.";
+        return 1;
+    fi
+}
+
+# Function to display syntax-highlighted content of a shell script file
+batshell ()
+{
+    if [[ -z $1 ]]; then
+        echo "Usage: batshell file_path";
+        return 1;
+    fi;
+    if [[ -f $1 ]]; then
+        bat -l bash "$1";
+    else
+        echo "File '$1' not found.";
+        return 1;
+    fi
+}
