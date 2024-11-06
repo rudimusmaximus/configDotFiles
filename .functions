@@ -430,3 +430,19 @@ batshell ()
         return 1;
     fi
 }
+
+# Function to display syntax-highlighted content of a text file
+# Usage: batl language file_path
+batl ()
+{
+    if [[ -z $1 || -z $2 ]]; then
+        echo "Usage: batl language file_path";
+        return 1;
+    fi;
+    if [[ -f $2 ]]; then
+        bat -l "$1" "$2";
+    else
+        echo "File '$2' not found.";
+        return 1;
+    fi
+}
