@@ -10,16 +10,35 @@
 (defcfg
   process-unmapped-keys yes
 )
+
 (defsrc
   caps a   s   d   f   j   k   l   ;
 )
-(defvar
-  ;; Note: consider using different time values for your different fingers.
-  ;; For example, your pinkies might be slower to release keys and index
-  ;; fingers faster.
-  tap-time 200
-  hold-time 150
 
+(deflayer base
+  @caps @a  @s  @d  @f  @j  @k  @l  @;
+)
+
+(deflayer nomods
+  caps a   s   d   f   j   k   l   ;
+)
+
+(deffakekeys
+  to-base (layer-switch base)
+)
+
+(defvar
+  ;; Adjust times based on finger speed and key position
+  pinky-tap-time 240
+  pinky-hold-time 190
+  ring-tap-time 240
+  ring-hold-time 190
+  middle-tap-time 200
+  middle-hold-time 150
+  index-tap-time 200
+  index-hold-time 150
+
+  ;; Key mappings divided by hand and finger speed
   left-hand-keys (
     q w e r t
     a s d f g
@@ -31,29 +50,24 @@
     n m , . /
   )
 )
-(deflayer base
-  @caps @a  @s  @d  @f  @j  @k  @l  @;
-)
 
-(deflayer nomods
-  caps a   s   d   f   j   k   l   ;
-)
-(deffakekeys
-  to-base (layer-switch base)
-)
 (defalias
   tap (multi
-    (layer-switch nomods)
-    (on-idle-fakekey to-base tap 20)
-  )
+      (layer-switch nomods)
+      (on-idle-fakekey to-base tap 20)
+    )
 
-  caps (tap-hold $tap-time $hold-time esc lctl) ;; Caps Lock as Escape/Control
-  a (tap-hold-release-keys $tap-time $hold-time (multi a @tap) lmet $left-hand-keys)
-  s (tap-hold-release-keys $tap-time $hold-time (multi s @tap) lalt $left-hand-keys)
-  d (tap-hold-release-keys $tap-time $hold-time (multi d @tap) lsft $left-hand-keys)
-  f (tap-hold-release-keys $tap-time $hold-time (multi f @tap) lctl $left-hand-keys)
-  j (tap-hold-release-keys $tap-time $hold-time (multi j @tap) rctl $right-hand-keys)
-  k (tap-hold-release-keys $tap-time $hold-time (multi k @tap) lsft $right-hand-keys)
-  l (tap-hold-release-keys $tap-time $hold-time (multi l @tap) ralt $right-hand-keys)
-  ; (tap-hold-release-keys $tap-time $hold-time (multi ; @tap) rmet $right-hand-keys)
+  caps (tap-hold $index-tap-time $index-hold-time esc lctl) ;; Caps Lock as Escape/Control
+
+  ;; Adjust timing based on specific fingers
+  a (tap-hold-release-keys $ring-tap-time $ring-hold-time (multi a @tap) lmet $left-hand-keys)
+  s (tap-hold-release-keys $middle-tap-time $middle-hold-time (multi s @tap) lalt $left-hand-keys)
+  d (tap-hold-release-keys $index-tap-time $index-hold-time (multi d @tap) lsft $left-hand-keys)
+  f (tap-hold-release-keys $index-tap-time $index-hold-time (multi f @tap) lctl $left-hand-keys)
+
+  j (tap-hold-release-keys $index-tap-time $index-hold-time (multi j @tap) rctl $right-hand-keys)
+  k (tap-hold-release-keys $middle-tap-time $middle-hold-time (multi k @tap) rsft $right-hand-keys)
+  l (tap-hold-release-keys $ring-tap-time $ring-hold-time (multi l @tap) ralt $right-hand-keys)
+  ; (tap-hold-release-keys $pinky-tap-time $pinky-hold-time (multi ; @tap) rmet $right-hand-keys)
 )
+
