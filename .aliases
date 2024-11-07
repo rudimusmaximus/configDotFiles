@@ -13,8 +13,8 @@ alias rcm_shared='cd "$RCM_SHARED"'
 # start kanata session for our custom home mod setup see dotfiles in .config/kanata
 # assumes asdf installed rust and cargo installed kanata and correct version of karabiner library and
 # other security settings (see repo jtroo.kanata)
-alias sk='tmux new-session -s kanata_session "sudo /Users/rudimusmaximus/.asdf/shims/kanata -c /Users/rudimusmaximus/.config/kanata/home_row_mod_advanced.kbd"'
-alias start_kanata='tmux new-session -s kanata_session "sudo /Users/rudimusmaximus/.asdf/shims/kanata -c /Users/rudimusmaximus/.config/kanata/home_row_mod_advanced.kbd"'
+alias sk='tmux new-session -s kanata_session "sudo $KANATA_PATH -c $KANATA_CONFIG_PATH"'
+alias start_kanata='tmux new-session -s kanata_session "sudo $KANATA_PATH -c $KANATA_CONFIG_PATH"'
 
 # Reload edits to .bashrc
 alias sb='clear && source ~/.bash_profile'
