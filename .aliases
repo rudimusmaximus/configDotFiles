@@ -36,7 +36,7 @@ alias txla='tmuxifier list'
 
 # lazygit
 alias lg='lazygit'
-alias configDotFiles='tx s configDotFiles'
+alias configDotFiles='tx s config_dot_files'
 
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias config='$CONFIG_DOT_FILES_GIT_COMMAND';
