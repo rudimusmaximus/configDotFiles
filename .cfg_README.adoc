@@ -14,6 +14,13 @@ If already installed, this file is from the bare repo installed in .cfg folder i
 
 Have a repo from which to setup any new macOS or Linux shell environment with familiar cli experience.
 
+=== Tested on
+
+* Bash shell
+* Kitty terminal
+* macOS Intel and M1 max
+* Linux (Fedora Asahi Remix on M1 max)
+
 === How it works
 
 Run the script under To Use section. The files from the repo are copied to your $HOME directory.

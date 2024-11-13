@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
+# login to new session (local or ssh into machine)
+# note also sources .bashrc; also, exports are done once here and available thereafter
 
-# * ~/.path can be used to extend `$PATH`.
-# * ~/.extra can be used for other settings you don’t want to commit.
+# The things we nee once per session, in preferred order
 declare -a profile_config_files=(
-    "${HOME}/.path"
-    "${HOME}/.extra"
-    "${HOME}/.exports"
+    "${HOME}/.path"     # Can be used to extend `$PATH`
+    "${HOME}/.extra"    # Can be used for machine specific or secret settings
+    "${HOME}/.bashrc"   # Prompt, alias, functions, keybindings, etc
+    "${HOME}/.multiple_runtime_version_management"
+    "${HOME}/.exports"  # Set environment variables including default editor
+    "${HOME}/.greeting" # fastfetch if available
+    "${HOME}/.prerequisite_check" # expected packages or apps TODO grow to simplify new machine setup
 )
 
 for file in "${profile_config_files[@]}"; do
@@ -15,49 +20,4 @@ for file in "${profile_config_files[@]}"; do
     fi
 done
 unset file
-
-# shellcheck source=/dev/null
-if [[ $TERM_PROGRAM == "iTerm.app" ]]; then
-    test -e "${HOME}/.iterm2_shell_integration.bash" &&
-        source "${HOME}/.iterm2_shell_integration.bash"
-fi
-
-# Display diagnostic as greeting if available
-# Check if fastfetch is available
-if command -v fastfetch >/dev/null; then
-    fastfetch;
-else
-    printf "\nFastfetch is not installed. https://github.com/fastfetch-cli/fastfetch\nPlease install to start with diagnostics.\n"
-fi
-
-# asdf settings
-# Configure asdf last (see https://asdf-vm.com/guide/getting-started.html)
-# User urls when installing plugins see https://github.com/asdf-vm/asdf-plugins?tab=readme-ov-file#plugin-list
-# Check if asdf is cloned in $HOME/.asdf
-if [ -d "$HOME/.asdf" ]; then
-  # Initialize asdf
-  # shellcheck source=/dev/null
-  source "$HOME/.asdf/asdf.sh"
-  # shellcheck source=/dev/null
-  source "$HOME/.asdf/completions/asdf.bash"
-  
-  # Set GOROOT for go (golang installed by asdf used by nvim)
-  if asdf where golang >/dev/null 2>&1; then
-    export GOROOT="$(asdf where golang)"
-  else
-    printf "golang is not installed with asdf.\n"
-  fi
-else
-  # Provide message for installing asdf properly
-  printf "asdf is not installed; you should clone the repo as it has a command for updates.\n"
-  printf "On updates, run 'exec \$SHELL' or restart your shell.\n"
-  printf "Visit https://asdf-vm.com/guide/getting-started.html#official-download.\n"
-fi
-
-# Ensure sourced in both interactive and non-interactive shells, including SSH sessions
-# Prompt, alias, functions
-# shellcheck source=/dev/null
-source "${HOME}/.bashrc"
-
-eval "$(tmuxifier init -)"
 

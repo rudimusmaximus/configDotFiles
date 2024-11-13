@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Verify node is available after initializing asdf
+if ! command -v node > /dev/null; then
+  echo "Warning: Node.js is not available in this session. Please check your asdf configuration or node installation."
+fi
+

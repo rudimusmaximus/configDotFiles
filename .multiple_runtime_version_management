@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# asdf settings
+# Configure asdf last (see https://asdf-vm.com/guide/getting-started.html)
+# User urls when installing plugins see https://github.com/asdf-vm/asdf-plugins?tab=readme-ov-file#plugin-list
+# Check if asdf is cloned in $HOME/.asdf
+if [ -d "$HOME/.asdf" ]; then
+  # Initialize asdf
+  # shellcheck source=/dev/null
+  source "$HOME/.asdf/asdf.sh"
+  # shellcheck source=/dev/null
+  source "$HOME/.asdf/completions/asdf.bash"
+
+  # Set GOROOT for go (golang installed by asdf used by nvim)
+  if asdf where golang >/dev/null 2>&1; then
+    export GOROOT
+    GOROOT="$(asdf where golang)"
+  else
+    printf "golang is not installed with asdf.\n"
+  fi
+else
+  # Provide message for installing asdf properly
+  printf "asdf is not installed; you should clone the repo as it has a command for updates.\n"
+  printf "On updates, run 'exec \$SHELL' or restart your shell.\n"
+  printf "Visit https://asdf-vm.com/guide/getting-started.html#official-download.\n"
+fi
+
