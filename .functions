@@ -446,3 +446,11 @@ batl ()
         return 1;
     fi
 }
+
+# Update the tpm project (tmux plugin manager); note for plugins, from tmux session
+# use leader + U to update the plugins which include tmuxifier
+# though some may want to manage that at the system level
+function tpmup() {
+    (cd ~/.tmux/plugins/tpm && git pull)
+}
+
