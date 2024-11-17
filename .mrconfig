@@ -1,0 +1,29 @@
+# vim: set filetype=ini:
+
+[configDotFiles]
+checkout = git clone 'git@github.com:rudimusmaximus/configDotFiles.git' 'configDotFiles'
+
+[.tmuxifier_layouts]
+checkout = git clone 'git@github.com:RedCrowConsulting/tmuxi-layouts.git' '.tmuxifier_layouts'
+
+# private - my customized nvim config
+[.config/nvim]
+checkout = git clone 'git@github.com:RedCrowConsulting/nvim-config.git' 'nvim'
+
+# private - snippets across languages for nvim
+[.config/nvim/lua/snippets/private]
+checkout = git clone 'git@github.com:redcrowmethods/snippets.git' 'private'
+
+# alternate config for developing
+[.config/nvim-config]
+checkout = git clone 'git@github.com:RedCrowConsulting/nvim-config.git' 'nvim-config'
+
+[.config/nvim-config/lua/snippets/private]
+checkout = git clone 'git@github.com:redcrowmethods/snippets.git' 'private'
+
+# catppuccin themes
+[.config/tmux/plugins/catppuccin/tmux]
+checkout = git clone 'git@github.com:catppuccin/tmux.git' 'tmux'
+
+[.tmux/plugins/tpm]
+checkout = git clone 'https://github.com/tmux-plugins/tpm' 'tpm'

@@ -5,3 +5,7 @@ if ! command -v node > /dev/null; then
   echo "Warning: Node.js is not available in this session. Please check your asdf configuration or node installation."
 fi
 
+# Ensure TMUX Plugin Manager (TPM) is installed
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+  echo "Warning: tmux plugin manager (TPM) is not installed. Have you include it in your .mrconig file?"
+fi

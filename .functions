@@ -110,13 +110,19 @@ md() {
   xdg-open "/tmp/${1%.md}.html"
 }
 
-# lists the prefixed with a v semver from the local package.json
-# and copies it to the clipboard
-# eg. v1.0.0
-# uses pbcopy on macOS and xclip on Linux
+# Lists the semver prefixed with 'v' from the local package.json
+# and copies it to the clipboard.
+# Example output: v1.0.0
+# Uses pbcopy on macOS and xclip on Linux.
 version() {
   version=$(jq -r ".version" package.json | awk '{print "v"$1}')
-  echo "$version" | tee >(if [[ "$OSTYPE" == "darwin"* ]]; then pbcopy; else xclip -selection clipboard; fi)
+  echo "$version" | tee >(
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      pbcopy
+    else
+      xclip -selection clipboard
+    fi
+  )
 }
 
 # increments or sets the prerelease version and copies it to the clipboard
