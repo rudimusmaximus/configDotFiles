@@ -15,6 +15,9 @@ alias rcm_shared='cd "$RCM_SHARED"'
 # other security settings (see repo jtroo.kanata)
 alias sk='tmux new-session -s kanata "sudo $KANATA_PATH -c $KANATA_CONFIG_PATH"'
 alias start_kanata='tmux new-session -s kanata "sudo $KANATA_PATH -c $KANATA_CONFIG_PATH"'
+alias skd="sudo '/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon'"
+alias skm='sudo $KANATA_PATH -c $KANATA_CONFIG_PATH'
+alias kcheck='ps aux | grep Karabiner-VirtualHIDDevice-Daemon | grep -v grep'
 
 # Reload edits to .bashrc
 alias sb='clear && source ~/.bash_profile'

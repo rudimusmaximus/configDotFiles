@@ -27,3 +27,16 @@ checkout = git clone 'git@github.com:catppuccin/tmux.git' 'tmux'
 
 [.tmux/plugins/tpm]
 checkout = git clone 'https://github.com/tmux-plugins/tpm' 'tpm'
+
+# When you notice updates and can risk testing them, go to this directory
+# and run 'cargo build' then test if working. the main concern if there are
+# changes in the third party karabiner manager and it's daemon
+# this runs with 'sudo target/debug/kanata --cfg <your_configuration_file>'
+# see
+# https://github.com/jtroo/kanata
+# the Karabiner VirtualHiDDevice DriverKit which must be in sync with dev version of kanata but usually is latest
+# https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/blob/main/dist/Karabiner-DriverKit-VirtualHIDDevice-5.0.0.pkg
+# the daemon this makes possible must be started in same way as kanata with sudo or if permissions are setup correctly without
+# see skm and skd aliases and tmuxifier layouts if you made them
+[project/kanata]
+checkout = git clone 'git@github.com:jtroo/kanata.git' 'kanata'
