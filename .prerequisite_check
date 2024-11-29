@@ -37,15 +37,13 @@ function check_git_flow_completion() {
         printf "✔ %s\n" "git-flow bash-completion is loaded."
     else
         printf "⚠️ %s\n" "git-flow bash-completion is NOT loaded."
-        printf "%s\n" "To enable it:"
-        printf "  1. %s\n" "Clone the repository:"
-        printf "     %s\n" "git clone https://github.com/bobthecow/git-flow-completion.git"
-        printf "  2. %s\n" "Add this line to your .bashrc:"
-        printf "     %s\n" "[[ -r \"$HOME/.bash_completion.d/git-flow-completion.bash\" ]] && . \"$HOME/.bash_completion.d/git-flow-completion.bash\""
+        printf "%s\n" "To enable it use Homebrew or dnf depedning on your os:"
+        printf "  1. %s\n" "See https://github.com/bobthecow/git-flow-completion.git"
     fi
 }
 
 # Verify Node.js availability after initializing asdf
+# TODO: add notes for installing
 function check_node_availability() {
     if ! command_exists node; then
         printf "⚠️  %s\n" "Warning: Node.js is not available in this session."
