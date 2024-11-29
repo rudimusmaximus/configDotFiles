@@ -23,6 +23,7 @@ export PATH="$HOME/.tmux/plugins/tmuxifier/bin:$PATH"
 # OS SPECIFIC CONFIGURATION
 # =========================
 
+
 # Darwin (macOS)-specific items
 if [[ "$(uname)" == "Darwin" ]]; then
     # edgedb-cli
@@ -34,6 +35,13 @@ if [[ "$(uname)" == "Darwin" ]]; then
         export BASH_HOMEBREW_HOME='/usr/local/bin';
         export PATH="$BASH_HOMEBREW_HOME:$PATH";
         # Other Intel-specific configurations can go here
+        # Enhance bash-completion
+        if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
+            # macOS Apple Silicon Homebrew location
+            . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+        else
+            printf "⚠️  %s\n" "Warning: bash-completion not found in expected Homebrew Apple Silicon location."
+        fi
     fi
 
     # Check for Apple Silicon
@@ -44,6 +52,13 @@ if [[ "$(uname)" == "Darwin" ]]; then
         # export PATH="$HOME/bin:$PATH";
 
         # Other Apple Silicon-specific configurations can go here
+        # Enhance bash-completion
+        if [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
+            # macOS Intel Homebrew location
+            . "/usr/local/etc/profile.d/bash_completion.sh"
+        else
+            printf "⚠️  %s\n" "Warning: bash-completion not found in expected Homebrew location on Intel macOS location."
+        fi
     fi
 
     # Java OpenJDK
@@ -57,7 +72,14 @@ if [[ "$(uname)" == "Darwin" ]]; then
 fi
 
 # Fedora Linux-specific items
+# TODO: make sure no changes needed for adding git-flow and bash-completion
 if [ -f /etc/os-release ] && grep -q 'ID=fedora' /etc/os-release; then
-    : # Placeholder for future Fedora-specific configurations
+    # Enhance bash-completion
+    if [[ -r "/usr/share/bash-completion/bash_completion" ]]; then
+        # Fedora default location
+        . "/usr/share/bash-completion/bash_completion"
+    else
+        printf "⚠️  %s\n" "Warning: bash-completion not found in expected Fedora location."
+    fi
 fi
 

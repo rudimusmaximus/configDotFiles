@@ -1,11 +1,75 @@
 #!/usr/bin/env bash
 
-# Verify node is available after initializing asdf
-if ! command -v node > /dev/null; then
-  echo "Warning: Node.js is not available in this session. Please check your asdf configuration or node installation."
-fi
+# Function to check if a command exists
+function command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Function to check git-flow installation
+function check_git_flow() {
+    if command_exists git-flow; then
+        printf "✔ %s\n" "git-flow is installed."
+    else
+        printf "⚠️ %s\n" "git-flow is NOT installed."
+        printf "%s\n" "To install:"
+        printf "  %s\n" "Fedora: sudo dnf install git-flow"
+        printf "  %s\n" "macOS: brew install git-flow"
+    fi
+}
+
+# Function to check bash-completion installation
+function check_bash_completion() {
+    if [[ -r "/usr/share/bash-completion/bash_completion" ]]; then
+        printf "✔ %s\n" "bash-completion is installed and available."
+    elif [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
+        printf "✔ %s\n" "bash-completion is installed and available (Homebrew path)."
+    else
+        printf "⚠️ %s\n" "bash-completion is NOT installed or not configured."
+        printf "%s\n" "To install:"
+        printf "  %s\n" "Fedora: sudo dnf install bash-completion"
+        printf "  %s\n" "macOS: brew install bash-completion"
+    fi
+}
+
+# Function to check if git-flow bash completion is loaded
+function check_git_flow_completion() {
+    if declare -F | grep -q git-flow-completion; then
+        printf "✔ %s\n" "git-flow bash-completion is loaded."
+    else
+        printf "⚠️ %s\n" "git-flow bash-completion is NOT loaded."
+        printf "%s\n" "To enable it:"
+        printf "  1. %s\n" "Clone the repository:"
+        printf "     %s\n" "git clone https://github.com/bobthecow/git-flow-completion.git"
+        printf "  2. %s\n" "Add this line to your .bashrc:"
+        printf "     %s\n" "[[ -r \"$HOME/.bash_completion.d/git-flow-completion.bash\" ]] && . \"$HOME/.bash_completion.d/git-flow-completion.bash\""
+    fi
+}
+
+# Verify Node.js availability after initializing asdf
+function check_node_availability() {
+    if ! command_exists node; then
+        printf "⚠️  %s\n" "Warning: Node.js is not available in this session."
+        printf "  %s\n" "Please check your asdf configuration or node installation."
+    else
+        printf "✔ %s\n" "Node.js is available."
+    fi
+}
 
 # Ensure TMUX Plugin Manager (TPM) is installed
-if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
-  echo "Warning: tmux plugin manager (TPM) is not installed. Have you include it in your .mrconig file?"
-fi
+function check_tpm_installed() {
+    local tpm_path="$HOME/.tmux/plugins/tpm"
+    if [[ ! -d "$tpm_path" ]]; then
+        printf "⚠️  %s\n" "Warning: tmux plugin manager (TPM) is not installed."
+        printf "  %s\n" "Have you included it in your .mrconfig file?"
+    else
+        printf "✔ %s\n" "TMUX Plugin Manager (TPM) is installed."
+    fi
+}
+
+# Run the checks
+check_git_flow
+check_bash_completion
+check_git_flow_completion
+check_node_availability
+check_tpm_installed
+
