@@ -20,9 +20,11 @@ function check_git_flow() {
 # Function to check bash-completion installation
 function check_bash_completion() {
     if [[ -r "/usr/share/bash-completion/bash_completion" ]]; then
-        printf "✔ %s\n" "bash-completion is installed and available."
+        printf "✔ %s\n" "bash-completion is installed and available; likely linux."
     elif [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
-        printf "✔ %s\n" "bash-completion is installed and available (Homebrew path)."
+        printf "✔ %s\n" "bash-completion is installed and available (Homebrew path); likely Intel, macOS."
+    elif [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
+        printf "✔ %s\n" "bash-completion is installed and available (Homebrew path); likely ARM, macOS."
     else
         printf "⚠️ %s\n" "bash-completion is NOT installed or not configured."
         printf "%s\n" "To install:"
@@ -33,12 +35,11 @@ function check_bash_completion() {
 
 # Function to check if git-flow bash completion is loaded
 function check_git_flow_completion() {
-    if declare -F | grep -q git-flow-completion; then
-        printf "✔ %s\n" "git-flow bash-completion is loaded."
+    if [[ $(type -t _git_flow) == "function" ]]; then
+        printf "✔ %s\n" "git-flow bash completion is loaded."
     else
-        printf "⚠️ %s\n" "git-flow bash-completion is NOT loaded."
-        printf "%s\n" "To enable it use Homebrew or dnf depedning on your os:"
-        printf "  1. %s\n" "See https://github.com/bobthecow/git-flow-completion.git"
+        printf "⚠️ %s\n" "git-flow bash completion is NOT loaded."
+        printf "%s\n" "configDotFile '.git-flow-completion.sh' was not sourced."
     fi
 }
 

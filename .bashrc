@@ -3,10 +3,10 @@
 
 # the things we need every time
 declare -a rc_config_files=(
-    "${HOME}/.bash_prompt"
     "${HOME}/.aliases"
     "${HOME}/.functions"
     "${HOME}/.keybindings"
+    "${HOME}/.bash_prompt"
 )
 
 for file in "${rc_config_files[@]}"; do

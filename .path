@@ -26,36 +26,42 @@ export PATH="$HOME/.tmux/plugins/tmuxifier/bin:$PATH"
 
 # Darwin (macOS)-specific items
 if [[ "$(uname)" == "Darwin" ]]; then
+    architecture=$(sysctl -n machdep.cpu.brand_string)
+
     # edgedb-cli
     export PATH="$HOME/Library/Application Support/edgedb/bin:$PATH"
 
     # Check for Intel iMac
-    if [[ "$(uname -m)" == "x86_64" ]]; then
-        # Intel-specific configurations
-        export BASH_HOMEBREW_HOME='/usr/local/bin';
-        export PATH="$BASH_HOMEBREW_HOME:$PATH";
-        # Other Intel-specific configurations can go here
+    if [[ "$architecture" == *"Apple"* ]]; then
+        # Homebrew
+        HOMEBREW_PREFIX="/opt/homebrew"
+        BASH_HOMEBREW_HOME="${HOMEBREW_PREFIX}/bin"
+        if ! [[ "$PATH" =~ (^|:)"$BASH_HOMEBREW_HOME"(:|$) ]]; then
+          export PATH="$BASH_HOMEBREW_HOME:$PATH"
+        fi
+
         # Enhance bash-completion
-        if [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
-            # macOS Apple Silicon Homebrew location
-            . "/opt/homebrew/etc/profile.d/bash_completion.sh"
+        # shellcheck disable=SC1091
+        if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+            source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+            source "${HOME}/.git-flow-completion"
         else
             printf "⚠️  %s\n" "Warning: bash-completion not found in expected Homebrew Apple Silicon location."
         fi
-    fi
-
     # Check for Apple Silicon
-    if [[ "$(uname -m)" == "arm64" ]]; then
-        # Apple Silicon-specific configurations
-        export BASH_HOMEBREW_HOME='/opt/homebrew/bin';
-        export PATH="$BASH_HOMEBREW_HOME:$PATH";
-        # export PATH="$HOME/bin:$PATH";
+    elif [[ "$architecture" == "Intel"* ]]; then
+        # Homebrew
+        HOMEBREW_PREFIX="/usr/local"
+        BASH_HOMEBREW_HOME="${HOMEBREW_PREFIX}/bin"
+        if ! [[ "$PATH" =~ (^|:)"$BASH_HOMEBREW_HOME"(:|$) ]]; then
+          export PATH="$BASH_HOMEBREW_HOME:$PATH"
+          source "${HOME}/.git-flow-completion"
+        fi
 
-        # Other Apple Silicon-specific configurations can go here
         # Enhance bash-completion
-        if [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
-            # macOS Intel Homebrew location
-            . "/usr/local/etc/profile.d/bash_completion.sh"
+        # shellcheck disable=SC1091
+        if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+            source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
         else
             printf "⚠️  %s\n" "Warning: bash-completion not found in expected Homebrew location on Intel macOS location."
         fi
@@ -72,14 +78,20 @@ if [[ "$(uname)" == "Darwin" ]]; then
 fi
 
 # Fedora Linux-specific items
+# Detecting Feora on Apple Silicon via Asahi Linux
 # TODO: make sure no changes needed for adding git-flow and bash-completion
-if [ -f /etc/os-release ] && grep -q 'ID=fedora' /etc/os-release; then
-    # Enhance bash-completion
-    if [[ -r "/usr/share/bash-completion/bash_completion" ]]; then
-        # Fedora default location
-        . "/usr/share/bash-completion/bash_completion"
-    else
-        printf "⚠️  %s\n" "Warning: bash-completion not found in expected Fedora location."
+if [[ "$(uname)" == "Linux" ]]; then
+    if [[ "$(uname -m)" == "x86_64" ]]; then
+      printf "TODONE: successfully tested detection of linux architecture\n"
+      # Enhance bash-completion
+      # shellcheck disable=SC1091
+      if [[ -r "/usr/share/bash-completion/bash_completion" ]]; then
+          # Fedora default location
+          source "/usr/share/bash-completion/bash_completion"
+          source "${HOME}/.git-flow-completion"
+      else
+          printf "⚠️  %s\n" "Warning: bash-completion not found in expected Fedora location."
+      fi
     fi
 fi
 
