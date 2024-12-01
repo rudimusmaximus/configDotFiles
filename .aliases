@@ -19,9 +19,6 @@ alias skd="sudo '/Library/Application Support/org.pqrs/Karabiner-DriverKit-Virtu
 alias skm='sudo $KANATA_PATH -c $KANATA_CONFIG_PATH'
 alias kcheck='ps aux | grep Karabiner-VirtualHIDDevice-Daemon | grep -v grep'
 
-# Reload edits to .bashrc
-alias sb='clear && source ~/.bash_profile'
-
 # refreshs for users of homebrew and one for homebrew and neovim nightly
 alias brewup='brew upgrade';
 

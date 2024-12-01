@@ -4,6 +4,7 @@
 
 # The things we need once per session, in preferred order
 declare -a profile_config_files=(
+    "${HOME}/.verbosity_logging" # provides log and sb functions
     "${HOME}/.path"     # Can be used to extend `$PATH`
     "${HOME}/.exports"  # Set environment variables including default editor
     "${HOME}/.extra"    # Can be used for machine specific or secret settings

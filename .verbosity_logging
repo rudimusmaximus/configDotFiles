@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# This file defines the sb and log functions for verbosity-based logging.
+# by default there is no logging, but if user wants to call sb with -v or -vv or -vvv
+# then the logging will appear at 3 levels of detail.
+
+# Prevent sourcing multiple times
+if [ -n "${VERBOSITY_LOGGING_LOADED:-}" ]; then
+    return
+fi
+export VERBOSITY_LOGGING_LOADED=1
+
+# Log function to print messages based on verbosity levels
+function log() {
+    # Usage: log <level> <message>
+    local level=$1
+    shift
+    if [ "$verbosity" -ge "$level" ]; then
+        printf "[LOG] %s\n" "$@"
+    fi
+}
+
+# sb function to clear the screen, set verbosity based on flags, and source .bash_profile
+function sb() {
+    # Usage: sb [-v|-vv|-vvv]
+    clear
+    verbosity=0  # Default verbosity level
+
+    # Parse verbosity flags
+    for arg in "$@"; do
+        case $arg in
+            -v) verbosity=1 ;;
+            -vv) verbosity=2 ;;
+            -vvv) verbosity=3 ;;
+        esac
+    done
+
+    # Source .bash_profile with the calculated verbosity level
+    source "${HOME}"/.bash_profile
+}
+
+# Examples:
+# Default (no verbosity):
+#   sb
+#
+# Verbose (level 1):
+#   sb -v
+#
+# Very verbose (level 2):
+#   sb -vv
+#
+# Extremely verbose (level 3):
+#   sb -vvv

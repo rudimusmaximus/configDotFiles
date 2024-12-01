@@ -3,6 +3,7 @@
 
 # the things we need every time
 declare -a rc_config_files=(
+    "${HOME}/.verbosity_logging" # provides log and sb functions
     "${HOME}/.aliases"
     "${HOME}/.functions"
     "${HOME}/.keybindings"
