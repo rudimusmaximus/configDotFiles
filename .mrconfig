@@ -43,3 +43,6 @@ checkout = git clone 'git@github.com:jtroo/kanata.git' 'kanata'
 
 [project/git-flow-completion]
 checkout = git clone 'git@github.com:bobthecow/git-flow-completion.git' 'git-flow-completion'
+
+[project/git]
+checkout = git clone 'git@github.com:git/git.git' 'git'

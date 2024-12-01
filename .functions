@@ -453,3 +453,83 @@ batl ()
     fi
 }
 
+# Function to sync ~/.git-completion.bash with the one in the git-source directory
+# Usage: sync_git_completion
+# assumes you have clone git to ~/project/git
+sync_git_completion() {
+    # Variables
+    local GIT_SOURCE_DIR=~/project/git
+    local TARGET_FILE=~/.git-completion
+    local CURRENT_GIT_VERSION
+    CURRENT_GIT_VERSION=$(git --version | awk '{print $3}')
+
+    # Pre-check
+    printf "Running precheck...\n"
+
+    # Check if the Git source directory exists
+    if [ ! -d "$GIT_SOURCE_DIR" ]; then
+        printf "⚠️  Missing Git source directory: %s\n" "$GIT_SOURCE_DIR"
+        return 1
+    fi
+
+    # Check if the destination file exists or its directory is valid
+    if [ ! -f "$TARGET_FILE" ]; then
+        if [ ! -d "$(dirname "$TARGET_FILE")" ]; then
+            printf "⚠️  Destination directory does not exist: %s\n" "$(dirname "$TARGET_FILE")"
+            return 1
+        fi
+        printf "⚠️  Target file does not exist: %s\n" "$TARGET_FILE"
+    else
+        printf "✅ Target file exists: %s\n" "$TARGET_FILE"
+    fi
+
+    # Report paths
+    printf "Confirmed paths:\n"
+    printf "  Git Source Directory: %s\n" "$GIT_SOURCE_DIR"
+    printf "  Destination File: %s\n" "$TARGET_FILE"
+
+    # Prompt user to continue
+    printf "Do you want to continue syncing git-completion for Git version %s? [y/N]: " "$CURRENT_GIT_VERSION"
+    read -r response
+    case "$response" in
+        [yY][eE][sS]|[yY]) ;;
+        *) printf "Sync aborted by user.\n"; return 0 ;;
+    esac
+
+    # Sync Process
+    printf "Starting sync...\n"
+
+    # Navigate to Git source directory and fetch updates
+    cd "$GIT_SOURCE_DIR" || {
+        printf "⚠️  Failed to navigate to Git source directory.\n"
+        return 1
+    }
+    git fetch --tags
+    if ! git checkout "v$CURRENT_GIT_VERSION"; then
+        printf "⚠️  Version v%s not found in %s\n" "$CURRENT_GIT_VERSION" "$GIT_SOURCE_DIR"
+        return 1
+    fi
+
+    # Copy the git-completion script to the target location
+    if cp contrib/completion/git-completion.bash "$TARGET_FILE"; then
+        printf "✅ git-completion.bash synced successfully to %s\n" "$TARGET_FILE"
+    else
+        printf "⚠️  Failed to copy git-completion.bash to %s\n" "$TARGET_FILE"
+        return 1
+    fi
+
+    # Switch back to the main branch to avoid detached HEAD
+    printf "Restoring branch to avoid detached HEAD on subequent pulls...\n"
+    if git rev-parse --verify main &>/dev/null; then
+        git switch main
+    elif git rev-parse --verify master &>/dev/null; then
+        git switch master
+    else
+        printf "⚠️  Unable to determine the main branch (main or master). Please manually resolve.\n"
+        return 1
+    fi
+
+    # Final message
+    printf "Sync complete for Git version %s.\n" "$CURRENT_GIT_VERSION"
+}
+
