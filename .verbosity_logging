@@ -9,44 +9,65 @@ if [ -n "${VERBOSITY_LOGGING_LOADED:-}" ]; then
 fi
 export VERBOSITY_LOGGING_LOADED=1
 
+# Display usage information
+function sb_help() {
+    printf "NOTE: rudimusmaximu/configDotFiles"
+    printf "Usage:\n"
+    printf "  To run locally :  sb [options]\n\n"
+    printf "Options:\n"
+    printf "  -h       Display this help message\n"
+    printf "  -v       Verbose (show logging)\n"
+}
+
 # Log function to print messages based on verbosity levels
+# Usage: log <level> <message>
 function log() {
     # Usage: log <level> <message>
     local level=$1
     shift
-    if [ "$verbosity" -ge "$level" ]; then
-        printf "[LOG] %s\n" "$@"
+
+    # Only log if verbose mode is enabled
+    if [ "${verbose:-false}" = true ]; then
+        case $level in
+            1) prefix="[LOG LEVEL 1] " ;;
+            2) prefix="[LOG LEVEL 2] " ;;
+            3) prefix="[LOG LEVEL 3] " ;;
+            *) prefix="[LOG Level 3+] " ;;
+        esac
+
+        # Print the log message with the appropriate prefix
+        printf "%s%s\n" "$prefix" "$@"
     fi
 }
 
 # sb function to clear the screen, set verbosity based on flags, and source .bash_profile
-function sb() {
-    # Usage: sb [-v|-vv|-vvv]
-    clear
-    verbosity=0  # Default verbosity level
 
-    # Parse verbosity flags
-    for arg in "$@"; do
-        case $arg in
-            -v) verbosity=1 ;;
-            -vv) verbosity=2 ;;
-            -vvv) verbosity=3 ;;
+# sb function to clear the screen, set verbosity, and source .bash_profile
+function sb() {
+
+    printf "Running function sb()...\n"
+    # Default to non-verbose mode
+    verbose=false
+
+    # Parse options using getopts
+    while getopts "hv" opt; do
+        case $opt in
+            h)
+                sb_help
+                return 0
+                ;;
+            v)
+                verbose=true
+                export verbose  # Make verbose available to sourced files
+                ;;
+            \?)
+                printf "\n  Option does not exist: -%s\n\n" "$OPTARG"
+                sb_help
+                return 1
+                ;;
         esac
     done
 
-    # Source .bash_profile with the calculated verbosity level
-    source "${HOME}"/.bash_profile
+    # Always source .bash_profile after parsing options
+    source "$HOME"/.bash_profile
 }
-
-# Examples:
-# Default (no verbosity):
-#   sb
-#
-# Verbose (level 1):
-#   sb -v
-#
-# Very verbose (level 2):
-#   sb -vv
-#
-# Extremely verbose (level 3):
-#   sb -vvv
