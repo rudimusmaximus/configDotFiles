@@ -12,7 +12,8 @@ fi
 # Display usage information
 function sb_help() {
     clear
-    printf "NOTE: rudimusmaximu/configDotFiles"
+    printf "  Source Bash Setting - function 'sb'\n"
+    printf "from rudimusmaximu/configDotFiles\n"
     printf "Usage:\n"
     printf "  To run locally :  sb [options]\n\n"
     printf "Options:\n"
