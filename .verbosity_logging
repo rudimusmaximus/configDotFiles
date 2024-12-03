@@ -4,10 +4,10 @@
 # then the logging will appear at 3 levels of detail.
 
 # Prevent sourcing multiple times
-if [ -n "${VERBOSITY_LOGGING_LOADED:-}" ]; then
+# Check if functions are already defined
+if declare -f sb >/dev/null && declare -f log >/dev/null && declare -f sb_help >/dev/null; then
     return
 fi
-export VERBOSITY_LOGGING_LOADED=1
 
 # Display usage information
 function sb_help() {
