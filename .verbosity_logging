@@ -20,9 +20,9 @@ function sb_help() {
 }
 
 # Log function to print messages based on verbosity levels
-# Usage: log <level> <message>
-function log() {
-    # Usage: log <level> <message>
+# Usage: verbLog <level> <message>
+function verbLog() {
+    # Usage: verbLog <level> <message>
     local level=$1
     shift
 

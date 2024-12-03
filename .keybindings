@@ -1,30 +1,30 @@
 #!/usr/bin/env bash
 
 # Set up fzf key bindings and fuzzy completion
-log 1 "Checking if fzf is installed..."
+verbLog 1 "Checking if fzf is installed..."
 if command -v fzf > /dev/null 2>&1; then
-    log 2 "fzf is installed. Setting up fzf key bindings..."
+    verbLog 2 "fzf is installed. Setting up fzf key bindings..."
     eval "$(fzf --bash)"
-    log 2 "fzf key bindings set up successfully."
+    verbLog 2 "fzf key bindings set up successfully."
 else
-    log 2 "fzf is not installed. Skipping fzf setup."
+    verbLog 2 "fzf is not installed. Skipping fzf setup."
 fi
 
 # Check if fzf-git.sh exists and source it, otherwise prompt the user to clone the repository
-log 2 "Checking if fzf-git.sh exists..."
+verbLog 2 "Checking if fzf-git.sh exists..."
 if [ -f "${HOME}/fzf-git.sh/fzf-git.sh" ]; then
-    log 2 "Found fzf-git.sh. Sourcing it..."
+    verbLog 2 "Found fzf-git.sh. Sourcing it..."
     # shellcheck source=/dev/null
     source "${HOME}/fzf-git.sh/fzf-git.sh"
-    log 2 "Sourced fzf-git.sh successfully."
+    verbLog 2 "Sourced fzf-git.sh successfully."
 else
-    log 2 "fzf-git.sh not found. Prompting user to clone repository..."
+    verbLog 2 "fzf-git.sh not found. Prompting user to clone repository..."
     echo "fzf-git.sh not found. Please clone the repository and re-source your .bash_profile to enable better git integration with fzf."
     echo "Run the following commands:"
     echo "git clone https://github.com/junegunn/fzf-git.sh.git ~/fzf-git.sh"
     echo "source ~/.bash_profile"
 fi
-log 1 "Finished ~/.keybindings."
+verbLog 1 "Finished ~/.keybindings."
 
 #OLD
 #!/usr/bin/env bash
