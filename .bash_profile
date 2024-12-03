@@ -2,6 +2,8 @@
 # login to new session (local or ssh into machine)
 # note also sources .bashrc; also, exports are done once here and available thereafter
 
+clear # clear the screen
+
 source "${HOME}/.verbosity_logging" # provides log and sb functions
 verbLog 1 "Entering ~/.bash_profile..."
 
@@ -22,12 +24,10 @@ for file in "${profile_config_files[@]}"; do
         # shellcheck source=/dev/null
         source "${file}";
     else
-        verbLog 1 "Skipped $file (not readable or does not exist)."
+        verbLog 1 "Skipped ${file} (not readable or does not exist)."
     fi
-    verbLog 1 "Done sourcing ${file}"
+    verbLog 1 "Done."
 done
 unset file
-
-cfg_greet_with_diagnostics
 
 verbLog 1 "Finished ~/.bash_profile"

@@ -11,6 +11,7 @@ export VERBOSITY_LOGGING_LOADED=1
 
 # Display usage information
 function sb_help() {
+    clear
     printf "NOTE: rudimusmaximu/configDotFiles"
     printf "Usage:\n"
     printf "  To run locally :  sb [options]\n\n"
@@ -29,10 +30,10 @@ function verbLog() {
     # Only log if verbose mode is enabled
     if [ "${verbose:-false}" = true ]; then
         case $level in
-            1) prefix="[LOG LEVEL 1] " ;;
-            2) prefix="[LOG LEVEL 2] " ;;
-            3) prefix="[LOG LEVEL 3] " ;;
-            *) prefix="[LOG Level 3+] " ;;
+            1) prefix="[LOG] ✔ " ;;
+            2) prefix="[LOG] ✔ ✔ " ;;
+            3) prefix="[LOG] ✔ ✔ ✔ " ;;
+            *) prefix="[LOG] ✔ ✔ ✔ + " ;;
         esac
 
         # Print the log message with the appropriate prefix
@@ -40,12 +41,9 @@ function verbLog() {
     fi
 }
 
-# sb function to clear the screen, set verbosity based on flags, and source .bash_profile
-
-# sb function to clear the screen, set verbosity, and source .bash_profile
+# sb function to set verbosity, and source .bash_profile
 function sb() {
 
-    printf "Running function sb()...\n"
     # Default to non-verbose mode
     verbose=false
 
@@ -57,6 +55,7 @@ function sb() {
                 return 0
                 ;;
             v)
+                verbLog 2 "Running function sb()..."
                 verbose=true
                 export verbose  # Make verbose available to sourced files
                 ;;
@@ -70,4 +69,5 @@ function sb() {
 
     # Always source .bash_profile after parsing options
     source "$HOME"/.bash_profile
+    verbose=false
 }

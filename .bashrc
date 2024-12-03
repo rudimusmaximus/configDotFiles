@@ -20,7 +20,7 @@ for file in "${rc_config_files[@]}"; do
     else
         verbLog 1 "Skipped $file (not readable or does not exist)."
     fi
-    verbLog 1 "Done sourcing ${file}"
+    verbLog 1 "Done."
 done
 unset file
 

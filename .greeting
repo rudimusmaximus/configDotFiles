@@ -5,9 +5,13 @@ function cfg_greet_with_diagnostics() {
 
     # Check if fastfetch is available
     if command -v fastfetch >/dev/null; then
-        clear && echo 'hello,\n' && fastfetch;
+        printf 'hello,\n' && fastfetch;
     else
-        printf "\nFastfetch is not installed. https://github.com/fastfetch-cli/fastfetch\nPlease install to start with diagnostics.\n"
+        printf "\n⚠️ Fastfetch is not installed. https://github.com/fastfetch-cli/fastfetch\nPlease install to start with diagnostics.\n"
     fi
 
 }
+
+cfg_greet_with_diagnostics
+unset -f cfg_greet_with_diagnostics
+
