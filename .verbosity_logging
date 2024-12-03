@@ -69,5 +69,4 @@ function sb() {
 
     # Always source .bash_profile after parsing options
     source "$HOME"/.bash_profile
-    verbose=false
 }
