@@ -8,7 +8,7 @@ function command_exists() {
 # Function to check git-flow installation
 function check_git_flow() {
     if command_exists git-flow; then
-        printf "✔ %s\n" "git-flow is installed."
+        verbLog 2 "✔ %s\n" "git-flow is installed."
     else
         printf "⚠️ %s\n" "git-flow is NOT installed."
         printf "%s\n" "To install:"
@@ -20,11 +20,11 @@ function check_git_flow() {
 # Function to check bash-completion installation
 function check_bash_completion() {
     if [[ -r "/usr/share/bash-completion/bash_completion" ]]; then
-        printf "✔ %s\n" "bash-completion is installed and available; likely linux."
+        verbLog 2 "✔ %s\n" "bash-completion is installed and available; likely linux."
     elif [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
-        printf "✔ %s\n" "bash-completion is installed and available (Homebrew path); likely Intel, macOS."
+        verbLog 2 "✔ %s\n" "bash-completion is installed and available (Homebrew path); likely Intel, macOS."
     elif [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
-        printf "✔ %s\n" "bash-completion is installed and available (Homebrew path); likely ARM, macOS."
+        verbLog 2 "✔ %s\n" "bash-completion is installed and available (Homebrew path); likely ARM, macOS."
     else
         printf "⚠️ %s\n" "bash-completion is NOT installed or not configured."
         printf "%s\n" "To install:"
@@ -36,7 +36,7 @@ function check_bash_completion() {
 # Function to check if git-flow bash completion is loaded
 function check_git_flow_completion() {
     if [[ $(type -t _git_flow) == "function" ]]; then
-        printf "✔ %s\n" "git-flow bash completion is loaded."
+        verbLog 2 "✔ %s\n" "git-flow bash completion is loaded."
     else
         printf "⚠️ %s\n" "git-flow bash completion is NOT loaded."
         printf "%s\n" "configDotFile '.git-flow-completion.sh' was not sourced."
@@ -50,7 +50,7 @@ function check_node_availability() {
         printf "⚠️  %s\n" "Warning: Node.js is not available in this session."
         printf "  %s\n" "Please check your asdf configuration or node installation."
     else
-        printf "✔ %s\n" "Node.js is available."
+        verbLog 2 "✔ %s\n" "Node.js is available."
     fi
 }
 
@@ -61,7 +61,7 @@ function check_tpm_installed() {
         printf "⚠️  %s\n" "Warning: tmux plugin manager (TPM) is not installed."
         printf "  %s\n" "Have you included it in your .mrconfig file?"
     else
-        printf "✔ %s\n" "TMUX Plugin Manager (TPM) is installed."
+        verbLog 2 "✔ %s\n" "TMUX Plugin Manager (TPM) is installed."
     fi
 }
 

@@ -28,4 +28,6 @@ for file in "${profile_config_files[@]}"; do
 done
 unset file
 
+cfg_greet_with_diagnostics
+
 verbLog 1 "Finished ~/.bash_profile"

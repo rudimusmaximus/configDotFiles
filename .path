@@ -27,14 +27,14 @@ export PATH="$HOME/.tmux/plugins/tmuxifier/bin:$PATH"
 function enhance_bash_completion() {
     if [[ -r "${HOME}/.git-completion" ]]; then
         source "${HOME}/.git-completion"
-        printf "✔ %s\n" ".git-completion is available and has been sourced. Remember to sync_git_completion on git updates."
+        verbLog 2 "✔ %s\n" ".git-completion is available and has been sourced. Remember to sync_git_completion on git updates."
     else
         printf "⚠️ %s\n" "expected .git-completion is NOT available."
     fi
 
     if [[ -r "${HOME}/.git-flow-completion" ]]; then
         source "${HOME}/.git-flow-completion"
-        printf "✔ %s\n" ".git-flow-completion is available and has been sourced."
+        verbLog 2 "✔ %s\n" ".git-flow-completion is available and has been sourced."
     else
         printf "⚠️ %s\n" "expected .git-flow-completion is NOT available."
     fi

@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
 # Display diagnostic as greeting if available
-# Check if fastfetch is available
-if command -v fastfetch >/dev/null; then
-    fastfetch;
-else
-    printf "\nFastfetch is not installed. https://github.com/fastfetch-cli/fastfetch\nPlease install to start with diagnostics.\n"
-fi
+function cfg_greet_with_diagnostics() {
 
+    # Check if fastfetch is available
+    if command -v fastfetch >/dev/null; then
+        clear && echo 'hello,\n' && fastfetch;
+    else
+        printf "\nFastfetch is not installed. https://github.com/fastfetch-cli/fastfetch\nPlease install to start with diagnostics.\n"
+    fi
+
+}
