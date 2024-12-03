@@ -28,7 +28,7 @@ function verbLog() {
     shift
 
     # Only log if verbose mode is enabled
-    if [ "${verbose:-false}" = true ]; then
+    if [ "${CFG_DOT_FILES_VERBOSE_MODE:-false}" = true ]; then
         case $level in
             1) prefix="[LOG] ✔ " ;;
             2) prefix="[LOG] ✔ ✔ " ;;
@@ -43,9 +43,11 @@ function verbLog() {
 
 # sb function to set verbosity, and source .bash_profile
 function sb() {
+    # Reset OPTIND to 1 to ensure getopts processes options correctly on subsequent calls
+    OPTIND=1
 
     # Default to non-verbose mode
-    verbose=false
+    CFG_DOT_FILES_VERBOSE_MODE=false
 
     # Parse options using getopts
     while getopts "hv" opt; do
@@ -56,8 +58,8 @@ function sb() {
                 ;;
             v)
                 verbLog 2 "Running function sb()..."
-                verbose=true
-                export verbose  # Make verbose available to sourced files
+                CFG_DOT_FILES_VERBOSE_MODE=true
+                export CFG_DOT_FILES_VERBOSE_MODE  # Make verbose available to sourced files
                 ;;
             \?)
                 printf "\n  Option does not exist: -%s\n\n" "$OPTARG"
@@ -68,5 +70,8 @@ function sb() {
     done
 
     # Always source .bash_profile after parsing options
-    source "$HOME"/.bash_profile
+    source "$HOME"/.bash_profile # this will cascade and source .bashrc and it's files too
+    # don't worry that this means the variable is not available for noon sb runs
+    # as the verbLog conditional check will work without it
+    unset CFG_DOT_FILES_VERBOSE_MODE
 }
