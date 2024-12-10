@@ -130,6 +130,7 @@ alias gp="git pull"
 alias gs="git status"
 alias gt="git tag -l -n1"
 alias gu='echo "Stage changes to tracked repository files (ignores new files)."; git add --refresh'
+alias gA="git add --all"
 alias c="clear"
 
 #n special script shortcuts for manual install, refresh, removal of n
