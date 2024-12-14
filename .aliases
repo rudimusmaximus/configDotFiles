@@ -352,4 +352,5 @@ alias keymapsfuzzy='bun -b run ~/.bun_scripts/list_keymap_tips_fuzzy.mjs'
 # manage asdf neovim versions
 alias refresh-nvim-stable='asdf uninstall neovim stable && asdf install neovim stable'
 alias refresh-nvim-nightly='asdf uninstall neovim nightly && asdf install neovim nightly'
+alias refresh-nvim-master='asdf uninstall neovim ref:master && asdf install neovim ref:master'
 
