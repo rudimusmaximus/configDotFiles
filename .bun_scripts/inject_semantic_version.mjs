@@ -97,7 +97,7 @@ function generatedSemVersioning() {
   });
 }
 
-`;
+  `;
 
   if (!fs.existsSync(fileToUpdate)) {
     // If file doesn't exist, create it
@@ -109,10 +109,11 @@ function generatedSemVersioning() {
     console.log(`File ${fileToUpdate} updated successfully.`);
   }
 
-  console.log(`Synchronized package.json's version: '${version}'
+  console.log(
+    `Synchronized package.json's version: '${version}'
   into '${fileToUpdate}'
-  as SEMANTIC_VERSION, LAST_UPDATED, and LAST_UPDATED_PRECISE constants.
-`);
+  as SEMANTIC_VERSION, LAST_UPDATED, and LAST_UPDATED_PRECISE constants.`
+  );
 
   return Object.freeze({
     toJSON: toJSON,
@@ -132,5 +133,4 @@ function generatedSemVersioning() {
     return Object.freeze(snapshot);
   };
 };
-
 
