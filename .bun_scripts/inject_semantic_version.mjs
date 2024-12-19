@@ -96,7 +96,6 @@ function generatedSemVersioning() {
     LAST_UPDATED_PRECISE: LAST_UPDATED_PRECISE,
   });
 }
-
   `;
 
   if (!fs.existsSync(fileToUpdate)) {
