@@ -115,6 +115,7 @@ alias s="cd ~/Library/Application\ Support/JetBrains/WebStorm2022.1/scratches/"
 
 alias e="edgedb"
 
+alias reflect-sem-ver="bun ~/.bun_scripts/inject_semantic_version.mjs"
 alias g="git"
 alias ga="git add"
 alias gall='echo "Stage all new, modified, and deleted files in the current directory and all sub directories."; git add .'
