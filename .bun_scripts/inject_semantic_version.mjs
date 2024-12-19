@@ -4,40 +4,54 @@
  * "scripts": { "semver": "bun ~/.bun_scripts/inject_semantic_version.mjs", ... }
  * bun semver to run inside the project with the package.json script
  * THIS SCRIPT injects the semantic version into a google apps script editor addon
- * see push script in package.json, expects about/a_semantic_version.js to exist
- * in local project and also package.json with version of course
+ * as an updated or created file ./a_semantic_version.js
+ * Requires a package.json with version of course in same directory
  * @author rudimusmaximus (https://github.com/rudimusmaximus) raul@raulfloresjr.com
  */
 import fs from 'fs';
 import { readFile } from 'fs/promises';
 
+// path to package.json
 const packagePath = Bun.resolveSync('./package.json', process.cwd());
+// content of package.json
 const data = await readFile(packagePath);
-const version = JSON.parse(data).version;
 const date = new Date();
 
-// Last updated date in UTC (date only)
-const lastUpdated = date.toLocaleDateString('en-US', {
-  day: '2-digit',
-  month: 'long',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
+console.log(
+  reflect_semantic_version({
+    version: JSON.parse(data).version,
+    lastUpdated: date.toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }),
+    lastUpdatedPrecise: date.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, ' UTC'),
+  }).toJSON(),
+);
 
-// Precise last updated timestamp in UTC with time, keep the z
-const lastUpdatedPrecise = date.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, ' UTC');
+process.exit(0);
 
-const fileToUpdate = Bun.resolveSync('./src/about/a_semantic_version.js', process.cwd());
-console.log(`
-Synchronized package.json's version: '${version}'
- with last updated        : '${lastUpdated}'
- and  last updated precise: '${lastUpdatedPrecise}'
- into '${fileToUpdate}'
- as SEMANTIC_VERSION, LAST_UPDATED, and LAST_UPDATED_PRECISE constants.
-`);
+/**
+ * Synchronize package.json's version with a_semantic_version.js usable by local project.
+ * @param {object} spec - anonymous object for member destructuring-assignments
+ * @param {string} spec.version - version from package.json
+ * @param {string} spec.lastUpdated - last updated date in UTC (date only)
+ * @param {string} spec.lastUpdatedPrecise - precise last updated timestamp in UTC with time
+ * @return {{toJSON: Function,
+ * }} Anonymous record type with given type members
+ */
+function reflect_semantic_version(spec) {
+  const {
+    version,
+    lastUpdated,
+    lastUpdatedPrecise,
+  } = spec;
 
-const code =
-  `/**
+  // File path for a_semantic_version.js
+  const fileToUpdate = './a_semantic_version.js';
+
+  const code = `/**
  * @file a_semantic_version.js
  * @description Automatically generated file that contains the semantic version of the
  * Google Apps Script Editor add-on. This file is updated as part of the development
@@ -83,8 +97,40 @@ function generatedSemVersioning() {
   });
 }
 
-`
+`;
 
-fs.writeFileSync(fileToUpdate, code);
-process.exit(0);
+  if (!fs.existsSync(fileToUpdate)) {
+    // If file doesn't exist, create it
+    fs.writeFileSync(fileToUpdate, code);
+    console.log(`File ${fileToUpdate} created and written successfully.`);
+  } else {
+    // If file exists, update it
+    fs.writeFileSync(fileToUpdate, code);
+    console.log(`File ${fileToUpdate} updated successfully.`);
+  }
+
+  console.log(`Synchronized package.json's version: '${version}'
+  into '${fileToUpdate}'
+  as SEMANTIC_VERSION, LAST_UPDATED, and LAST_UPDATED_PRECISE constants.
+`);
+
+  return Object.freeze({
+    toJSON: toJSON,
+  });
+
+  /**
+   * This returns an object of selected members; it can be called directly or
+   * using JSON.stringify on an Object made by invoking this cfoo.
+   * @return {object} Snapshot - selected items for logging or debugging
+   */
+  function toJSON() {
+    const snapshot = {
+      title: `a selective snapshot of function reflect_semantic_version(spec)`,
+      spec,
+      toJSON,
+    };
+    return Object.freeze(snapshot);
+  };
+};
+
 
