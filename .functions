@@ -80,8 +80,8 @@ findAndReplaceBsdF() {
 semver() {
     echo "Checking package.json";
     jq -r .version package.json;
-    echo "Checking src file";
-    bat ./src/about/a_semantic_version.js;
+    echo "Checking ./a_semantic_version.js";
+    batl javascript ./a_semantic_version.js;
 }
 
 # initiates a FaceTime call to a phone number using the open command
