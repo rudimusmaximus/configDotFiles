@@ -355,3 +355,7 @@ alias refresh-nvim-stable='asdf uninstall neovim stable && asdf install neovim s
 alias refresh-nvim-nightly='asdf uninstall neovim nightly && asdf install neovim nightly'
 alias refresh-nvim-master='asdf uninstall neovim ref:master && asdf install neovim ref:master'
 
+# see the related functions in .functions
+alias aliases='show_aliases | column'
+alias functions='show_functions | column'
+
