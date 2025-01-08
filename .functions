@@ -40,14 +40,30 @@ go_home() {
   pwd
 }
 
-aliases() {
+show_aliases() {
   mapfile -t my_array < <( compgen -A alias );
-  echo "${my_array[@]}";
+  printf "%s\n" "${my_array[@]}" | sort
 }
 
-functions() {
-  mapfile -t my_array < <( compgen -A function );
-  echo "${my_array[@]}";
+show_functions() {
+    local all=false
+    local my_array=()
+
+    # Check if the user passed the '-all' flag
+    if [[ "$1" == "-all" ]]; then
+        all=true
+    fi
+
+    mapfile -t my_array < <(compgen -A function)
+
+    # Filter out functions starting with an underscore unless '-all' is passed
+    if [[ "$all" == false ]]; then
+        local temp_array
+        temp_array=$(printf "%s\n" "${my_array[@]}" | grep -v '^_')
+        mapfile -t my_array <<<"$temp_array"
+    fi
+
+    printf "%s\n" "${my_array[@]}" | grep --color=auto -v '^$' | sort
 }
 
 findAndReplaceBsd() {
@@ -295,25 +311,36 @@ update_dotfiles() {
   gl -3
 }
 
-# outputs a sorted, combined list of functions and aliases
-# that are in the .functions and .aliases files in the home directory
-# can be used to pipe to fzf to quickly find bash functions and aliases.
-fna() {
-  ALIAS_FILE="$HOME/.aliases"
-  FUNCTIONS_FILE="$HOME/.functions"
+# Outputs a sorted, combined list of functions and aliases
+# Can be used to pipe to fzf to quickly find bash functions and aliases.
+function fna() {
+    local show_all_entries=false
+    local alias_list=()
+    local function_list=()
 
-  if [[ ! -f "$ALIAS_FILE" && ! -f "$FUNCTIONS_FILE" ]]; then
-    echo "Neither .aliases nor .functions file exists in the home directory."
-    return 1
-  fi
+    # Check if the user passed the '-all' flag
+    if [[ "$1" == "-all" ]]; then
+        show_all_entries=true
+    fi
 
-  {
-    # Process aliases: remove 'alias ', handle '-- -' as '-', and truncate after '='
-    [[ -f "$ALIAS_FILE" ]] && grep -v '^\s*#' "$ALIAS_FILE" | grep '^alias' | sed -e 's/^alias //' -e 's/=.*//' -e 's/-- -/-/'
+    # Retrieve aliases
+    mapfile -t alias_list < <(show_aliases)
 
-    # Process functions: remove comments and capture valid function definitions, excluding lines starting with '['
-    [[ -f "$FUNCTIONS_FILE" ]] && grep -v '^\s*#' "$FUNCTIONS_FILE" | grep -v '^\s*\[' | grep '() {' | sed 's/(.*//'
-  } | sort
+    # Retrieve functions
+    if [[ "$show_all_entries" == true ]]; then
+        mapfile -t function_list < <(show_functions -all)
+    else
+        mapfile -t function_list < <(show_functions)
+    fi
+
+    # Print the combined list of aliases and functions
+    {
+        printf "%s\n" "${alias_list[@]}"
+        printf "%s\n" "${function_list[@]}"
+    } | grep --color=auto -v '^$' | sort | column
+
+    # Print the source information
+    echo -e "\nThese entries are based on the current shell environment."
 }
 
 # Ensure the SSH agent is running and add the SSH key (so users don't have to enter their password each time)
