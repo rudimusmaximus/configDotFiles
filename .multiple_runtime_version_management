@@ -11,13 +11,16 @@ if [ -d "$HOME/.asdf" ]; then
   # shellcheck source=/dev/null
   source "$HOME/.asdf/completions/asdf.bash"
 
-  # Set GOROOT for go (golang installed by asdf used by nvim)
+  # Set GOROOT and GOPROXY for go (golang installed by asdf used by nvim)
   if asdf where golang >/dev/null 2>&1; then
     verbLog 3 "Found golang, installed by asdf(used by nvim)."
     verbLog 3 "Setting GOROOT for golang..."
     export GOROOT
     GOROOT="$(asdf where golang)"
     verbLog 3 "GOROOT set to $GOROOT"
+    verbLog 3 "Setting Go module proxy to facilitate module downloads. Using default proxy."
+    export GOPROXY=https://proxy.golang.org
+    verbLog 3 "GOPROXY set to $GOPROXY"
   else
     printf "⚠️ golang is not installed with asdf.\n"
   fi
