@@ -18,9 +18,12 @@ if [ -d "$HOME/.asdf" ]; then
     export GOROOT
     GOROOT="$(asdf where golang)"
     verbLog 3 "GOROOT set to $GOROOT"
-    verbLog 3 "Setting Go module proxy to facilitate module downloads. Using default proxy."
+    verbLog 3 "Setting Go module proxy to facilitate module downloads. Using default proxy..."
     export GOPROXY=https://proxy.golang.org
     verbLog 3 "GOPROXY set to $GOPROXY"
+    verbLog 3 "Setting GOSUMDB for public checksums..."
+    export GOSUMDB=sum.golang.org
+    verbLog 3 "GOSUMDB set to $GOSUMDB"
   else
     printf "⚠️ golang is not installed with asdf.\n"
   fi
