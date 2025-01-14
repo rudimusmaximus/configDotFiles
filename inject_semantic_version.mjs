@@ -95,6 +95,22 @@ function generatedSemVersioning() {
   });
 }
 
+/**
+ * Determines if the current environment is Google Apps Script.
+ * This function checks for the existence of the 'Session' object and its 'getActiveUser'
+ * method, which are unique to the Google Apps Script environment. This helps in
+ * conditionally executing code based on the run time environment.
+ * @return {boolean} 'true' if running within Google Apps Script; otherwise, 'false'.
+ */
+function isGoogleAppsScript() {
+  return typeof Session !== 'undefined' && typeof Session.getActiveUser === 'function';
+}
+
+// Conditionally execute the function based on the environment
+if (!isGoogleAppsScript()) {
+  console.log(generatedSemVersioning());
+}
+
 `;
 
   if (!fs.existsSync(fileToUpdate)) {
