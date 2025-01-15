@@ -92,11 +92,19 @@ findAndReplaceBsdF() {
   echo "";
 }
 
+# sometimes used as prepush script in certain projects
+# examine file for logic details
+# requires local package.json leaves a local file named
+# a_semantic_version.js with same version as the one in package.json
+injectSemver(){
+  bun -b run ~/inject_semantic_version.mjs;
+}
+
 # assumes version alias and tries two ways to find local date in files
 semver() {
-    echo "Checking package.json";
+    echo "Checking package.json's version...";
     jq -r .version package.json;
-    echo "Running ./a_semantic_version.js";
+    echo "Running ./a_semantic_version.js directly...";
     bun -b run ./a_semantic_version.js;
 }
 

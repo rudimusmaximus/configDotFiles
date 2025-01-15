@@ -23,19 +23,19 @@ function generatedSemVersioning() {
    * Bun script as part of the development workflow.
    * @type {string}
    */
-  const SEMANTIC_VERSION = '0.4.6';
+  const SEMANTIC_VERSION = '0.4.7';
 
   /**
    * The last updated time stamp reflects the day the version was automatically updated.
    * @type {string}
    */
-  const LAST_UPDATED = 'January 14, 2025';
+  const LAST_UPDATED = 'January 15, 2025';
 
   /**
    * The precise last updated time stamp in UTC.
    * @type {string}
    */
-  const LAST_UPDATED_PRECISE = '2025-01-14 17:26:12 UTC';
+  const LAST_UPDATED_PRECISE = '2025-01-15 03:38:37 UTC';
 
   return Object.freeze({
     SEMANTIC_VERSION: SEMANTIC_VERSION,
