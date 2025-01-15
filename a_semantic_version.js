@@ -23,7 +23,7 @@ function generatedSemVersioning() {
    * Bun script as part of the development workflow.
    * @type {string}
    */
-  const SEMANTIC_VERSION = '0.4.7';
+  const SEMANTIC_VERSION = '0.4.8';
 
   /**
    * The last updated time stamp reflects the day the version was automatically updated.
@@ -35,7 +35,7 @@ function generatedSemVersioning() {
    * The precise last updated time stamp in UTC.
    * @type {string}
    */
-  const LAST_UPDATED_PRECISE = '2025-01-15 03:38:37 UTC';
+  const LAST_UPDATED_PRECISE = '2025-01-15 05:10:17 UTC';
 
   return Object.freeze({
     SEMANTIC_VERSION: SEMANTIC_VERSION,
@@ -49,14 +49,8 @@ function generatedSemVersioning() {
  * This function checks for the existence of the 'Session' object and its 'getActiveUser'
  * method, which are unique to the Google Apps Script environment. This helps in
  * conditionally executing code based on the run time environment.
- * @return {boolean} 'true' if running within Google Apps Script; otherwise, 'false'.
  */
-function isGoogleAppsScript() {
-  return typeof Session !== 'undefined' && typeof Session.getActiveUser === 'function';
-}
-
-// Conditionally execute the function based on the environment
-if (!isGoogleAppsScript()) {
+if (typeof Session === 'undefined' || typeof Session.getActiveUser !== 'function') {
   console.log(generatedSemVersioning());
 }
 
