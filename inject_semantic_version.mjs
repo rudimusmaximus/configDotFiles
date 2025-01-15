@@ -9,6 +9,8 @@
  * @author rudimusmaximus (https://github.com/rudimusmaximus) raul@raulfloresjr.com
  */
 
+/** @type {import('bun-types').Bun } */
+
 try {
   const packagePath = './package.json';
   // contents of package.json
@@ -111,13 +113,11 @@ function generatedSemVersioning() {
 
 /**
  * Determines if the current environment is Google Apps Script.
- * This function checks for the existence of the 'Session' object and its 'getActiveUser'
- * method, which are unique to the Google Apps Script environment. This helps in
+ * This function checks for the existence of the 'PropertiesService' object
+ * available in the Google Apps Script environment. This helps in
  * conditionally executing code based on the run time environment.
  */
-if (typeof Session === 'undefined' || typeof Session.getActiveUser !== 'function') {
-  console.log(generatedSemVersioning());
-}
+if (typeof PropertiesService === 'undefined') console.log(generatedSemVersioning());
 
 `);
     return Object.freeze({

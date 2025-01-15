@@ -23,7 +23,7 @@ function generatedSemVersioning() {
    * Bun script as part of the development workflow.
    * @type {string}
    */
-  const SEMANTIC_VERSION = '0.4.8';
+  const SEMANTIC_VERSION = '0.4.9';
 
   /**
    * The last updated time stamp reflects the day the version was automatically updated.
@@ -35,7 +35,7 @@ function generatedSemVersioning() {
    * The precise last updated time stamp in UTC.
    * @type {string}
    */
-  const LAST_UPDATED_PRECISE = '2025-01-15 05:10:17 UTC';
+  const LAST_UPDATED_PRECISE = '2025-01-15 18:55:20 UTC';
 
   return Object.freeze({
     SEMANTIC_VERSION: SEMANTIC_VERSION,
@@ -46,11 +46,9 @@ function generatedSemVersioning() {
 
 /**
  * Determines if the current environment is Google Apps Script.
- * This function checks for the existence of the 'Session' object and its 'getActiveUser'
- * method, which are unique to the Google Apps Script environment. This helps in
+ * This function checks for the existence of the 'PropertiesService' object
+ * available in the Google Apps Script environment. This helps in
  * conditionally executing code based on the run time environment.
  */
-if (typeof Session === 'undefined' || typeof Session.getActiveUser !== 'function') {
-  console.log(generatedSemVersioning());
-}
+if (typeof PropertiesService === 'undefined') console.log(generatedSemVersioning());
 
