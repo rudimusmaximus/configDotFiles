@@ -27,7 +27,7 @@ function generatedSemVersioning() {
    * The precise last updated time stamp in UTC.
    * @type {string}
    */
-  const LAST_UPDATED_PRECISE = '2025-01-16 15:54:48 UTC';
+  const LAST_UPDATED_PRECISE = '2025-01-16 20:31:31 UTC';
 
   /**
    * The semantic version of the Google Apps Script Editor add-on, synchronized with the
@@ -35,7 +35,7 @@ function generatedSemVersioning() {
    * Bun script as part of the development workflow.
    * @type {string}
    */
-  const SEMANTIC_VERSION = '0.4.10';
+  const SEMANTIC_VERSION = '0.4.11-local-bin.0';
 
   return Object.freeze({
     LAST_UPDATED,

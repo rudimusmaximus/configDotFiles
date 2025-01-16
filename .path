@@ -17,6 +17,9 @@ if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
 
+# local bin use by python pip installs
+export PATH="$HOME/.local/bin:$PATH"
+
 # tmuxifier for session layouts (installed via TPM in .tmux.conf) see $HOME/.tmux/plugins
 export PATH="$HOME/.tmux/plugins/tmuxifier/bin:$PATH"
 
