@@ -85,14 +85,6 @@ async function reflect_semantic_version(spec) {
  */
 function generatedSemVersioning() {
   /**
-   * The semantic version of the Google Apps Script Editor add-on, synchronized with the
-   * version number specified in package.json. This value is updated automatically by the
-   * Bun script as part of the development workflow.
-   * @type {string}
-   */
-  const SEMANTIC_VERSION = '${version}';
-
-  /**
    * The last updated time stamp reflects the day the version was automatically updated.
    * @type {string}
    */
@@ -104,10 +96,18 @@ function generatedSemVersioning() {
    */
   const LAST_UPDATED_PRECISE = '${lastUpdatedPrecise}';
 
+  /**
+   * The semantic version of the Google Apps Script Editor add-on, synchronized with the
+   * version number specified in package.json. This value is updated automatically by the
+   * Bun script as part of the development workflow.
+   * @type {string}
+   */
+  const SEMANTIC_VERSION = '${version}';
+
   return Object.freeze({
-    SEMANTIC_VERSION: SEMANTIC_VERSION,
-    LAST_UPDATED: LAST_UPDATED,
-    LAST_UPDATED_PRECISE: LAST_UPDATED_PRECISE,
+    LAST_UPDATED,
+    LAST_UPDATED_PRECISE,
+    SEMANTIC_VERSION,
   });
 }
 
