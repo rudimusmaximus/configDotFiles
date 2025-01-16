@@ -100,12 +100,28 @@ injectSemver(){
   bun -b run ~/inject_semantic_version.mjs;
 }
 
+# Lists the semver prefixed with 'v' from the local package.json
+# and copies it to the clipboard.
+# Example output: v1.0.0
+# Uses pbcopy on macOS and xclip on Linux.
+version() {
+  version=$(jq -r ".version" package.json | awk '{print "v"$1}')
+  echo "$version" | tee >(
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      pbcopy
+    else
+      xclip -selection clipboard
+    fi
+  )
+}
+
 # assumes version alias and tries two ways to find local date in files
 semver() {
     echo "Checking package.json's version...";
     jq -r .version package.json;
     echo "Running ./a_semantic_version.js directly...";
     bun -b run ./a_semantic_version.js;
+    version;
 }
 
 # initiates a FaceTime call to a phone number using the open command
@@ -132,21 +148,6 @@ crypto() {
 md() {
   pandoc "$1" --highlight-style=tango -o "/tmp/${1%.md}.html"
   xdg-open "/tmp/${1%.md}.html"
-}
-
-# Lists the semver prefixed with 'v' from the local package.json
-# and copies it to the clipboard.
-# Example output: v1.0.0
-# Uses pbcopy on macOS and xclip on Linux.
-version() {
-  version=$(jq -r ".version" package.json | awk '{print "v"$1}')
-  echo "$version" | tee >(
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-      pbcopy
-    else
-      xclip -selection clipboard
-    fi
-  )
 }
 
 # increments or sets the prerelease version and copies it to the clipboard
