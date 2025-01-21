@@ -14,7 +14,6 @@ declare -a profile_config_files=(
     "${HOME}/.extra"    # Can be used for machine specific or secret settings
     "${HOME}/.bashrc"   # Prompt, alias, functions, keybindings, etc
     "${HOME}/.multiple_runtime_version_management" # asdf for languages and nvim
-    "${HOME}/.prerequisite_check" # expected packages or apps TODO grow to simplify new machine setup
     "${HOME}/.greeting" # fastfetch if available
 )
 
