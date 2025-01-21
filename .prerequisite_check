@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+printf "[LOG] ✔ %s\n" "Entering .prerequisite_check..."
+
 # Function to check if a command exists
 function command_exists() {
     command -v "$1" >/dev/null 2>&1
@@ -8,7 +10,7 @@ function command_exists() {
 # Function to check git-flow installation
 function check_git_flow() {
     if command_exists git-flow; then
-        verbLog 2 "git-flow is installed."
+        printf "[LOG] ✔✔ %s\n" "git-flow is installed."
     else
         printf "⚠️ %s\n" "git-flow is NOT installed."
         printf "%s\n" "To install:"
@@ -20,11 +22,11 @@ function check_git_flow() {
 # Function to check bash-completion installation
 function check_bash_completion() {
     if [[ -r "/usr/share/bash-completion/bash_completion" ]]; then
-        verbLog 2 "bash-completion is installed and available; likely linux."
+        printf "[LOG] ✔✔ %s\n" "bash-completion is installed and available; likely linux."
     elif [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
-        verbLog 2 "bash-completion is installed and available (Homebrew path); likely Intel, macOS."
+        printf "[LOG] ✔✔ %s\n" "bash-completion is installed and available (Homebrew path); likely Intel, macOS."
     elif [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
-        verbLog 2 "bash-completion is installed and available (Homebrew path); likely ARM, macOS."
+        printf "[LOG] ✔✔ %s\n" "bash-completion is installed and available (Homebrew path); likely ARM, macOS."
     else
         printf "⚠️ %s\n" "bash-completion is NOT installed or not configured."
         printf "%s\n" "To install:"
@@ -36,7 +38,7 @@ function check_bash_completion() {
 # Function to check if git-flow bash completion is loaded
 function check_git_flow_completion() {
     if [[ $(type -t _git_flow) == "function" ]]; then
-        verbLog 2 "git-flow bash completion is loaded."
+        printf "[LOG] ✔✔ %s\n" "git-flow bash completion is loaded."
     else
         printf "⚠️ %s\n" "git-flow bash completion is NOT loaded."
         printf "%s\n" "configDotFile '.git-flow-completion.sh' was not sourced."
@@ -50,7 +52,7 @@ function check_node_availability() {
         printf "⚠️  %s\n" "Warning: Node.js is not available in this session."
         printf "  %s\n" "Please check your asdf configuration or node installation."
     else
-        verbLog 2 "Node.js is available."
+        printf "[LOG] ✔✔ %s\n" "Node.js is available."
     fi
 }
 
@@ -61,7 +63,7 @@ function check_tpm_installed() {
         printf "⚠️  %s\n" "Warning: tmux plugin manager (TPM) is not installed."
         printf "  %s\n" "Have you included it in your .mrconfig file?"
     else
-        verbLog 2 "TMUX Plugin Manager (TPM) is installed."
+        printf "[LOG] ✔✔ %s\n" "TMUX Plugin Manager (TPM) is installed."
     fi
 }
 
@@ -78,4 +80,8 @@ unset -f check_bash_completion
 unset -f check_git_flow_completion
 unset -f check_node_availability
 unset -f check_tpm_installed
+
+# TODO pull other checks out and place them here like fastfetch
+# the idea is to run intstall script remotely checking for prequisites
+# review
 

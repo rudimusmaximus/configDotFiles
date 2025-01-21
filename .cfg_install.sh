@@ -24,9 +24,7 @@ error_exit() {
 
 # Display usage information
 output_help() {
-    printf "NOTE: RAW_CODE_URL is the GitHub SSH URL to the raw shell script.\n"
-    printf "      https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_install.sh\n\n"
-    printf "Usage:\n"
+  printf "\nUsage (from home directory):\n"
     printf "  To run remotely:  bash <(curl -sSf RAW_CODE_URL) [options]\n"
     printf "  To run locally :  bash .cfg_install.sh [options]\n\n"
     printf "Options:\n"
@@ -35,9 +33,13 @@ output_help() {
     printf "  -h       Display this message\n"
     printf "  -v       Display script version\n"
     printf "  -r       Remove existing dotfiles if .cfg is local - otherwise backed up during installs.\n"
-    printf "  -p       Prepare for reinstall. Remove existing cloned directories if present.\n\n"
-    printf "Maintenance after first install:\n"
+    printf "  -p       Prepare for reinstall. Remove existing cloned directories if present.\n"
+    printf "  -q       Check expected prequisites for planed use.\n\n"
+    printf "Maintenance after first install (see .cfg_README.adoc):\n"
     printf "  cfgInstallScript       Alias for running script remotely. Just add [options].\n\n"
+    printf "NOTE: RAW_CODE_URL above is the GitHub URL to the raw shell script.\n"
+    printf "      https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_install.sh\n\n"
+    printf "      However, the script uses the SSH URL for cloning which requires github account with a SSH key.\n"
 }
 
 # Use 'config' function as a substitute for the 'git' command, scoped to this specific repository setup
@@ -125,6 +127,16 @@ remove_tracked_files_and_empty_directories_when_done() {
     done
 }
 
+
+# Check for expected prequisites
+# apps, files, directories, etc
+check_for_expected_prerequisites() {
+  clear # clear the screen
+  printf "[LOG] ✔Sourcing ~/.prerequisite_check..."
+  source "${HOME}/.prerequisite_check"
+  printf "[LOG] ✔Finished ~/.prerequisite_check"
+}
+
 check_for_and_remove_expected_repositories() {
     local something_was_removed=false
     # Remove the directories if they are present and print a message
@@ -178,7 +190,7 @@ run() {
     command -v git >/dev/null 2>&1 || error_exit "git is required but it's not installed. Aborting."
     handle_not_a_flag_edge_cases "$@"
     # Parse options using getopts
-    while getopts ":bchprv" opt; do
+    while getopts ":bchpqrv" opt; do
         case $opt in
             b)
                 printf "Running basicBareRepoInstall...\n"
@@ -194,6 +206,10 @@ run() {
             p)
                 printf "Preparing for reinstall. Removing existing configDotFiles and .cfg directories if present.\n"
                 check_for_and_remove_expected_repositories
+                ;;
+            q)
+                printf "Checking all expected prequisites for planed use...\n"
+                check_for_expected_prerequisites
                 ;;
             r)
                 printf "Checking for tracked files.\n"
