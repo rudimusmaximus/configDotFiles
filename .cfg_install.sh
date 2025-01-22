@@ -129,9 +129,9 @@ remove_tracked_files_and_empty_directories_when_done() {
 # apps, files, directories, etc
 check_for_expected_prerequisites() {
   clear # clear the screen
-  printf "[LOG] ✔Sourcing ~/.prerequisite_check..."
+  printf "[LOG] ✔ Sourcing ~/.prerequisite_check..."
   source "${HOME}/.prerequisite_check"
-  printf "[LOG] ✔Finished ~/.prerequisite_check"
+  printf "[LOG] ✔ Finished ~/.prerequisite_check"
 }
 
 check_for_and_remove_expected_repositories() {
