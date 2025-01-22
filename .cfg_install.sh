@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 
-# e - script stops on error (return != 0)
-# u - error if undefined variable
-# o pipefail - script fails if one of piped command fails
-# x - output each line (debug)
 # Script version
-SCRIPT_VERSION="2.0.12"
+# Not set programmatically because this script is sometimes run by curling it locally into a bash script
+SCRIPT_VERSION="0.4.13"
 
 # Determine script name based on whether the script is run locally or remotely
 if [[ -f "$0" ]]; then
