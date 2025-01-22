@@ -24,8 +24,10 @@ for file in "${rc_config_files[@]}"; do
 done
 unset file
 
-# Initialize tmuxifier layouts
-eval "$(tmuxifier init -)"
+# Initialize tmuxifier layouts if available
+if command -v tmuxifier &> /dev/null; then
+    eval "$(tmuxifier init -)"
+fi#
 
 # Enable vi mode for Bash shell to use vi-style keybindings
 set -o vi
