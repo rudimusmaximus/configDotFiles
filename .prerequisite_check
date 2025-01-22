@@ -71,10 +71,10 @@ function check_tpm_installed() {
 function check_tmuxifier_installed() {
   # Check if tmuxifier is installed
   if command -v tmuxifier &> /dev/null; then
-      printf "%s\n" "Tmuxifier is installed and available."
+      printf "[LOG] ✔✔ %s\n" "Tmuxifier for Tmux layouts is installed and available."
   else
-      printf "⚠️ %s\n" "Tmuxifier is not installed or not in PATH."
-  fi#
+      printf "⚠️ %s\n" "Tmuxifier for Tmux layouts s not installed or not in PATH."
+  fi
 }
 
 # Run the checks
