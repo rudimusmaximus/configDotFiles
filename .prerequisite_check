@@ -70,18 +70,24 @@ function check_tpm_installed() {
 # Run the checks
 check_git_flow
 check_bash_completion
-check_git_flow_completion
+# check_git_flow_completion
 check_node_availability
 check_tpm_installed
 
 # Remove the functions from memory
 unset -f check_git_flow
 unset -f check_bash_completion
-unset -f check_git_flow_completion
+# unset -f check_git_flow_completion
 unset -f check_node_availability
 unset -f check_tpm_installed
 
 # TODO pull other checks out and place them here like fastfetch
 # the idea is to run intstall script remotely checking for prequisites
 # review
+
+# TODO git_flow_completion is not checked for now. git completion and git flow completion are
+# set in the .path file and are os specific checks during day to day bash usage
+# need to review all the ways we make these possible and make clean indipendent
+# check here that works across platforms and also consider making this work for
+# pi running debian bookworm
 
