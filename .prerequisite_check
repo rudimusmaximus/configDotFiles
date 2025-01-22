@@ -67,12 +67,23 @@ function check_tpm_installed() {
     fi
 }
 
+
+function check_tmuxifier_installed() {
+  # Check if tmuxifier is installed
+  if command -v tmuxifier &> /dev/null; then
+      printf "%s\n" "Tmuxifier is installed and available."
+  else
+      printf "⚠️ %s\n" "Tmuxifier is not installed or not in PATH."
+  fi#
+}
+
 # Run the checks
 check_git_flow
 check_bash_completion
 # check_git_flow_completion
 check_node_availability
 check_tpm_installed
+check_tmuxifier_installed
 
 # Remove the functions from memory
 unset -f check_git_flow
@@ -80,6 +91,7 @@ unset -f check_bash_completion
 # unset -f check_git_flow_completion
 unset -f check_node_availability
 unset -f check_tpm_installed
+unset -f check_tmuxifier_installed
 
 # TODO pull other checks out and place them here like fastfetch
 # the idea is to run intstall script remotely checking for prequisites
