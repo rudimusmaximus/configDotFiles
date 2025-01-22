@@ -27,7 +27,7 @@ unset file
 # Initialize tmuxifier layouts if available
 if command -v tmuxifier &> /dev/null; then
     eval "$(tmuxifier init -)"
-fi#
+fi
 
 # Enable vi mode for Bash shell to use vi-style keybindings
 set -o vi
