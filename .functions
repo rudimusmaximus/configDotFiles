@@ -97,7 +97,7 @@ findAndReplaceBsdF() {
 # requires local package.json leaves a local file named
 # a_semantic_version.js with same version as the one in package.json
 injectSemver(){
-  bun -b run ~/inject_semantic_version.mjs;
+  bun -b run ~/.bun_scripts/inject_semantic_version.mjs;
 }
 
 # Lists the semver prefixed with 'v' from the local package.json
