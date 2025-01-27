@@ -2,7 +2,10 @@
 # login to new session (local or ssh into machine)
 # note also sources .bashrc; also, exports are done once here and available thereafter
 
-clear # clear the screen
+# Only clear if verbose mode is off
+if [ "${CFG_DOT_FILES_VERBOSE_MODE:-false}" != true ]; then
+  clear # clear the screen
+fi
 
 source "${HOME}/.verbosity_logging" # provides log and sb functions
 verbLog 1 "Entering ~/.bash_profile..."
