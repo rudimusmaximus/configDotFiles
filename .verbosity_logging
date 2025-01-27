@@ -47,6 +47,9 @@ function sb() {
     # Reset OPTIND to 1 to ensure getopts processes options correctly on subsequent calls
     OPTIND=1
 
+    # Array to store unknown flags
+    unknown_flags=()
+
     # Default to non-verbose mode
     CFG_DOT_FILES_VERBOSE_MODE=false
 
@@ -59,20 +62,28 @@ function sb() {
                 ;;
             v)
                 CFG_DOT_FILES_VERBOSE_MODE=true
-                printf "\nVerbose mode enabled..."
+                printf "\nVerbose mode enabled...\n"
                 export CFG_DOT_FILES_VERBOSE_MODE  # Make verbosity available to sourced files
                 ;;
             \?)
-                printf "\n  Option does not exist: -%s" "$OPTARG"
-                printf "\n  Try -h for help\n\n"
-                return 1
+                # Collect unknown flags
+                unknown_flags+=("$OPTARG")
                 ;;
         esac
     done
 
+    # After parsing all options, check if there were any unknown flags
+    if [[ ${#unknown_flags[@]} -gt 0 ]]; then
+        printf "Unknown flags: %s\n" "${unknown_flags[*]}"
+        printf "\n  Try -h for help\n"
+        return 1
+    fi
+
     # Always source .bash_profile after parsing options
     source "$HOME"/.bash_profile # this will cascade and source .bashrc and it's files too
-    # don't worry that this means the variable is not available for noon sb runs
+
+    # don't worry that this means the variable is not available for non-verbose mode on sb runs
     # as the verbLog conditional check will work without it
     unset CFG_DOT_FILES_VERBOSE_MODE
 }
+
