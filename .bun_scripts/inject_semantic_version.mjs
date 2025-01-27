@@ -8,17 +8,16 @@
  * Requires a package.json with version of course in same directory
  * @author rudimusmaximus (https://github.com/rudimusmaximus) raul@raulfloresjr.com
  */
-import fs from 'fs';
-import { readFile } from 'fs/promises';
 
-// path to package.json
-const packagePath = Bun.resolveSync('./package.json', process.cwd());
-// content of package.json
-const data = await readFile(packagePath);
-const date = new Date();
+/** @type {import('bun-types').Bun } */
 
-console.log(
-  reflect_semantic_version({
+try {
+  const packagePath = './package.json';
+  // contents of package.json
+  const data = await Bun.file(packagePath).text();
+  const date = new Date();
+
+  const betterSemanticVersion = await reflect_semantic_version({
     version: JSON.parse(data).version,
     lastUpdated: date.toLocaleDateString('en-US', {
       day: '2-digit',
@@ -27,10 +26,15 @@ console.log(
       timeZone: 'UTC',
     }),
     lastUpdatedPrecise: date.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, ' UTC'),
-  }).toJSON(),
-);
+    fileToUpdate: './a_semantic_version.js',
+  });
 
-process.exit(0);
+  console.log(betterSemanticVersion.toJSON());
+
+} catch (error) {
+  console.error('An error occurred:', error);
+  console.error(error.stack);
+}
 
 /**
  * Synchronize package.json's version with a_semantic_version.js usable by local project.
@@ -38,20 +42,30 @@ process.exit(0);
  * @param {string} spec.version - version from package.json
  * @param {string} spec.lastUpdated - last updated date in UTC (date only)
  * @param {string} spec.lastUpdatedPrecise - precise last updated timestamp in UTC with time
- * @return {{toJSON: Function,
- * }} Anonymous record type with given type members
+ * @param {string} spec.fileToUpdate - path to file to update
+ * @return {Promise<{toJSON: Function}>} A Promise that resolves to an object with a toJSON method.
  */
-function reflect_semantic_version(spec) {
+async function reflect_semantic_version(spec) {
   const {
     version,
     lastUpdated,
     lastUpdatedPrecise,
+    fileToUpdate,
   } = spec;
 
-  // File path for a_semantic_version.js
-  const fileToUpdate = './a_semantic_version.js';
+  const code = defineSemanticCode().semanticCode;
+  const fileExists = await Bun.file(fileToUpdate).exists();
 
-  const code = `/**
+  // Write to a_semantic_version.js using Bun's write function
+  await Bun.write(fileToUpdate, code);
+  console.log(`File ${fileToUpdate} has been ${fileExists ? 'updated' : 'created'} successfully.`);
+
+  return Promise.resolve(Object.freeze({
+    toJSON: toJSON,
+  }));
+
+  function defineSemanticCode() {
+    const code = (`/**
  * @file a_semantic_version.js
  * @description Automatically generated file that contains the semantic version of the
  * Google Apps Script Editor add-on. This file is updated as part of the development
@@ -71,14 +85,6 @@ function reflect_semantic_version(spec) {
  */
 function generatedSemVersioning() {
   /**
-   * The semantic version of the Google Apps Script Editor add-on, synchronized with the
-   * version number specified in package.json. This value is updated automatically by the
-   * Bun script as part of the development workflow.
-   * @type {string}
-   */
-  const SEMANTIC_VERSION = '${version}';
-
-  /**
    * The last updated time stamp reflects the day the version was automatically updated.
    * @type {string}
    */
@@ -90,33 +96,34 @@ function generatedSemVersioning() {
    */
   const LAST_UPDATED_PRECISE = '${lastUpdatedPrecise}';
 
+  /**
+   * The semantic version of the Google Apps Script Editor add-on, synchronized with the
+   * version number specified in package.json. This value is updated automatically by the
+   * Bun script as part of the development workflow.
+   * @type {string}
+   */
+  const SEMANTIC_VERSION = '${version}';
+
   return Object.freeze({
-    SEMANTIC_VERSION: SEMANTIC_VERSION,
-    LAST_UPDATED: LAST_UPDATED,
-    LAST_UPDATED_PRECISE: LAST_UPDATED_PRECISE,
+    LAST_UPDATED,
+    LAST_UPDATED_PRECISE,
+    SEMANTIC_VERSION,
   });
 }
-  `;
 
-  if (!fs.existsSync(fileToUpdate)) {
-    // If file doesn't exist, create it
-    fs.writeFileSync(fileToUpdate, code);
-    console.log(`File ${fileToUpdate} created and written successfully.`);
-  } else {
-    // If file exists, update it
-    fs.writeFileSync(fileToUpdate, code);
-    console.log(`File ${fileToUpdate} updated successfully.`);
+/**
+ * Determines if the current environment is Google Apps Script.
+ * This function checks for the existence of the 'PropertiesService' object
+ * available in the Google Apps Script environment. This helps in
+ * conditionally executing code based on the run time environment.
+ */
+if (typeof PropertiesService === 'undefined') console.log(generatedSemVersioning());
+
+`);
+    return Object.freeze({
+      semanticCode: code,
+    });
   }
-
-  console.log(
-    `Synchronized package.json's version: '${version}'
-  into '${fileToUpdate}'
-  as SEMANTIC_VERSION, LAST_UPDATED, and LAST_UPDATED_PRECISE constants.`
-  );
-
-  return Object.freeze({
-    toJSON: toJSON,
-  });
 
   /**
    * This returns an object of selected members; it can be called directly or
@@ -125,7 +132,7 @@ function generatedSemVersioning() {
    */
   function toJSON() {
     const snapshot = {
-      title: `a selective snapshot of function reflect_semantic_version(spec)`,
+      title: `a selective snapshot of reflect_semantic_version(spec)`,
       spec,
       toJSON,
     };
