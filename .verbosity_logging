@@ -58,13 +58,13 @@ function sb() {
                 return 0
                 ;;
             v)
-                verbLog 2 "Running function sb()..."
                 CFG_DOT_FILES_VERBOSE_MODE=true
-                export CFG_DOT_FILES_VERBOSE_MODE  # Make verbose available to sourced files
+                printf "\nVerbose mode enabled..."
+                export CFG_DOT_FILES_VERBOSE_MODE  # Make verbosity available to sourced files
                 ;;
             \?)
-                printf "\n  Option does not exist: -%s\n\n" "$OPTARG"
-                sb_help
+                printf "\n  Option does not exist: -%s" "$OPTARG"
+                printf "\n  Try -h for help\n\n"
                 return 1
                 ;;
         esac
