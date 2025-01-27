@@ -115,13 +115,18 @@ version() {
   )
 }
 
-# assumes version alias and tries two ways to find local date in files
+# assumes version alias and if injectSemver() HAD BEEN OPTIONALLY RUN
+# not all projects use the second version file; part of a proprietary workflow
 semver() {
-    echo "Checking package.json's version...";
-    jq -r .version package.json;
-    echo "Running ./a_semantic_version.js directly...";
-    bun -b run ./a_semantic_version.js;
-    version;
+  printf "\n%s\n" "Determining version (use injectSemver() to refresh or sync if needed)..."
+  if [[ -f ./a_semantic_version.js ]]; then
+    printf "%s\n" "Running ./a_semantic_version.js..."
+    bun -b run ./a_semantic_version.js
+  else
+    printf "%s\n" "No a_semantic_version.js file; run the function 'injectSemver' if you want one."
+  fi
+  printf "%s\n" "Using package.json, this semver is in your clipboard..."
+  version
 }
 
 # initiates a FaceTime call to a phone number using the open command
