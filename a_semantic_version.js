@@ -21,13 +21,13 @@ function generatedSemVersioning() {
    * The last updated time stamp reflects the day the version was automatically updated.
    * @type {string}
    */
-  const LAST_UPDATED = 'January 22, 2025';
+  const LAST_UPDATED = 'January 27, 2025';
 
   /**
    * The precise last updated time stamp in UTC.
    * @type {string}
    */
-  const LAST_UPDATED_PRECISE = '2025-01-22 19:28:06 UTC';
+  const LAST_UPDATED_PRECISE = '2025-01-27 20:11:51 UTC';
 
   /**
    * The semantic version of the Google Apps Script Editor add-on, synchronized with the
@@ -35,7 +35,7 @@ function generatedSemVersioning() {
    * Bun script as part of the development workflow.
    * @type {string}
    */
-  const SEMANTIC_VERSION = '0.4.17';
+  const SEMANTIC_VERSION = '0.4.18';
 
   return Object.freeze({
     LAST_UPDATED,
