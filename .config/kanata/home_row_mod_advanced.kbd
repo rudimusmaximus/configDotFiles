@@ -43,10 +43,10 @@
 ;; Special layer mostly above function keys, but others could be added
 ;; _   brdn brup  @mc   @sls  @dtn  @dnd  prev  pp  next  mute  vold  volu
 (deflayer special-keys
-  esc  🔅   🔆   @mc  @lp  @dtn @dnd ◀◀   ▶⏸   ▶▶   🔇   🔉   🔊
+  esc  🔅   🔆   @mc  @sls @dtn @dnd ◀◀   ▶⏸   ▶▶   🔇   🔉   🔊
   _    _    _    _    _    _    _    _    _    _    _    _    _    del
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
-  _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    @lp  _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _              _              _    _    _
   _
@@ -119,12 +119,13 @@
   l (tap-hold-release-keys $ring-tap-time $ring-hold-time (multi l @tap) ralt $right-hand-keys)
   ; (tap-hold-release-keys $pinky-tap-time $pinky-hold-time (multi ; @tap) rmet $right-hand-keys)
 
-  ;; macOS function key glyphs (make sure you've defined them in macOS...some are default)
-  mc C-up         ;; Mission Control
-  ;; Spotlight Search just use M-space
-  dtn C-A-S-M-f5  ;; Dictation
-  dnd C-A-S-M-f6  ;; Do Not Disturb
-  lp C-A-S-M-l    ;; Launchpad special on F4 on some keyboards and search on others
+  ;; these special layer aliases perform key combinations that need to match what the os has (macOS and custom items shown here)
+  ;; to be clear custom means define using macOS settings
+  mc  C-up        ;; Mission Control (default)
+  sls M-spc       ;; Spotlight Search just use M-space (default)
+  dtn C-A-S-M-d   ;; Dictation (custom)
+  dnd C-A-S-M-n   ;; Do Not Disturb (custom)
+  lp  C-A-S-M-l   ;; Launchpad fn + l (note on some it's f4, but our f4 is spotlight search like on macbook pro) (custom)
 
   ;; special-keys layer on hold and return to base layer on release
   fnl (tap-hold 200 200 fn (layer-toggle special-keys))
