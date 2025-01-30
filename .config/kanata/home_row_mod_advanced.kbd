@@ -1,15 +1,9 @@
-;; vim: set ft=lisp:
-
-;; Home row mods QWERTY example with more complexity.
-;; Some of the changes from the basic example:
-;; - when a home row mod activates tap, the home row mods are disabled
-;;   while continuing to type rapidly
-;; - tap-hold-release helps make the hold action more responsive
-;; - pressing another key on the same half of the keyboard
-;;   as the home row mod will activate an early tap action
-;; - rfjr added Caps Lock Behavior to register Escape on tap and Control on hold
-;; - used this guide to preserve special functions on top of function keys
-;;   https://github.com/jtroo/kanata/issues/975#issuecomment-2489950660
+;; KEY FEATURES OF THIS CONFIG
+;; - QWERTY Home row mods asdf jkl; as M A S C and C S A M
+;; - Chord left and right shift to toggle caps lock (no LED yet)
+;; - Caps lock is escape on tap and control on hold
+;; - Fn key on hold gives special keys layer (media player, mission control,
+;; spotlight search, dictation, do not disturb, launchpad)
 
 (defcfg
   process-unmapped-keys yes
@@ -27,9 +21,7 @@
   fn
 )
 
-;; Base layer: as modified here
-;; - Media controls on the top row in place of the usual F-keys
-;; - 'fn' key on the bottom row for toggling the Fn layer
+;; Base layer as modified here
 (deflayer base
   esc   f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
   grv   1    2    3    4    5    6    7    8    9    0    -    =    bspc
@@ -52,7 +44,7 @@
   _
 )
 
-;; for keys with tap-hold logic, what is
+;; For keys with tap-hold logic, what is
 ;; the default key behavior without any modifiers
 (deflayer nomods
   _    _    _    _    _    _    _    _    _    _    _    _    _
@@ -130,4 +122,5 @@
   ;; special-keys layer on hold and return to base layer on release
   fnl (tap-hold 200 200 fn (layer-toggle special-keys))
 )
+;; vim: set ft=lisp:
 

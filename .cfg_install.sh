@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
 
-# Script version
-# Not set programmatically because this script is sometimes run by curling it locally into a bash script
-SCRIPT_VERSION="0.4.13"
-
-# Determine script name based on whether the script is run locally or remotely
+# Determine script name and version based on whether the script is run locally or remotely
 if [[ -f "$0" ]]; then
-    # Running locally, use the actual script name
-    script_name="$(basename "$0")"
+  title='rudimusmaximus/cfgDotFiles Install Script'
+  # Running locally, use the actual script name
+  script_name="$(basename "$0")"
+  # Get version from package.json in home directory
+  if [[ -f "$HOME/package.json" ]]; then
+      CFG_SCRIPT_VERSION=$(jq -r '.version' "$HOME/package.json")
+      CFG_VERSION_MESSAGE="-- ${title} v${CFG_SCRIPT_VERSION} -- local ~/${script_name}"
+  else
+      CFG_SCRIPT_VERSION="unknown"
+  fi
 else
-    # Running remotely, use a descriptive name
-    script_name="remote installation (via curl)"
+    CFG_SCRIPT_VERSION=$(curl -s "https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/package.json" | jq -r '.version')
+    CFG_VERSION_MESSAGE="-- ${title} v${CFG_SCRIPT_VERSION} -- remote installation (via curl)"
 fi
 
 # Error handling function
@@ -214,10 +218,10 @@ run() {
                 printf "Removed tracked files from %s based on existing .cfg.\n" "$HOME"
                 ;;
             v)
-                printf "\n -- Install Script Version %s -- %s from repo rudimusmaximus/configDotFiles\n\n" "$SCRIPT_VERSION" "$script_name"
+                printf "\n %s\n" "$CFG_VERSION_MESSAGE"
                 ;;
             *)
-                printf "\n  Option does not exist: %s\n\n" "$OPTARG"
+                printf "\n  Option does not exist: %s\nn" "$OPTARG"
                 output_help
                 exit 1
                 ;;
