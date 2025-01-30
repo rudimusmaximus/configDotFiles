@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
+printf "\n%s\n" "rudimusmaximus/cfgDotFiles Install Script"
 
 # Determine script name and version based on whether the script is run locally or remotely
 if [[ -f "$0" ]]; then
-  title='rudimusmaximus/cfgDotFiles Install Script'
   # Running locally, use the actual script name
   script_name="$(basename "$0")"
   # Get version from package.json in home directory
   if [[ -f "$HOME/package.json" ]]; then
       CFG_SCRIPT_VERSION=$(jq -r '.version' "$HOME/package.json")
-      CFG_VERSION_MESSAGE="-- ${title} v${CFG_SCRIPT_VERSION} -- local ~/${script_name}"
+      CFG_VERSION_MESSAGE="-- v${CFG_SCRIPT_VERSION} -- local ~/${script_name}"
   else
       CFG_SCRIPT_VERSION="unknown"
   fi
 else
     CFG_SCRIPT_VERSION=$(curl -s "https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/package.json" | jq -r '.version')
-    CFG_VERSION_MESSAGE="-- ${title} v${CFG_SCRIPT_VERSION} -- remote installation (via curl)"
+    CFG_VERSION_MESSAGE="-- v${CFG_SCRIPT_VERSION} -- remote installation (via curl)"
 fi
 
 # Error handling function
@@ -133,9 +133,9 @@ remove_tracked_files_and_empty_directories_when_done() {
 # apps, files, directories, etc
 check_for_expected_prerequisites() {
   clear # clear the screen
-  printf "[LOG] ✔ Sourcing ~/.prerequisite_check..."
+  printf "\n%s\n" "[LOG] ✔ Sourcing ~/.prerequisite_check..."
   source "${HOME}/.prerequisite_check"
-  printf "[LOG] ✔ Finished ~/.prerequisite_check"
+  printf "%s\n" "[LOG] ✔ Finished ~/.prerequisite_check"
 }
 
 check_for_and_remove_expected_repositories() {
