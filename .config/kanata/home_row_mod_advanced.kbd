@@ -1,3 +1,5 @@
+;; vim: set ft=lisp:
+
 ;; Home row mods QWERTY example with more complexity.
 ;; Some of the changes from the basic example:
 ;; - when a home row mod activates tap, the home row mods are disabled
@@ -6,29 +8,75 @@
 ;; - pressing another key on the same half of the keyboard
 ;;   as the home row mod will activate an early tap action
 ;; - rfjr added Caps Lock Behavior to register Escape on tap and Control on hold
+;; - used this guide to preserve special functions on top of function keys
+;;   https://github.com/jtroo/kanata/issues/975#issuecomment-2489950660
 
 (defcfg
   process-unmapped-keys yes
+  concurrent-tap-hold   yes
 )
 
+;; Source/Physical Keys
 (defsrc
-  caps a   s   d   f   j   k   l   ;
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt           spc            ralt rmet rctl
+  fn
 )
 
+;; Base layer: as modified here
+;; - Media controls on the top row in place of the usual F-keys
+;; - 'fn' key on the bottom row for toggling the Fn layer
 (deflayer base
-  @caps @a  @s  @d  @f  @j  @k  @l  @;
+  esc   f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12
+  grv   1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab   q    w    e    r    t    y    u    i    o    p    [    ]    \
+  @caps @a   @s   @d   @f   g    h    @j   @k   @l   @;    '    ret
+  lsft  z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl  lmet lalt           spc            ralt rmet rctl
+  @fnl
 )
 
+;; Special layer mostly above function keys, but others could be added
+;; _   brdn brup  @mc   @sls  @dtn  @dnd  prev  pp  next  mute  vold  volu
+(deflayer special-keys
+  esc  🔅   🔆   @mc  @lp  @dtn @dnd ◀◀   ▶⏸   ▶▶   🔇   🔉   🔊
+  _    _    _    _    _    _    _    _    _    _    _    _    _    del
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              _    _    _
+  _
+)
+
+;; for keys with tap-hold logic, what is
+;; the default key behavior without any modifiers
 (deflayer nomods
-  caps a   s   d   f   j   k   l   ;
+  _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  caps a    s    d    f    _    _    j    k    l    ;    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _              _              _    _    _
+  fn
 )
 
+;; Define a fake key to switch back to base if needed
 (deffakekeys
   to-base (layer-switch base)
 )
 
+(defchordsv2
+  ;; TODO Works but caps lock LED light doesn't turn on
+  (lsft rsft) caps 300 all-released ()
+)
+
+;; Variables for tap-hold timing (tweak as you wish)
 (defvar
-  ;; Adjust times based on finger speed and key position
+  ;;; Adjust times based on finger speed and key position
   pinky-tap-time 240
   pinky-hold-time 190
   ring-tap-time 240
@@ -57,9 +105,10 @@
       (on-idle-fakekey to-base tap 20)
     )
 
-  caps (tap-hold $index-tap-time $index-hold-time esc lctl) ;; Caps Lock as Escape/Control
+  ;; escape on tap, control on hold
+  caps (tap-hold $index-tap-time $index-hold-time esc lctl)
 
-  ;; Adjust timing based on specific fingers
+  ;; Adjust timing based on specific finger speed and position (home row mods)
   a (tap-hold-release-keys $ring-tap-time $ring-hold-time (multi a @tap) lmet $left-hand-keys)
   s (tap-hold-release-keys $middle-tap-time $middle-hold-time (multi s @tap) lalt $left-hand-keys)
   d (tap-hold-release-keys $index-tap-time $index-hold-time (multi d @tap) lsft $left-hand-keys)
@@ -69,5 +118,15 @@
   k (tap-hold-release-keys $middle-tap-time $middle-hold-time (multi k @tap) rsft $right-hand-keys)
   l (tap-hold-release-keys $ring-tap-time $ring-hold-time (multi l @tap) ralt $right-hand-keys)
   ; (tap-hold-release-keys $pinky-tap-time $pinky-hold-time (multi ; @tap) rmet $right-hand-keys)
+
+  ;; macOS function key glyphs (make sure you've defined them in macOS...some are default)
+  mc C-up         ;; Mission Control
+  ;; Spotlight Search just use M-space
+  dtn C-A-S-M-f5  ;; Dictation
+  dnd C-A-S-M-f6  ;; Do Not Disturb
+  lp C-A-S-M-l    ;; Launchpad special on F4 on some keyboards and search on others
+
+  ;; special-keys layer on hold and return to base layer on release
+  fnl (tap-hold 200 200 fn (layer-toggle special-keys))
 )
 
