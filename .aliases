@@ -12,11 +12,11 @@ alias rcm_shared='cd "$RCM_SHARED"'
 
 # start kanata session for our custom home mod setup see dotfiles in .config/kanata
 # assumes asdf installed rust and cargo installed kanata and correct version of karabiner library and
-# other security settings (see repo jtroo.kanata)
-alias sk='tmux new-session -s kanata "sudo $KANATA_PATH -c $KANATA_CONFIG_PATH"'
-alias start_kanata='tmux new-session -s kanata "sudo $KANATA_PATH -c $KANATA_CONFIG_PATH"'
-alias skd="sudo '/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon'"
-alias skm='sudo $KANATA_PATH -c $KANATA_CONFIG_PATH'
+# other security settings (see repo jtroo.kanata) and .cfg_KANATA.adoc
+alias start_kanata_tmux_session='tmux new-session -s "kanata debug" "sudo $KANATA_DEBUG_BINARY -c $KANATA_CONFIG"'
+# we still use this to start kanata in dev mode after a cargo build as we can watch the output
+# having issues? try starting with external monitors off
+alias skm='sudo $KANATA_DEBUG_BINARY -c $KANATA_CONFIG'
 alias kcheck='ps aux | grep Karabiner-VirtualHIDDevice-Daemon | grep -v grep'
 
 # refreshs for users of homebrew and one for homebrew and neovim nightly
