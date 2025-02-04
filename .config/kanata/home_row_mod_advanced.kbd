@@ -1,7 +1,7 @@
 ;; KEY FEATURES OF THIS CONFIG
 ;; - QWERTY Home row mods asdf jkl; as M A S C and C S A M
 ;; - Chord left and right shift to toggle caps lock (no LED yet)
-;; - Caps lock is escape on tap and control on hold
+;; - Caps (the actual caps lock key) is escape on tap and control on hold
 ;; - Fn key on hold gives special keys layer (media player, mission control,
 ;; spotlight search, dictation, do not disturb, launchpad)
 

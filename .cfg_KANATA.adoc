@@ -2,7 +2,7 @@
 :icons: font
 :sectnums:
 :toc:
-:toc-placement: before
+:toc-placement: left
 :toclevels: 4
 :imagesdir: adoc_images
 :source-highlighter: rouge
@@ -30,7 +30,7 @@ Open terminal and run the following command:
 
 . Launch the daemon with sudo OR Create a LaunchDaemon plist
 
-You can star manually with an alias
+You can start manually with an alias
 ``` bash
 alias skd="sudo '/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon'"
 ```
@@ -43,7 +43,7 @@ If you want the Karabiner-DriverKit-VirtualHIDDevice daemon to start automatical
 
 `/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon`
 
-. run this to create the plist and pace it where it goes (you will have to enter your password)
+. Run this to create the plist and pace it where it goes (you will have to enter your password)
 
 ``` bash
 sudo tee /Library/LaunchDaemons/org.rudimusmaximus.karabiner-driverkit.plist <<EOF
@@ -123,12 +123,15 @@ Your custom configuration is located at:
 
 This is fine to keep in your home directory if you only need Kanata *after* you have logged in.
 
-=== Setting up LaunchDaemons DO NOT USE THIS YET
-TODO we are running dev build only and starting with skm alias
+=== Setting up LaunchDaemons (ONLY ONE CAN RUN AT A TIME AS THEY ARE MUTUALLY EXCLUSIVE)
 
 You can have separate LaunchDaemons for the debug and release versions of Kanata. Note that LaunchDaemons run *very early*, so if your home directory is encrypted (FileVault), it may not be immediately available. If that doesn’t matter (e.g., you only need Kanata *after* login), it’s fine. Otherwise, consider copying the binary and config to a system path that’s available at boot.
+That said, we just point to the binary and config in the LaunchDaemon plist. This way the files stay where they are version managed.
 
-==== Debug LaunchDaemon
+==== Additional one-time setup
+You will need to give input monitoring permission in macos under security and privacy settings. I just navigated to the screen, hit plus to browse and add the binary files. They are both named 'kanata' but with slighlty different target paths.
+
+==== Creating Debug LaunchDaemon
 
 Create `/Library/LaunchDaemons/org.rudimusmaximus.kanata-debug.plist`:
 
@@ -174,7 +177,7 @@ sudo launchctl load /Library/LaunchDaemons/org.rudimusmaximus.kanata-debug.plist
 sudo launchctl start org.rudimusmaximus.kanata-debug
 ```
 
-==== Release LaunchDaemon
+==== Creating Release LaunchDaemon (STABLE, I'M USING THIS NOW)
 
 Similarly, create `/Library/LaunchDaemons/org.rudimusmaximus.kanata-release.plist`:
 
@@ -220,7 +223,7 @@ sudo launchctl load /Library/LaunchDaemons/org.rudimusmaximus.kanata-release.pli
 sudo launchctl start org.rudimusmaximus.kanata-release
 ```
 
-== Defining Environment Variables ON HOLD
+== Defining Environment Variables
 
 It’s convenient to define paths in a file like `~/.extra` (or any startup script that your shell sources). For instance:
 
@@ -228,96 +231,41 @@ It’s convenient to define paths in a file like `~/.extra` (or any startup scri
 export KANATA_DEBUG_BINARY="$HOME/project/kanata/target/debug/kanata"
 export KANATA_RELEASE_BINARY="$HOME/project/kanata/target/release/kanata"
 export KANATA_CONFIG="$HOME/.config/kanata/home_row_mod_advanced.kbd"
-# TODO export KANATA_DEBUG_LAUNCH_DAEMON="/Library/LaunchDaemons/org.rudimusmaximus.kanata-debug.plist"
-# TODO export KANATA_RELEASE_LAUNCH_DAEMON="/Library/LaunchDaemons/org.rudimusmaximus.kanata-release.plist"
+export KANATA_DEBUG_LAUNCH_DAEMON="/Library/LaunchDaemons/org.rudimusmaximus.kanata-debug.plist"
+export KANATA_RELEASE_LAUNCH_DAEMON="/Library/LaunchDaemons/org.rudimusmaximus.kanata-release.plist"
 ```
 
 After editing `~/.extra`, either restart your shell or `source ~/.extra` to apply.
 
-== Creating a Shell Function and Aliases for Refreshing
+== Updating After Code Changes (BOUNCING THE DAEMON)
 
-When you pull new Kanata code or make local changes, you might rebuild and then copy the resulting binary to, for example, `/usr/local/bin/kanata`. Below is a sample function `refresh_the_right_kanata` that takes a parameter (`debug` or `release`) and copies the correct binary to `/usr/local/bin/`. We then define two aliases for convenience:
+Note that launchd on macOS will automatically stop when unloading and also start when loading.
 
-``` bash
-# In your ~/.extra or ~/.bashrc / ~/.zshrc (after the export lines above)
-function refresh_the_right_kanata() {
-local mode="$1"
-if [[ "$mode" == "debug" ]]; then
- (cd ~/project/kanata && cargo build)
- sudo cp "$KANATA_DEBUG_PATH" /usr/local/bin/kanata
-elif [[ "$mode" == "release" ]]; then
- (cd ~/project/kanata && cargo build --release)
- sudo cp "$KANATA_RELEASE_PATH" /usr/local/bin/kanata
-else
- echo "Usage: refresh_the_right_kanata [debug|release]"
- return 1
-fi
+So, when you
 
-echo "Kanata ($mode) has been built and copied to /usr/local/bin/kanata"
-}
+. **Rebuild** the binary (see earlier section)
 
-alias refresh-kanata-debug='refresh_the_right_kanata debug'
-alias refresh-kanata-release='refresh_the_right_kanata release'
-```
-
-With these defined, you can simply run:
+. **Unload and reload** the kanata daemon (debug or release):
 
 ``` bash
-refresh-kanata-debug
+# Unload and it will automatically stop first
+sudo launchctl unload /Library/LaunchDaemons/org.rudimusmaximus.kanata-release.plist
+# or org.rudimusmaximus.kanata-debug.plist for debug version
+
+# Load and it will automatically start after
+sudo launchctl load /Library/LaunchDaemons/org.rudimusmaximus.kanata-release.plist
+# or org.rudimusmaximus.kanata-debug.plist for debug version`
 ```
-
-or
-
-``` bash
-refresh-kanata-release
-```
-
-…and you’ll get the latest Kanata debug/release binary in `/usr/local/bin/kanata`.
-
-== Updating After Code Changes
-
-When you change Kanata code and rebuild:
-
-. **Stop/unload** the daemon (debug or release):
-
-``` bash
-sudo launchctl unload /Library/LaunchDaemons/org.rudimusmaximus.kanata-debug.plist
-```
-
-(or the release plist if you’re updating release)
-
-. **Rebuild** and/or **refresh** the binary:
-
-``` bash
-# For debug:
-refresh-kanata-debug
-
-# For release:
-refresh-kanata-release
-```
-
-. **Reload** the daemon:
-
-``` bash
-sudo launchctl load /Library/LaunchDaemons/org.rudimusmaximus.kanata-debug.plist
-sudo launchctl start org.rudimusmaximus.kanata-debug
-```
-
-(or the release variant if needed)
 
 Now the updated binary is in place, and launchd will run it at boot or on demand.
 
-== Summary
+== A nice home row mod config
 
-- **Paths**
-- Debug binary: `/Users/rudimusmaximus/project/kanata/target/debug/kanata`
-- Release binary: `/Users/rudimusmaximus/project/kanata/target/release/kanata`
-- Config: `/Users/rudimusmaximus/.config/kanata/home_row_mod_advanced.kbd`
-- **Karabiner**
-- You must keep Karabiner’s `Karabiner-VirtualHIDDevice-Daemon` running as root (e.g., via `sudo` or a LaunchDaemon).
-- **Shell function & aliases**
-- `refresh_the_right_kanata [debug|release]` quickly rebuilds and copies the binary to `/usr/local/bin/kanata`.
-- **LaunchDaemons**
-- You can create separate plists for debug and release or stick to one. LaunchDaemons enable auto-start at boot, but be mindful of FileVault encryption if your home directory isn’t unlocked yet.
-- TODO modify function to rename plist files so of debug and release only one is active at a time (rename extension to make ignored)
+I edited the kanata example after trial and error and to get what i like. Hope it inspires you to try something similar.
+
+.the config run by this setup
+[source,lisp]
+----
+include::./.config/kanata/home_row_mod_advanced.kbd[]
+----
 
