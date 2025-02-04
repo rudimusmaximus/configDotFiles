@@ -11,3 +11,7 @@ font-family = Comic Code Ligatures
 # set ghostty default as backup
 font-family = "JetBrains Mono"
 
+#theme = catppuccin-frappe
+theme = tokyonight
+#theme = nvimdark
+
