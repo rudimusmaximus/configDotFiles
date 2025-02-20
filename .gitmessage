@@ -1,6 +1,6 @@
 subjectLineType: vSemVerIteration_oneSpace_ShortTitle
 
-# Types are { feat fix docs style refactor test chore } with
+# Types are {feat fix docs style refactor test chore} with
 # an empty line after the subject line
 #
 # Further paragraphs come after blank lines.
@@ -16,8 +16,8 @@ subjectLineType: vSemVerIteration_oneSpace_ShortTitle
 # - Bullet points are okay, too
 #
 # - Typically a hyphen or asterisk is used for the bullet, preceded
-#  by a single space, with blank lines in between, but conventions
-#  vary here
+# by a single space, with blank lines in between, but conventions
+# vary here
 #
 # If you use an issue tracker, put references to them at the bottom,
 # like this and auto close if applicable using a close word
@@ -36,4 +36,5 @@ subjectLineType: vSemVerIteration_oneSpace_ShortTitle
 # they can safely auto close on merge to main.
 #
 # See also #number, #anotherIssue OR no line at all
+
 
