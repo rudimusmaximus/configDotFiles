@@ -6,10 +6,8 @@
 # Check if asdf is cloned in $HOME/.asdf
 if [ -d "$HOME/.asdf" ]; then
   verbLog 2 "Initializing asdf..."
-  # shellcheck source=/dev/null
-  source "$HOME/.asdf/asdf.sh"
-  # shellcheck source=/dev/null
-  source "$HOME/.asdf/completions/asdf.bash"
+  export ASDF_DATA_DIR="$HOME/.asdf"
+  export PATH="$ASDF_DATA_DIR/shims:$PATH"
 
   # Set GOROOT and GOPROXY for go (golang installed by asdf used by nvim)
   if asdf where golang >/dev/null 2>&1; then
