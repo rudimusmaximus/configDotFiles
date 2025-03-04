@@ -359,3 +359,6 @@ alias refresh-nvim-master='asdf uninstall neovim ref:master && asdf install neov
 alias aliases='show_aliases | column'
 alias functions='show_functions | column'
 
+# see relate script
+alias watch_project_adocs='bun -b run ~/.bun_scripts/watch_project_adocs.js'
+

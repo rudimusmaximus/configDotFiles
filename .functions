@@ -574,3 +574,82 @@ sync_git_completion() {
     printf "Sync complete for Git version %s.\n" "$CURRENT_GIT_VERSION"
 }
 
+# Function to convert an AsciiDoc file to HTML or PDF
+# Usage: cast_adoc file.adoc target outDir [--no-open]
+# target: 'html' or 'pdf'
+# outDir: The directory where the HTML or PDF file will be saved.
+# If not specified, it will default to the root of the Git project/adoc_generated/
+# --no-open: Optional flag to prevent opening the file after conversion.
+cast_adoc() {
+  local file="$1"
+  local target="$2"
+  local outDir="$3"
+  local noOpen=false
+
+  # Check for optional --no-open flag as the fourth parameter.
+  if [[ "$4" == "--no-open" ]]; then
+    noOpen=true
+  fi
+
+  # Check that the file exists.
+  if [[ ! -f "$file" ]]; then
+    echo "Error: File '$file' not found." >&2
+    return 1
+  fi
+
+  # Determine the output directory.
+  if [[ -z "$outDir" ]]; then
+    # No destination specified: use Git project root/adoc_generated.
+    local projectRoot
+    projectRoot=$(git rev-parse --show-toplevel 2>/dev/null)
+    if [[ -z "$projectRoot" ]]; then
+      echo "Error: Not in a Git project and no output directory specified." >&2
+      return 1
+    fi
+    outDir="$projectRoot/adoc_generated"
+  else
+    # Destination specified: resolve it (works for "." as well).
+    outDir=$(realpath "$outDir")
+  fi
+
+  # Create the output directory if it doesn't exist.
+  if [[ ! -d "$outDir" ]]; then
+    mkdir -p "$outDir"
+    echo "Created output directory: $outDir"
+  else
+    echo "Using existing output directory: $outDir"
+  fi
+
+  local base
+  base=$(basename "$file" .adoc)
+  local output=""
+
+  if [[ "$target" == "html" ]]; then
+    asciidoctor -b html5 "$file" -D "$outDir"
+    output="$outDir/${base}.html"
+  elif [[ "$target" == "pdf" ]]; then
+    asciidoctor-pdf "$file" -D "$outDir"
+    output="$outDir/${base}.pdf"
+  else
+    echo "Error: Unknown target type '$target'. Use 'html' or 'pdf'." >&2
+    return 1
+  fi
+
+  if [[ -f "$output" ]]; then
+    echo "Conversion successful: $output"
+    # Optionally, open the file if an opener is available and noOpen is false.
+    if [[ "$noOpen" == false ]]; then
+      if command -v xdg-open &>/dev/null; then
+        xdg-open "$output"
+      elif command -v open &>/dev/null; then
+        open "$output"
+      else
+        echo "No suitable file opener found. Please open '$output' manually."
+      fi
+    fi
+  else
+    echo "Error: Conversion failed." >&2
+    return 1
+  fi
+}
+
