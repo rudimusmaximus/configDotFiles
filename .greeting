@@ -13,7 +13,7 @@ function cfg_greet_with_diagnostics() {
 }
 
 # Only greet with diagnostics in verbose mode
-if [ "${CFG_DOT_FILES_VERBOSE_MODE:-false}" != true ]; then
+if [ "${CFG_DOT_FILES_VERBOSE_MODE:-false}" = true ]; then
   cfg_greet_with_diagnostics
 else
   printf 'hello,\n'
