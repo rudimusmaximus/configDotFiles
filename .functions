@@ -653,3 +653,134 @@ cast_adoc() {
   fi
 }
 
+
+# Tries to open a given file, prioritizing the Brave web browser before
+# falling back to the system's default application handler.
+# Works on macOS (using 'open') and Linux distributions (using 'xdg-open').
+#
+# Usage: openInBrowser <file_path>
+#
+# Arguments:
+#   file_path : The path to the file you want to open.
+#
+# Examples:
+#   # Open an HTML file, trying Brave browser first
+#   openInBrowser report.html
+#
+#   # Open a PDF file (may open in Brave or default PDF viewer depending on fallback)
+#   openInBrowser document.pdf
+#
+#   # Open an image file (may open in Brave or default image viewer)
+#   openInBrowser images/logo.png
+#
+#   # Open a file with spaces in its name
+#   openInBrowser "my report.html"
+#
+# Dependencies:
+#   - Brave Browser executable/app ('brave-browser' for Linux, 'Brave Browser' for macOS)
+#   - Linux: xdg-utils (which provides xdg-open) as a fallback
+#   - macOS: Built-in 'open' command as a fallback
+#
+openInBrowser () {
+    local file_path="$1"
+    local browser_found=false
+    local open_cmd="" # Keep track of the fallback command if needed
+    local exit_status=0
+
+    # --- Input Validation ---
+    if [[ -z "$file_path" ]]; then
+        echo "Error: No file path provided." 1>&2
+        echo "Usage: openInBrowser <file_path>" 1>&2
+        return 1
+    fi
+
+    if [[ ! -e "$file_path" ]]; then
+        echo "Error: File or path '$file_path' not found." 1>&2
+        return 1
+    fi
+
+    # --- Try Preferred Browser First ---
+    # Define the preferred browser command/app based on user request
+    local linux_browsers=("brave-browser") # Linux: Try Brave first
+    local macos_apps=("Brave Browser")     # macOS: Try Brave first
+
+    echo "Attempting to find preferred browser (Brave) to open '$file_path'..."
+
+    if [[ "$(uname)" == "Darwin" ]]; then
+        # macOS Logic
+        local app_name="${macos_apps[0]}" # Get the single preferred app
+        echo "Checking for macOS browser: '$app_name'..."
+        # Use 'open -a' to attempt opening with the specific application
+        if open -a "$app_name" "$file_path"; then
+            echo "Successfully launched '$file_path' with '$app_name'."
+            browser_found=true
+        else
+            # open -a returns non-zero if app not found or fails to open file
+             echo "'$app_name' not found or failed to open the file."
+        fi
+
+        # Fallback for macOS if Brave Browser didn't work
+        if [[ "$browser_found" == false ]]; then
+            echo "Preferred browser (Brave) not found or failed. Falling back to default 'open' command (system default)..."
+            if command -v open &> /dev/null; then
+                open_cmd="open" # Set the fallback command
+                open "$file_path"
+                exit_status=$?
+            else
+                 echo "Error: macOS 'open' command not found!" 1>&2
+                 return 1 # Critical command missing
+            fi
+        fi
+
+    elif [[ "$(uname)" == "Linux" ]]; then
+        # Linux Logic
+        local browser_cmd="${linux_browsers[0]}" # Get the single preferred command
+        echo "Checking for Linux browser command: '$browser_cmd'..."
+        if command -v "$browser_cmd" &> /dev/null; then
+            echo "Found '$browser_cmd'. Attempting to open..."
+            # Run in background, suppress output
+            "$browser_cmd" "$file_path" &> /dev/null &
+            exit_status=$?
+            if [[ $exit_status -eq 0 ]]; then
+                echo "Successfully launched '$file_path' with '$browser_cmd'."
+                browser_found=true
+            else
+                 echo "Command '$browser_cmd' existed but failed to launch immediately (exit code $exit_status)."
+                 # Reset exit_status as we will try the fallback
+                 exit_status=0
+            fi
+        else
+             echo "'$browser_cmd' command not found."
+        fi
+
+        # Fallback for Linux if Brave didn't work
+        if [[ "$browser_found" == false ]]; then
+            echo "Preferred browser (Brave) not found or failed. Falling back to 'xdg-open' (system default)..."
+            if command -v xdg-open &> /dev/null; then
+                open_cmd="xdg-open" # Set the fallback command
+                xdg-open "$file_path" &> /dev/null &
+                exit_status=$?
+            else
+                echo "Warning: Neither Brave browser nor 'xdg-open' command found." 1>&2
+                echo "Cannot automatically open '$file_path'." 1>&2
+                return 2 # Indicate warning: command not found
+            fi
+        fi
+    else
+        echo "Error: Unsupported operating system '$(uname)'." 1>&2
+        return 1
+    fi
+
+    # --- Final Status ---
+    # Check the exit status of the *last attempted* command (Brave or fallback)
+    if [[ $exit_status -ne 0 ]]; then
+         echo "Note: The last launch command exited with status $exit_status. The file might still be opening, or there might have been an issue." 1>&2
+    elif [[ "$browser_found" == true || "$open_cmd" != "" ]]; then
+         # Only print success if we actually attempted an open (either preferred or fallback)
+         echo "'$file_path' should now be opening."
+    fi
+
+    # Return 0 if an attempt was made (preferred browser found or fallback executed)
+    # Return non-zero only on critical errors (no input, file not found, OS unsupported, critical commands missing)
+    return 0
+}
