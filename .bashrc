@@ -8,7 +8,7 @@ verbLog 1 "Entering ~/.bashrc..."
 declare -a rc_config_files=(
     "${HOME}/.aliases"
     "${HOME}/.functions"
-    # "${HOME}/.keybindings"
+    "${HOME}/.keybindings"
     "${HOME}/.bash_prompt"
 )
 
