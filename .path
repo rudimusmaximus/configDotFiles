@@ -50,7 +50,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
     # edgedb-cli
     export PATH="$HOME/Library/Application Support/edgedb/bin:$PATH"
 
-    # Check for Intel iMac
+    # Check for Apple Silicon iMac
     if [[ "$architecture" == *"Apple"* ]]; then
         # Homebrew
         HOMEBREW_PREFIX="/opt/homebrew"
@@ -67,7 +67,13 @@ if [[ "$(uname)" == "Darwin" ]]; then
         else
             printf "⚠️  %s\n" "Warning: bash-completion not found in expected Homebrew Apple Silicon location."
         fi
-    # Check for Apple Silicon
+        # The next line updates PATH for the Google Cloud SDK.
+        if [ -f "${HOME}/google-cloud-sdk/path.bash.inc" ]; then . "${HOME}/google-cloud-sdk/path.bash.inc"; fi
+
+        # The next line enables shell command completion for gcloud.
+        if [ -f "${HOME}/google-cloud-sdk/completion.bash.inc" ]; then . "${HOME}/google-cloud-sdk/completion.bash.inc"; fi
+
+    # Check for Intel macOS
     elif [[ "$architecture" == "Intel"* ]]; then
         # Homebrew
         HOMEBREW_PREFIX="/usr/local"
