@@ -38,8 +38,9 @@ checkout = git clone 'https://github.com/tmux-plugins/tpm' 'tpm'
 # https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/blob/main/dist/Karabiner-DriverKit-VirtualHIDDevice-5.0.0.pkg
 # the daemon this makes possible must be started in same way as kanata with sudo or if permissions are setup correctly without
 # see skm and skd aliases and tmuxifier layouts if you made them
-[project/kanata]
-checkout = git clone 'git@github.com:jtroo/kanata.git' 'kanata'
+# [project/kanata]
+# checkout = git clone 'git@github.com:jtroo/kanata.git' 'kanata'
+# disabled as we moved to keyboard  solution
 
 [project/git-flow-completion]
 checkout = git clone 'git@github.com:bobthecow/git-flow-completion.git' 'git-flow-completion'
