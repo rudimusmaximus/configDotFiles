@@ -4,7 +4,7 @@
 
 clear # clear the screen
 
-source "${HOME}/.verbosity_logging" # provides log and sb functions
+source "${HOME}/.verbosity_logging_and_refresh_terminal_session" # provides log and refresh_terminal_session functions
 verbLog 1 "Entering ~/.bash_profile..."
 
 # The things we need once per session, in preferred order

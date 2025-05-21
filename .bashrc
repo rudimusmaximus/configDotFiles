@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # non-login, interactive shell
 
-source "${HOME}/.verbosity_logging" # provides log and sb functions
+source "${HOME}/.verbosity_logging_and_refresh_terminal_session" # provides log and refresh_terminal_session functions
 verbLog 1 "Entering ~/.bashrc..."
 
 # the things we need every time

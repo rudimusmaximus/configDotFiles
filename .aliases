@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # not required for sourced files here but used so we can run shellcheck on the file
+alias rts='refresh_terminal_session'
 
 alias cloud='cd "$CLOUD"'
 alias cld='cd "$CLOUD"'
