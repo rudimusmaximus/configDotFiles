@@ -33,6 +33,7 @@ function verbLog() {
     if [ "${CFG_DOT_FILES_VERBOSE_MODE:-false}" = true ]; then
         local prefix
         case "$level" in
+            0) prefix="[ERROR] ✗ " ;;
             1) prefix="[LOG] ✔ " ;;
             2) prefix="[LOG] ✔ ✔ " ;;
             3) prefix="[LOG] ✔ ✔ ✔ " ;;
