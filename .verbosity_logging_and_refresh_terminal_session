@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
 # This file defines session refresh and logging functions.
 
-# Prevent sourcing multiple times by checking if key functions are already defined
-if declare -f refresh_terminal_session >/dev/null && declare -f verbLog >/dev/null && declare -f refresh_terminal_session_help >/dev/null; then
-    # Optionally, print a message if in a very verbose debugging mode for your dotfiles
-    # verbLog 3 "Functions (refresh_terminal_session, verbLog, refresh_session_help) already defined. Skipping definitions."
-    return
-fi
+# Prevent sourcing multiple times in the same shell session
+if [ -n "${__VERBOSITY_AND_REFRESH_SCRIPT_SOURCED:-}" ]; then return 0; fi
 
 # Help function for refresh_terminal_session
 function refresh_terminal_session_help() {
@@ -86,3 +82,5 @@ function refresh_terminal_session() {
     exec "$SHELL" --login
  }
 
+__VERBOSITY_LOGGING_AND_REFRESH_SCRIPT_SOURCED="true"
+export __VERBOSITY_LOGGING_AND_REFRESH_SCRIPT_SOURCED
