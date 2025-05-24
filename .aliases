@@ -2,6 +2,8 @@
 # not required for sourced files here but used so we can run shellcheck on the file
 alias rts='refresh_terminal_session'
 
+alias ff='clear && fastfetch'
+
 alias cloud='cd "$CLOUD"'
 alias cld='cd "$CLOUD"'
 alias rcc_root='cd "$RCC_ROOT"'

@@ -3,182 +3,230 @@
 # asdf settings
 # Configure asdf (see https://asdf-vm.com/guide/getting-started.html)
 # User urls when installing plugins see https://github.com/asdf-vm/asdf-plugins?tab=readme-ov-file#plugin-list
+# VerbLog function is defined globally and available before this script is sourced
 
-ASDF_DATA_DIR="${HOME}/.asdf" # Still needed for plugins, shims, and tool versions
+#!/usr/bin/env bash
 
-# Function to check if a command exists
-command_exists() {
+# Guard to prevent sourcing multiple times in the same shell session
+if [ -n "${_CFG_ASDF_MULTIPLE_RUNTIME_MANAGEMENT_SOURCED:-}" ]; then
+    verbLog 2 "ASDF setup script already sourced. Skipping."
+    return 0
+fi
+
+# (Assume _cfg_command_exists function is defined globally or will be defined below)
+_cfg_command_exists() {
   command -v "$1" >/dev/null 2>&1
 }
 
-# --- Ensure asdf Core is Installed (via Package Manager if possible) ---
-ASDF_FRESHLY_INSTALLED_FLAG_FILE="${ASDF_DATA_DIR}/.freshly_installed_by_script"
+# --- Main ASDF Setup Function ---
+_cfg_asdf_setup_main() {
+    local ASDF_DATA_DIR="${HOME}/.asdf"
+    local ASDF_FRESHLY_INSTALLED_FLAG_FILE="${ASDF_DATA_DIR}/.cfg_asdf_plugins_pending"
+    local install_scenario=""
+    local ASDF_INSTALLED_SUCCESSFULLY=false
+    local OS_TYPE
 
-if ! command_exists asdf || ! asdf --version >/dev/null 2>&1; then
-  verbLog 1 "asdf command not available or not working. Attempting installation..."
-  OS_TYPE="$(uname -s)"
-  ASDF_INSTALLED_BY_PM=false
+    verbLog 2 "Starting ASDF setup..."
 
-  # Remove any previous flag file
-  rm -f "${ASDF_FRESHLY_INSTALLED_FLAG_FILE}"
+    # --- Scenario Determination Function (nested for encapsulation or can be global) ---
+    _cfg_asdf_determine_install_scenario() {
+        local scenario_result="recommend_manual_or_brew_install" # Default fallback
+        OS_TYPE="$(uname -s)" # Set outer scope OS_TYPE
 
-  if [ "$OS_TYPE" = "Darwin" ]; then # macOS
-    if command_exists brew; then
-      verbLog 1 "macOS: Attempting to install/update asdf via Homebrew..."
-      if brew list asdf &>/dev/null; then
-        brew upgrade asdf # Ensure it's latest
-      else
-        brew install asdf
-      fi
-      if brew list asdf &>/dev/null; then ASDF_INSTALLED_BY_PM=true; fi
-    else
-      verbLog 0 "macOS: Homebrew not found. Please install Homebrew or install asdf manually."
-    fi
-  elif [ "$OS_TYPE" = "Linux" ]; then
-    # Check for sudo upfront for Linux installs
-    SUDO_CMD=""
-    if command_exists sudo; then
-      if sudo -n true 2>/dev/null; then # Check for passwordless sudo
-        SUDO_CMD="sudo"
-      else
-        verbLog 1 "Linux: Package manager operations require sudo. Please enter your password if prompted."
-        if sudo true; then # Prompt for password, credentials will be cached by sudo
-          SUDO_CMD="sudo"
+        verbLog 3 "Determining OS and PM. OS_TYPE=${OS_TYPE}"
+
+        if _cfg_command_exists asdf && asdf --version &>/dev/null; then
+            scenario_result="already_installed"
+            verbLog 2 "Scenario: asdf already installed and working."
+        elif [ "$OS_TYPE" = "Darwin" ]; then # macOS
+            if _cfg_command_exists brew; then
+                scenario_result="macos_brew"
+                verbLog 2 "Scenario: macOS with Homebrew."
+            else
+                scenario_result="macos_needs_brew_fallback"
+                verbLog 2 "Scenario: macOS, Homebrew not found."
+            fi
+        elif [ "$OS_TYPE" = "Linux" ]; then
+            if grep -q -E "ID=fedora|ID_LIKE=fedora" /etc/os-release 2>/dev/null; then
+                if _cfg_command_exists dnf; then
+                    scenario_result="linux_fedora_dnf"
+                    verbLog 2 "Scenario: Fedora Linux with dnf."
+                else
+                    scenario_result="linux_fedora_needs_dnf_fallback"
+                    verbLog 2 "Scenario: Fedora Linux, dnf not found."
+                fi
+            elif _cfg_command_exists brew; then # Homebrew on other Linux
+                scenario_result="linux_brew"
+                verbLog 2 "Scenario: Non-Fedora Linux with Homebrew."
+            else # Not Fedora, and Homebrew not found on Linux
+                scenario_result="linux_needs_brew_fallback"
+                verbLog 2 "Scenario: Non-Fedora Linux, Homebrew not found."
+            fi
         else
-          verbLog 0 "Linux: sudo authentication failed. Cannot install asdf via package manager."
+            verbLog 2 "Scenario: OS type '${OS_TYPE}' is unsupported. Recommending manual/Homebrew install."
+            scenario_result="unsupported_os_needs_brew_fallback" # Specific fallback message
         fi
+        echo "$scenario_result"
+    }
+    # --- End of Scenario Determination Function ---
+
+    install_scenario=$(_cfg_asdf_determine_install_scenario)
+
+    if [ "$install_scenario" != "already_installed" ]; then
+        verbLog 1 "asdf not found or not working. Attempting installation based on scenario: ${install_scenario}"
+        rm -f "${ASDF_FRESHLY_INSTALLED_FLAG_FILE}"
+
+        case "$install_scenario" in
+            "macos_brew")
+                verbLog 1 "macOS: Attempting to install/update asdf via Homebrew..."
+                if brew install asdf; then ASDF_INSTALLED_SUCCESSFULLY=true; else
+                    verbLog 0 "macOS: 'brew install asdf' failed."
+                fi
+                ;;
+            "linux_fedora_dnf")
+                verbLog 1 "Fedora Linux: Attempting to install/update asdf via dnf..."
+                if sudo dnf install -y asdf; then ASDF_INSTALLED_SUCCESSFULLY=true; else # Requires sudo
+                    verbLog 0 "Fedora Linux: 'sudo dnf install -y asdf' failed."
+                fi
+                ;;
+            "linux_brew")
+                verbLog 1 "Linux: Attempting to install/update asdf via Homebrew..."
+                if brew install asdf; then ASDF_INSTALLED_SUCCESSFULLY=true; else
+                    verbLog 0 "Linux: 'brew install asdf' (via Homebrew on Linux) failed."
+                fi
+                ;;
+            "macos_needs_brew_fallback" | "linux_needs_brew_fallback" | "unsupported_os_needs_brew_fallback" | "recommend_manual_or_brew_install")
+                verbLog 0 "Required package manager (Homebrew) not found for automatic asdf installation on this system (${OS_TYPE:-unknown})."
+                verbLog 0 "Please install Homebrew from https://brew.sh and then re-run this setup."
+                verbLog 0 "Alternatively, install asdf manually from https://asdf-vm.com"
+                ;;
+            "linux_fedora_needs_dnf_fallback")
+                verbLog 0 "Fedora Linux: dnf command not found. Please ensure dnf is available."
+                verbLog 0 "Alternatively, install Homebrew from https://brew.sh and re-run this setup, or install asdf manually."
+                ;;
+            *) # Should not be reached if _cfg_asdf_determine_install_scenario is comprehensive
+                verbLog 0 "Internal error or unhandled scenario: '${install_scenario}'. Please install asdf manually."
+                ;;
+        esac
+
+        if [ "$ASDF_INSTALLED_SUCCESSFULLY" = true ]; then
+            verbLog 1 "asdf core successfully installed/updated by package manager."
+            mkdir -p "${ASDF_DATA_DIR}" # Ensure data dir exists
+            touch "${ASDF_FRESHLY_INSTALLED_FLAG_FILE}"
+            if ! _cfg_command_exists asdf || ! asdf --version &>/dev/null; then
+                verbLog 0 "asdf installation reported success via PM, but 'asdf --version' still fails. Check PATH or PM setup."
+            fi
+        else
+            if [[ "$install_scenario" != "already_installed" && \
+                  "$install_scenario" != *"_fallback" ]]; then # Avoid double messaging if already handled by fallback
+                verbLog 0 "asdf core installation using designated package manager failed or was skipped."
+            fi
+        fi
+    else
+        verbLog 2 "asdf already installed and working. Skipping core installation steps."
+    fi # End of installation block
+
+    # --- ASDF Shell Initialization (for every shell session) ---
+    # (This logic remains the same: find and source asdf.sh, set PATH, completions)
+    local _CFG_ASDF_SCRIPT_TO_SOURCE=""
+    if _cfg_command_exists brew && brew --prefix asdf &>/dev/null && [ -f "$(brew --prefix asdf)/libexec/asdf.sh" ]; then
+      _CFG_ASDF_SCRIPT_TO_SOURCE="$(brew --prefix asdf)/libexec/asdf.sh"
+    elif [ -f "/usr/share/asdf/asdf.sh" ]; then
+      _CFG_ASDF_SCRIPT_TO_SOURCE="/usr/share/asdf/asdf.sh"
+    elif [ -f "/opt/asdf-vm/asdf.sh" ]; then
+      _CFG_ASDF_SCRIPT_TO_SOURCE="/opt/asdf-vm/asdf.sh"
+    elif [ -f "/opt/asdf/asdf.sh" ]; then
+      _CFG_ASDF_SCRIPT_TO_SOURCE="/opt/asdf/asdf.sh"
+    elif [ -f "${ASDF_DATA_DIR}/asdf.sh" ]; then
+      _CFG_ASDF_SCRIPT_TO_SOURCE="${ASDF_DATA_DIR}/asdf.sh"
+    fi
+
+    if [ -n "$_CFG_ASDF_SCRIPT_TO_SOURCE" ] && [ -f "$_CFG_ASDF_SCRIPT_TO_SOURCE" ]; then
+      verbLog 2 "Initializing asdf by sourcing: ${_CFG_ASDF_SCRIPT_TO_SOURCE}"
+      . "${_CFG_ASDF_SCRIPT_TO_SOURCE}"
+
+      if [[ ":$PATH:" != *":${ASDF_DATA_DIR}/shims:"* ]]; then
+        export PATH="${ASDF_DATA_DIR}/shims:$PATH"
+        verbLog 3 "Added asdf shims (${ASDF_DATA_DIR}/shims) to PATH."
+      fi
+
+      local _CFG_ASDF_COMPLETIONS_PATH=""
+      if [ -n "$BASH_VERSION" ]; then
+        if _cfg_command_exists brew && [ -f "$(brew --prefix)/etc/bash_completion.d/asdf" ]; then
+          _CFG_ASDF_COMPLETIONS_PATH="$(brew --prefix)/etc/bash_completion.d/asdf"
+        elif [ -f "/usr/share/bash-completion/completions/asdf" ]; then
+          _CFG_ASDF_COMPLETIONS_PATH="/usr/share/bash-completion/completions/asdf"
+        elif [ -f "/usr/share/asdf/completions/asdf.bash" ]; then
+          _CFG_ASDF_COMPLETIONS_PATH="/usr/share/asdf/completions/asdf.bash"
+        elif [ -f "${ASDF_DATA_DIR}/completions/asdf.bash" ]; then
+          _CFG_ASDF_COMPLETIONS_PATH="${ASDF_DATA_DIR}/completions/asdf.bash"
+        fi
+
+        if [ -n "$_CFG_ASDF_COMPLETIONS_PATH" ] && [ -f "$_CFG_ASDF_COMPLETIONS_PATH" ]; then
+          verbLog 3 "Sourcing asdf Bash completions from: ${_CFG_ASDF_COMPLETIONS_PATH}"
+          . "$_CFG_ASDF_COMPLETIONS_PATH"
+        else
+          verbLog 2 "Bash completions for asdf not found in expected locations."
+        fi
+      fi # End Bash completions
+
+      # --- Add Plugins (if asdf was freshly installed by this script) ---
+      if [ -f "${ASDF_FRESHLY_INSTALLED_FLAG_FILE}" ]; then
+        verbLog 1 "asdf was freshly installed. Adding standard plugins..."
+        if _cfg_command_exists asdf && declare -f asdf >/dev/null 2>&1; then
+            local -A plugins_to_add # Make associative array local
+            plugins_to_add=(
+              ["golang"]="https://github.com/asdf-community/asdf-golang.git"
+              ["java"]="https://github.com/halcyon/asdf-java.git"
+              ["lua"]="https://github.com/Stratus3D/asdf-lua.git"
+              ["neovim"]="https://github.com/richin13/asdf-neovim.git"
+              ["nodejs"]="https://github.com/asdf-vm/asdf-nodejs.git"
+              ["python"]="https://github.com/danhper/asdf-python.git"
+              ["ruby"]="https://github.com/asdf-vm/asdf-ruby.git"
+              ["rust"]="https://github.com/code-lever/asdf-rust.git"
+              ["tree-sitter"]="https://github.com/ivanvc/asdf-tree-sitter.git"
+            )
+            local plugin_name plugin_url # Make loop variables local
+            for plugin_name in "${!plugins_to_add[@]}"; do
+              plugin_url="${plugins_to_add[$plugin_name]}"
+              verbLog 1 "Adding plugin: ${plugin_name} from ${plugin_url}"
+              if asdf plugin add "${plugin_name}" "${plugin_url}"; then
+                verbLog 2 "Plugin ${plugin_name} added successfully."
+              else
+                verbLog 0 "Failed to add plugin: ${plugin_name}."
+              fi
+            done
+        else
+            verbLog 0 "asdf command/function not properly available. Skipping plugin additions."
+        fi
+        rm -f "${ASDF_FRESHLY_INSTALLED_FLAG_FILE}"
+      fi # End plugin adding
+
+      # Golang setup
+      if _cfg_command_exists asdf && declare -f asdf >/dev/null 2>&1 && asdf where golang >/dev/null 2>&1; then
+        verbLog 2 "Found active golang via asdf. Setting Go env vars..."
+        export GOROOT="$(asdf where golang)"
+        export GOPROXY="${GOPROXY:-https://proxy.golang.org}"
+        export GOSUMDB="${GOSUMDB:-sum.golang.org}"
+        verbLog 3 "GOROOT=${GOROOT}, GOPROXY=${GOPROXY}, GOSUMDB=${GOSUMDB}"
+      else
+        verbLog 2 "asdf 'golang' not active or asdf cmd/function unavailable. Skipping Go env setup."
       fi
     else
-      verbLog 0 "Linux: sudo command not found. Cannot install asdf via package manager without root privileges."
+      verbLog 0 "asdf.sh could not be found. asdf will not be available."
+      return 1 # Indicate failure
     fi
+    return 0 # Indicate success
+}
 
-    if [ -n "$SUDO_CMD" ]; then
-      if command_exists dnf; then # Fedora, RHEL-like
-        verbLog 1 "Linux (dnf): Attempting to install/update asdf..."
-        $SUDO_CMD dnf install -y asdf || $SUDO_CMD dnf upgrade -y asdf
-        if dnf list installed asdf &>/dev/null; then ASDF_INSTALLED_BY_PM=true; fi
-      elif command_exists apt || command_exists apt-get; then # Debian, Ubuntu-like
-        verbLog 1 "Linux (apt): Attempting to install/update asdf..."
-        $SUDO_CMD apt-get update -y && $SUDO_CMD apt-get install -y asdf || $SUDO_CMD apt-get upgrade -y asdf
-        # Check if installed (dpkg -s is more reliable than apt list for scripting)
-        if dpkg -s asdf &>/dev/null; then ASDF_INSTALLED_BY_PM=true; fi
-      else
-        verbLog 0 "Linux: Neither dnf nor apt found. Please install asdf manually or add support for your package manager."
-      fi
-    fi
-  else
-    verbLog 0 "Unsupported OS: ${OS_TYPE}. Please install asdf manually."
-  fi
-
-  if [ "$ASDF_INSTALLED_BY_PM" = true ]; then
-    verbLog 1 "asdf successfully installed/updated via package manager."
-    # Create a flag file to indicate fresh install for plugin step
-    mkdir -p "${ASDF_DATA_DIR}" # Ensure data dir exists
-    touch "${ASDF_FRESHLY_INSTALLED_FLAG_FILE}"
-  else
-    verbLog 0 "Failed to install asdf using package managers. Please install it manually from https://asdf-vm.com"
-    # Optionally, you could fall back to the binary download method here if desired
-    # For now, we'll assume failure means user needs to manually intervene.
-  fi
-fi
-
-# --- ASDF Shell Initialization (for every shell session) ---
-# Find the correct asdf.sh to source
-ASDF_SCRIPT_TO_SOURCE=""
-if command_exists brew && [ -f "$(brew --prefix asdf)/libexec/asdf.sh" ]; then # macOS Homebrew
-  ASDF_SCRIPT_TO_SOURCE="$(brew --prefix asdf)/libexec/asdf.sh"
-elif [ -f "/usr/share/asdf/asdf.sh" ]; then # Common for Linux package manager installs
-  ASDF_SCRIPT_TO_SOURCE="/usr/share/asdf/asdf.sh"
-elif [ -f "/opt/asdf/asdf.sh" ]; then # Another possible Linux path
-  ASDF_SCRIPT_TO_SOURCE="/opt/asdf/asdf.sh"
-elif [ -f "${ASDF_DATA_DIR}/asdf.sh" ]; then # Fallback to ASDF_DATA_DIR (e.g. if user did manual git clone despite this script)
-  ASDF_SCRIPT_TO_SOURCE="${ASDF_DATA_DIR}/asdf.sh"
-fi
-
-if [ -n "$ASDF_SCRIPT_TO_SOURCE" ] && [ -f "$ASDF_SCRIPT_TO_SOURCE" ]; then
-  verbLog 2 "Initializing asdf by sourcing: ${ASDF_SCRIPT_TO_SOURCE}"
-  . "${ASDF_SCRIPT_TO_SOURCE}"
-
-  # Ensure ASDF_DATA_DIR shims are in PATH (plugins and tools install here)
-  if [[ ":$PATH:" != *":${ASDF_DATA_DIR}/shims:"* ]]; then
-    export PATH="${ASDF_DATA_DIR}/shims:$PATH"
-    verbLog 3 "Added asdf shims (${ASDF_DATA_DIR}/shims) to PATH."
-  fi
-
-# Bash Completions
-  ASDF_BASH_COMPLETIONS_PATH=""
-  verbLog 2 "COMPLETIONS_DEBUG: Checking for Homebrew completions..." # Added for debugging
-  if command_exists brew; then
-    brew_completion_file_path="$(brew --prefix)/etc/bash_completion.d/asdf"
-    verbLog 2 "COMPLETIONS_DEBUG: Expected Homebrew path: ${brew_completion_file_path}" # Added
-    if [ -f "${brew_completion_file_path}" ]; then
-      ASDF_BASH_COMPLETIONS_PATH="${brew_completion_file_path}"
-      verbLog 2 "COMPLETIONS_DEBUG: Found Homebrew completions at: ${ASDF_BASH_COMPLETIONS_PATH}" # Added
-    else
-      verbLog 2 "COMPLETIONS_DEBUG: Homebrew completion file NOT found at ${brew_completion_file_path}" # Added
-    fi
-  fi
-
-  # Check other locations only if Homebrew path wasn't found or brew doesn't exist
-  if [ -z "$ASDF_BASH_COMPLETIONS_PATH" ] && [ -f "/usr/share/asdf/completions/asdf.bash" ]; then
-    ASDF_BASH_COMPLETIONS_PATH="/usr/share/asdf/completions/asdf.bash"
-    verbLog 2 "COMPLETIONS_DEBUG: Found Linux system completions at: ${ASDF_BASH_COMPLETIONS_PATH}" # Added
-  fi
-  
-  if [ -z "$ASDF_BASH_COMPLETIONS_PATH" ] && [ -f "${ASDF_DATA_DIR}/completions/asdf.bash" ]; then
-    ASDF_BASH_COMPLETIONS_PATH="${ASDF_DATA_DIR}/completions/asdf.bash"
-    verbLog 2 "COMPLETIONS_DEBUG: Found ASDF_DATA_DIR completions at: ${ASDF_BASH_COMPLETIONS_PATH}" # Added
-  fi
-  
-  verbLog 2 "COMPLETIONS_DEBUG: Final ASDF_BASH_COMPLETIONS_PATH is: '${ASDF_BASH_COMPLETIONS_PATH}'" # Added
-  verbLog 2 "COMPLETIONS_DEBUG: BASH_VERSION is: '${BASH_VERSION}'" # Added
-
-  if [ -n "$ASDF_BASH_COMPLETIONS_PATH" ] && [ -f "$ASDF_BASH_COMPLETIONS_PATH" ] && [ -n "$BASH_VERSION" ]; then
-    verbLog 3 "Sourcing asdf Bash completions from: ${ASDF_BASH_COMPLETIONS_PATH}"
-    . "$ASDF_BASH_COMPLETIONS_PATH"
-  else
-    verbLog 2 "Bash completions for asdf not found in expected locations or not in a Bash session. (Final decision)"
-  fi
-
-  # --- Add Plugins (if asdf was freshly installed by this script) ---
-  if [ -f "${ASDF_FRESHLY_INSTALLED_FLAG_FILE}" ]; then
-    verbLog 1 "asdf was freshly installed. Adding standard plugins..."
-    declare -A plugins_to_add # Your plugin list
-    plugins_to_add=(
-      ["golang"]="https://github.com/asdf-community/asdf-golang.git"
-      ["java"]="https://github.com/halcyon/asdf-java.git"
-      ["lua"]="https://github.com/Stratus3D/asdf-lua.git"
-      ["neovim"]="https://github.com/richin13/asdf-neovim.git"
-      ["nodejs"]="https://github.com/asdf-vm/asdf-nodejs.git"
-      ["python"]="https://github.com/danhper/asdf-python.git"
-      ["ruby"]="https://github.com/asdf-vm/asdf-ruby.git"
-      ["rust"]="https://github.com/code-lever/asdf-rust.git"
-      ["tree-sitter"]="https://github.com/ivanvc/asdf-tree-sitter.git"
-    )
-    for plugin_name in "${!plugins_to_add[@]}"; do
-      plugin_url="${plugins_to_add[$plugin_name]}"
-      verbLog 1 "Adding plugin: ${plugin_name} from ${plugin_url}"
-      if asdf plugin add "${plugin_name}" "${plugin_url}"; then
-        verbLog 2 "Plugin ${plugin_name} added successfully."
-      else
-        verbLog 0 "Failed to add plugin: ${plugin_name}."
-      fi
-    done
-    rm -f "${ASDF_FRESHLY_INSTALLED_FLAG_FILE}" # Remove flag after processing
-  fi
-
-  # Your Golang specific setup
-  if command -v asdf >/dev/null 2>&1 && asdf where golang >/dev/null 2>&1; then
-    verbLog 2 "Found active golang via asdf. Setting Go env vars..."
-    export GOROOT="$(asdf where golang)"
-    export GOPROXY="${GOPROXY:-https://proxy.golang.org}"
-    export GOSUMDB="${GOSUMDB:-sum.golang.org}"
-    verbLog 3 "GOROOT=${GOROOT}, GOPROXY=${GOPROXY}, GOSUMDB=${GOSUMDB}"
-  else
-    verbLog 2 "asdf 'golang' not active or asdf cmd unavailable. Skipping Go env setup."
-  fi
+# --- Execute the main setup logic ---
+if _cfg_asdf_setup_main; then
+    verbLog 2 "ASDF environment configuration processed."
 else
-  verbLog 0 "asdf.sh could not be found in standard locations. asdf will not be available."
-  verbLog 0 "Please ensure asdf is installed correctly and its shell integration script is locatable."
+    verbLog 0 "ASDF environment configuration encountered a critical error."
 fi
+
+# --- Set the "sourced once" guard variable AT THE VERY END ---
+_CFG_ASDF_MULTIPLE_RUNTIME_MANAGEMENT_SOURCED="true"
+export _CFG_ASDF_MULTIPLE_RUNTIME_MANAGEMENT_SOURCED
 

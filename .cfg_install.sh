@@ -96,9 +96,20 @@ basicBareRepoInstall() {
         fi
     fi
 
+    if [ -f "$HOME/.mrconfig" ]; then
+        printf "Found .mrconfig file; leaving it as is.\n"
+    else
+        if [ -f "$HOME/.mrconfig.template" ]; then
+            cp "$HOME/.mrconfig.template" "$HOME/.mrconfig"
+            printf "Making starter .mrconfig file; please update with your information. This file is ignored.\n"
+        else
+            error_exit "Error: Expected .mrconfig.template not found in $HOME.\n"
+        fi
+    fi
+
     printf "Please review the readme file - .cfg_README.adoc\n"
     printf "Remember some tools are assumed installed.\n"
-    printf "Start a new tab or run 'source %s/.bash_profile' to use the new tools. This is alias 'sb' for future reference.\n" "$HOME"
+    printf "Enter `exec "$SHELL" --login` to use the new tools.\n" "$HOME"
     printf "Finished.\n"
     printf "Enjoy!\n"
 }

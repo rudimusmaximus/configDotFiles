@@ -4,6 +4,10 @@
 .extra.backup.*
 cfgstash.log
 
+# ignore mr config file, we incude an example in the repo as these are a little like customized .extra files
+# TODO if you have forked this repo you should include your mr config file
+.mrconfig
+
 # this is where the bare clone will live
 .cfg
 .idea/*
