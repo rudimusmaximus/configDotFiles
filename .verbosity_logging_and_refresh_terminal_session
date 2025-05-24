@@ -1,13 +1,8 @@
 #!/usr/bin/env bash
 # This file defines session refresh and logging functions.
-# Suggested new name: .session_utils.sh or .shell_helpers.sh or .verbosity_logging_and_session_replacement.sh
 
-# Prevent sourcing multiple times by checking if key functions are already defined
-if declare -f refresh_terminal_session >/dev/null && declare -f verbLog >/dev/null && declare -f refresh_session_help >/dev/null; then
-    # Optionally, print a message if in a very verbose debugging mode for your dotfiles
-    # verbLog 3 "Functions (refresh_terminal_session, verbLog, refresh_session_help) already defined. Skipping definitions."
-    return
-fi
+# Prevent sourcing multiple times in the same shell session
+if [ -n "${__VERBOSITY_AND_REFRESH_SCRIPT_SOURCED:-}" ]; then return 0; fi
 
 # Help function for refresh_terminal_session
 function refresh_terminal_session_help() {
@@ -33,7 +28,7 @@ function verbLog() {
     if [ "${CFG_DOT_FILES_VERBOSE_MODE:-false}" = true ]; then
         local prefix
         case "$level" in
-            0) prefix="[ERROR] ✗ " ;;
+            0) prefix="[ERROR] " ;;
             1) prefix="[LOG] ✔ " ;;
             2) prefix="[LOG] ✔ ✔ " ;;
             3) prefix="[LOG] ✔ ✔ ✔ " ;;
@@ -47,11 +42,7 @@ function verbLog() {
 # Function to refresh/reload the shell session by replacing the current process
 function refresh_terminal_session() {
     OPTIND=1 # Reset OPTIND for getopts
-
-    local enable_verbose_for_new_session=false
-    local unknown_options_found=false
-    local first_unknown_option=""
-
+    local verbose_mode_requested=false
     # Parse options using getopts
     while getopts "hv" opt; do
         case "$opt" in
@@ -60,40 +51,36 @@ function refresh_terminal_session() {
                 return 0
                 ;;
             v)
-                enable_verbose_for_new_session=true
+                verbose_mode_requested=true
                 CFG_DOT_FILES_VERBOSE_MODE=true
                 printf "\nVerbose mode enabled for the upcoming new session...\n"
                 export CFG_DOT_FILES_VERBOSE_MODE  # Make verbosity available to sourced files
                 ;;
             \?)
-                unknown_options_found=true
-                first_unknown_option="$OPTARG"
-                break
+                # Print first unknown option
+                printf "Error: Unknown option '-%s'.\n" "$OPTARG"
+                refresh_terminal_session_help
+                return 1
                 ;;
         esac
     done
 
     shift "$((OPTIND - 1))"
 
-    if "$unknown_options_found"; then
-        printf "Error: Unknown option '-%s'.\n" "$first_unknown_option"
-        refresh_terminal_session_help
-        return 1
-    fi
-
     # If -h was specified, help was already shown and we returned.
     # Now, handle the state of CFG_DOT_FILES_VERBOSE_MODE before exec.
 
-    if ! "$enable_verbose_for_new_session"; then
-        # This means -v was NOT specified for the current command.
+    if ! "$verbose_mode_requested"; then
         if [ -n "${CFG_DOT_FILES_VERBOSE_MODE+x}" ]; then
             printf "Note: Verbose mode (CFG_DOT_FILES_VERBOSE_MODE) was previously active and is now being cleared for the new session.\n"
             unset CFG_DOT_FILES_VERBOSE_MODE
         fi
     fi
-    # If 'enable_verbose_for_new_session' is true, CFG_DOT_FILES_VERBOSE_MODE was already set and exported.
 
+    # If 'verbose_mode_requested' is true, CFG_DOT_FILES_VERBOSE_MODE was already set and exported.
     printf "Reloading interactive session by replacing the current shell...\n"
     exec "$SHELL" --login
  }
 
+__VERBOSITY_LOGGING_AND_REFRESH_SCRIPT_SOURCED="true"
+export __VERBOSITY_LOGGING_AND_REFRESH_SCRIPT_SOURCED
