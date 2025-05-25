@@ -102,9 +102,9 @@ if [[ "$(uname)" == "Darwin" ]]; then
     export PATH="$PATH:$HOME/projects/mit-scheme-12.1/src/mit-scheme.app/Contents/Resources"
 fi
 
-# Fedora Linux-specific items
-# Detecting Feora on Apple Silicon via Asahi Linux
-# TODO: make sure no changes needed for adding git-flow and bash-completion
+# Other Linux related items
+# likely fedora or pi (Debian GNULinux bookworm on aarch64)
+# TODO: make sure no changes needed for adding git-flow and bash-completion elsewhere
 if [[ "$(uname)" == "Linux" ]]; then
       # Establish bash-completion
       # shellcheck disable=SC1091
@@ -114,6 +114,12 @@ if [[ "$(uname)" == "Linux" ]]; then
           enhance_bash_completion
       else
           printf "⚠️  %s\n" "Warning: bash-completion not found in expected Linux location."
+      fi
+      # check for linuxbrew
+      # Setup Homebrew on Linux (e.g., Raspberry Pi) if it exists
+      if [ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+          verbLog 1 "Linuxbrew detected. Setting up environment..." # Assuming verbLog is available
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
       fi
 fi
 
