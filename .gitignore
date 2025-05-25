@@ -8,6 +8,9 @@ cfgstash.log
 # TODO if you have forked this repo you should include your mr config file
 .mrconfig
 
+# ignore all adoc generated files
+adoc_generated/
+
 # this is where the bare clone will live
 .cfg
 .idea/*
