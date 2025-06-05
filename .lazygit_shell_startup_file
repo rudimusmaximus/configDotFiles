@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# see ~/Library/Application\ Support/lazygit/config.yml shellFunctionsFile
+# allows for use of these in : commands from within lazygit
+source "${HOME}/.aliases"
+source "${HOME}/.functions"
+
