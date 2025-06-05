@@ -14,6 +14,90 @@ Kanata requires privileged access on macOS to create and manage virtual HID devi
 
 First, let's setup an important requirement.
 
+---
+== ARCHIVE notes
+
+Since moving to a hardware solution, I am documenting the changes here in case someone wants to review the kanata approach in the future.
+Key reasons:
+
+- portability and works on ios too
+- easier programability
+- no software install to use only to setup
+- try a voyager keyboard from Canadian company zsa.io
+
+=== .alias removals
+
+``` bash
+# start kanata session for our custom home mod setup see dotfiles in .config/kanata
+# assumes asdf installed rust and cargo installed kanata and correct version of karabiner library and
+# other security settings (see repo jtroo.kanata) and .cfg_KANATA.adoc
+alias start_kanata_tmux_session='tmux new-session -s "kanata debug" "sudo $KANATA_DEBUG_BINARY -c $KANATA_CONFIG"'
+# we still use this to start kanata in dev mode after a cargo build as we can watch the output
+# having issues? try starting with external monitors off
+alias skm='sudo $KANATA_DEBUG_BINARY -c $KANATA_CONFIG'
+alias kcheck='ps aux | grep Karabiner-VirtualHIDDevice-Daemon | grep -v grep'
+
+```
+
+=== .extra removals
+
+``` bash
+# from intel imac with oclp macos
+
+# Kanata alias needs these to start and config Kanta; defined here because various machines will differ
+export KANATA_PATH="$HOME/project/kanata/target/debug/kanata"
+export KANATA_CONFIG_PATH="/Users/rfjr/.config/kanata/home_row_mod_advanced.kbd"
+
+# from m1max macos
+# Kanata alias needs these to start and config Kanta; defined here because various machines will differ
+# And these include project path assumptions
+export KANATA_DEBUG_BINARY="$HOME/project/kanata/target/debug/kanata"
+export KANATA_RELEASE_BINARY="$HOME/project/kanata/target/release/kanata"
+export KANATA_CONFIG="$HOME/.config/kanata/home_row_mod_advanced.kbd"
+export KANATA_DEBUG_LAUNCH_DAEMON="/Library/LaunchDaemons/org.rudimusmaximus.kanata-debug.plist"
+export KANATA_RELEASE_LAUNCH_DAEMON="/Library/LaunchDaemons/org.rudimusmaximus.kanata-release.plist"
+
+```
+
+=== .mrconfig (for mrupdate) removals
+
+
+``` bash
+# When you notice updates and can risk testing them, go to this directory
+# and run 'cargo build' then test if working. the main concern if there are
+# changes in the third party karabiner manager and it's daemon
+# this runs with 'sudo target/debug/kanata --cfg <your_configuration_file>'
+# see
+# https://github.com/jtroo/kanata
+# the Karabiner VirtualHiDDevice DriverKit which must be in sync with dev version of kanata but usually is latest
+# https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/blob/main/dist/Karabiner-DriverKit-VirtualHIDDevice-5.0.0.pkg
+# the daemon this makes possible must be started in same way as kanata with sudo or if permissions are setup correctly without
+# see skm and skd aliases and tmuxifier layouts if you made them
+# [project/kanata]
+checkout = git clone 'git@github.com:jtroo/kanata.git' 'kanata'
+disabled as we moved to keyboard  solution
+
+```
+
+=== Additional removals
+
+- plist files listed below
+- kanata repo
+- Karabiner items
+- on both machines followed instructions to remove setup approximately as follows
+
+``` bash
+sudo launchctl unload /Library/LaunchDaemons/org.rudimusmaximus.karabiner-driverkit.plist
+sudo rm /Library/LaunchDaemons/org.rudimusmaximus.karabiner-driverkit.plist
+/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager deactivate
+sudo rm -rf /Applications/.Karabiner-VirtualHIDDevice-Manager.app
+sudo rm -rf "/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice"
+```
+
+=== rest of original install notes follow
+
+---
+
 == Karabiner VirtualHIDDevice Driver is required
 
 The activation of the Karabiner-DriverKit-VirtualHIDDevice is a one-time process. Once activated, the driver remains active across system restarts and does not require reactivation. The daemon, however, needs to be managed separately. To ensure the daemon starts automatically at system boot, you can create a LaunchDaemon plist file. This plist will handle the launching of the daemon but does not handle the activation process. Therefore, you only need to activate the driver once, and the LaunchDaemon will manage the daemon’s lifecycle thereafter.
