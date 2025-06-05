@@ -92,6 +92,7 @@ sudo rm /Library/LaunchDaemons/org.rudimusmaximus.karabiner-driverkit.plist
 /Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager deactivate
 sudo rm -rf /Applications/.Karabiner-VirtualHIDDevice-Manager.app
 sudo rm -rf "/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice"
+rm /Library/LaunchDaemons/org.rudimusmaximus.kanata-release.plist
 ```
 
 === rest of original install notes follow
