@@ -28,9 +28,14 @@ alias txls='tmuxifier list-sessions'
 alias txlw='tmuxifier list-windows'
 alias txla='tmuxifier list'
 
+# tmuxifier session shortcuts
+alias configDotFiles='tx s cfg'
+alias dotFiles='tx s cfg'
+alias pde='tx s pde'
+alias snippets='tx s snippets'
+
 # lazygit
 alias lg='lazygit'
-alias configDotFiles='tx s config_dot_files'
 
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
 alias config='$CONFIG_DOT_FILES_GIT_COMMAND';
