@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # not required for sourced files here but used so we can run shellcheck on the file
-alias rts='refresh_terminal_session'
 
+alias rts='refresh_terminal_session'
+alias gx='npx https://github.com/google-gemini/gemini-cli'
 alias ff='clear && fastfetch'
+alias buninit='br ~/.bun_scripts/initialize_git_and_git_flow_with_bun.mjs'
 
 alias cloud='cd "$CLOUD"'
 alias cld='cd "$CLOUD"'
