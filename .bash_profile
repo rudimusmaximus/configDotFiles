@@ -29,4 +29,6 @@ for file in "${profile_config_files[@]}"; do
 done
 unset file
 
+eval "$(zoxide init bash)" # enable alternative to cd
+
 verbLog 1 "Finished ~/.bash_profile"
