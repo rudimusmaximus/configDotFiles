@@ -32,4 +32,7 @@ fi
 # Enable vi mode for Bash shell to use vi-style keybindings
 set -o vi
 
+# enables z as alternative to cd and more (try zi)
+eval "$(zoxide init bash)"
+
 verbLog 1 "Finished ~/.bashrc"
