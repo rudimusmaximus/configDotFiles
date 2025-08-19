@@ -13,9 +13,20 @@
  * bun run ~/.bun_scripts/initialize_git_and_git_flow_with_bun.mjs
  */
 
-import { file, write, which } from 'bun';
+import { which } from 'bun';
 import { $ } from 'bun';
 
+try {
+  console.log(
+    (await initializeGitAndGitFlow({
+      featureBranchName: 'baseline',
+      currentVersion: '0.1.0', // git init basic version is initially 0.1.0
+      packageJsonPath: './package.json',
+    })).toJSON());
+} catch (error) {
+  console.error({ note: `❌ An error occured during initialization: `, error });
+  process.exit(1); // Exit with an error code
+}
 
 /**
  * From a named folder, starts a project git and git flow.
@@ -24,7 +35,8 @@ import { $ } from 'bun';
  * @param {string} spec.primaryBranchName - old school was master, set to 'main'
  * @param {string} spec.currentVersion - current project version
  * @param {string} spec.packageJsonPath - path to package.json
- * @returns {Promise<{toJSON: function(): object}>} A promise that resolves to an object with a toJSON method.
+ * @returns {Promise<{toJSON: function(): object}>} A promise
+ * that resolves to an object with a toJSON method and
  */
 async function initializeGitAndGitFlow(spec) {
 
@@ -63,106 +75,94 @@ async function initializeGitAndGitFlow(spec) {
   }
 
   /**
-   * A helper function to log errors.
-   * @param {string} message The error message to log.
-   * @param {any} error The error object.
-   */
-  function logError(message, error) {
-    console.error(`
-❌ ${message}`);
-    console.error('   Error details:', error.message || error);
-  }
-
-  /**
    * Main function to orchestrate the repository initialization.
    * @returns {Promise<void>}
    */
   async function initializeRepo() {
-    try {
-      // Step 1: Initialize Git repository
-      logStep(`Initializing Git repository naming primary branch "${primaryBranchName}" branch...`);
-      await $`git init --initial-branch=${primaryBranchName}`;
+    // Step 1: Initialize Git repository
+    logStep(`Initializing Git repository naming primary branch "${primaryBranchName}" branch...`);
+    await $`git init --initial-branch=${primaryBranchName}`;
 
-      // Step 2: Configure Git Flow to use the preferred primary branch name
-      logStep(`Configuring Git Flow to use "${primaryBranchName}" and "develop" branches...`);
-      await $`git config gitflow.branch.master ${primaryBranchName}`;
-      await $`git config gitflow.branch.develop develop`;
+    // Step 2: Configure Git Flow to use the preferred primary branch name
+    logStep(`Configuring Git Flow to use "${primaryBranchName}" and "develop" branches...`);
+    await $`git config gitflow.branch.master ${primaryBranchName}`;
+    await $`git config gitflow.branch.develop develop`;
 
-      // Step 3: Configure Git Flow version tag prefix
-      logStep('Configuring Git Flow version tag prefix to "v"...');
-      await $`git config gitflow.prefix.versiontag v`;
+    // Step 3: Configure Git Flow version tag prefix
+    logStep('Configuring Git Flow version tag prefix to "v"...');
+    await $`git config gitflow.prefix.versiontag v`;
 
-      // Step 4: Initialize Git Flow using the new configuration
-      logStep('Initializing Git Flow with configured settings...');
-      // The -d flag accepts the default settings
-      await $`git flow init -d`;
+    // Step 4: Initialize Git Flow using the new configuration
+    logStep('Initializing Git Flow with configured settings...');
+    // The -d flag accepts the default settings
+    await $`git flow init -d`;
 
-      // Step 5: Start a new feature branch
-      logStep(`Starting Git Flow feature branch: "${featureBranchName}"...`);
-      await $`git flow feature start ${featureBranchName}`;
+    // Step 5: Start a new feature branch
+    logStep(`Starting Git Flow feature branch: "${featureBranchName}"...`);
+    await $`git flow feature start ${featureBranchName}`;
 
-      // Step 6: Initialize Bun project
-      logStep('Initializing Bun project...');
-      await $`bun init -y`;
+    // Step 6: Initialize Bun project
+    logStep('Initializing Bun project...');
+    await $`bun init -y`;
 
-      // Step 7: Modify package.json's version
-      logStep(`Updating ${packageJsonPath}'s version...`);
-      await $`bash -ic "source ~/.functions; vp ${featureBranchName}"`
+    // Step 7: Modify package.json's version
+    logStep(`Updating ${packageJsonPath}'s version...`);
+    await $`bash -ic "source ~/.functions; vp ${featureBranchName}"`
 
-      // Step 8: Sort package.json if the tool is available
-      logStep('Checking for sort-package-json...');
-      if (which('sort-package-json')) {
-        logStep('Sorting package.json...');
-        await $`sort-package-json`;
-      } else {
-        logWarning(`'sort-package-json' not found.`);
-        console.log(`   To automatically sort package.json on init, please install it globally: `);
-        console.log(`   bun add -g sort-package-json@latest`);
-      }
+    // Step 8: Sort package.json if the tool is available
+    logStep('Checking for sort-package-json...');
+    if (which('sort-package-json')) {
+      logStep('Sorting package.json...');
+      await $`sort-package-json`;
+    } else {
+      logWarning(`'sort-package-json' not found.`);
+      console.log(`   To automatically sort package.json on init, please install it globally: `);
+      console.log(`   bun add -g sort-package-json@latest`);
+    }
 
-      // Step 9: Stage and commit the initial project files
-      logStep('Staging initial project files...');
-      await $`git add .`;
-      logStep('Committing initial project files...');
-      await $`git commit -m "feat: v${currentVersion} baseline project for git flow and bun pm...
+    // Step 9: Stage and commit the initial project files
+    logStep('Staging initial project files...');
+    await $`git add .`;
+    logStep('Committing initial project files...');
+    await $`git commit -m "feat: v${currentVersion} baseline project for git flow and bun pm...
 
  - set the branch scheme with v as version prefix
  - added basic package dev dependencies useful with types
  - ok to use js with jsdoc for types if writing javascript
 "`;
 
-      // Step 10: Finish the feature branch
-      logStep(`Finishing Git Flow feature branch: "${featureBranchName}"...`);
-      await $`git flow feature finish ${featureBranchName}`;
+    // Step 10: Finish the feature branch
+    logStep(`Finishing Git Flow feature branch: "${featureBranchName}"...`);
+    await $`git flow feature finish ${featureBranchName}`;
 
-      // Step 11: Start the release branch
-      const releaseVersion = currentVersion.split('-')[0];
-      logStep(`Starting Git Flow release branch: "${releaseVersion}"...`);
-      await $`git flow release start ${releaseVersion}`;
+    // Step 11: Start the release branch
+    const releaseVersion = currentVersion.split('-')[0];
+    logStep(`Starting Git Flow release branch: "${releaseVersion}"...`);
+    await $`git flow release start ${releaseVersion}`;
 
-      // Step 12: Update package.json to the release version
-      logStep(`Updating ${packageJsonPath}'s version...`);
-      await $`bash -ic "source ~/.functions; v ${releaseVersion}"`
+    // Step 12: Update package.json to the release version
+    logStep(`Updating ${packageJsonPath}'s version...`);
+    await $`bash -ic "source ~/.functions; v ${releaseVersion}"`
 
-      // Step 13: Commit the version change
-      logStep('Committing release version...');
-      await $`git add ${packageJsonPath}`;
-      await $`git commit -m "chore: v${releaseVersion} RC.0 semver only"`;
+    // Step 13: Commit the version change
+    logStep('Committing release version...');
+    await $`git add ${packageJsonPath}`;
+    await $`git commit -m "chore: v${releaseVersion} RC.0 semver only"`;
 
-      // Step 14: Finish the release branch
-      logStep(`Finishing Git Flow release branch: "${releaseVersion}"...`);
-      await $`bash -ic "source ~/.functions; git flow release finish ${releaseVersion}`;
+    // Step 14: Finish the release branch
+    logStep(`Finishing Git Flow release branch: "${releaseVersion}"...`);
+    await $`bash -ic "source ~/.functions; git flow release finish ${releaseVersion}`;
 
-      console.log(`
+    console.log(`
 🎉 Repository setup complete!`);
-      console.log(`   - Git and Git Flow initialized(using "main" branch).`);
-      console.log(`   - Project created.`);
-      console.log(`   - Version set to ${currentVersion} in package.json.`);
-      console.log(`   - Initial project files committed.`);
-      console.log(`   - Feature branch "${featureBranchName}" finished.`);
-      console.log(`   - Release branch "v${currentVersion}" started and finished.`);
+    console.log(`   - Git and Git Flow initialized(using "main" branch).`);
+    console.log(`   - Project created.`);
+    console.log(`   - Version set to ${currentVersion} in package.json.`);
+    console.log(`   - Initial project files committed.`);
+    console.log(`   - Feature branch "${featureBranchName}" finished.`);
+    console.log(`   - Release branch "v${currentVersion}" started and finished.`);
 
-      console.log(`
+    console.log(`
 \x1b[1m\x1b[32m✅  Git and Git Flow initialized successfully!\x1b[0m
 
 \x1b[1m\x1b[33mNext Steps: Connect to a Private GitHub Repository\x1b[0m
@@ -209,10 +209,6 @@ Use this method if you do not have 'gh' installed.
    \x1b[35mgit push -u origin --all && git push -u origin --tags\x1b[0m
 `);
 
-    } catch (error) {
-      logError('An error occurred during initialization.', error);
-      process.exit(1); // Exit with an error code
-    }
   }
 
   /**
@@ -230,8 +226,3 @@ Use this method if you do not have 'gh' installed.
   }
 }
 
-await initializeGitAndGitFlow({
-  featureBranchName: 'baseline',
-  currentVersion: '0.1.0', // git init basic version is initially 0.1.0
-  packageJsonPath: './package.json',
-});
