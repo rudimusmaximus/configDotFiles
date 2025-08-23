@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Set up fzf key bindings and fuzzy completion
+# see also exports for customization
 verbLog 1 "Checking if fzf is installed..."
 if command -v fzf > /dev/null 2>&1; then
     verbLog 2 "fzf is installed. Setting up fzf key bindings..."
