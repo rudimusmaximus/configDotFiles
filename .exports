@@ -67,3 +67,10 @@ export VISUAL="$EDITOR"
 export BUN_INSTALL="$HOME/.bun"
 export PATH=$BUN_INSTALL/bin:$PATH
 
+# Make fzf completion nicer
+export FZF_COMPLETION_OPTS='--height=50% --reverse --border'
+
+# Change the trigger from ** to, say, .. (so you type ..<TAB> to fuzzy-complete)
+# Default is '**'. Keep it if you like.
+export FZF_COMPLETION_TRIGGER='..'
+
