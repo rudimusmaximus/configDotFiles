@@ -19,6 +19,10 @@ alias rcm_shared='cd "$RCM_SHARED"'
 alias brewup='brew upgrade';
 
 alias n='nvim'
+# open nvim from my nvim-config repo where i might be trying out something (does not effect next nvim open)
+alias nvimConfig='NVIM_APPNAME=nvim-config nvim'
+alias ncon='NVIM_APPNAME=nvim-config nvim'
+
 alias tm='tmux'
 alias tmls='tmux ls'
 alias tma='tmux attach -t'
@@ -314,8 +318,6 @@ alias pnUPGRADE='pnpm add -g pnpm';
 alias px="pnpm dlx"
 alias pnl='echo "pnpm ls"; pnpm ls'
 alias pnlg='echo "pnpm ls -g"; pnpm ls -g'
-# open nvim from my nvim-config repo where i might be trying out something (does not effect next nvim open)
-alias nvimConfig='NVIM_APPNAME=nvim-config nvim'
 alias db='echo "edgedb"; edgedb'
 # inspect what a npm published package will include
 alias mktar='tar xf $(npm pack) && tar -xf $(ls *.tgz) --directory ~/Downloads/ && mv $(ls *.tgz) ~/Downloads/'
