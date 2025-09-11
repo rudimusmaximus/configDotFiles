@@ -123,3 +123,9 @@ if [[ "$(uname)" == "Linux" ]]; then
       fi
 fi
 
+# For fzf, if installed locally then put it on the path in Linux where
+# not using a package manager (should be in local .mrconfig for updates)
+if [ "$(uname -s)" = "Linux" ] && [ -d "$HOME/.fzf/bin" ]; then
+  PATH="$HOME/.fzf/bin:$PATH"
+fi
+
