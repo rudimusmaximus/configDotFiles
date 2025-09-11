@@ -358,6 +358,10 @@ alias refresh-nvim-stable='asdf uninstall neovim stable && asdf install neovim s
 alias refresh-nvim-nightly='asdf uninstall neovim nightly && asdf install neovim nightly'
 alias refresh-nvim-master='asdf uninstall neovim ref:master && asdf install neovim ref:master'
 
+# update by direct reinstall as global bun package
+alias refresh-gemini='bun add -g @google/gemini-cli@latest'
+alias refresh-codex='bun add -g @openai/codex@latest'
+
 # see the related functions in .functions
 alias aliases='show_aliases | column'
 alias functions='show_functions | column'
