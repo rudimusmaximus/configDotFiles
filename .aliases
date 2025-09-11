@@ -2,7 +2,6 @@
 # not required for sourced files here but used so we can run shellcheck on the file
 
 alias rts='refresh_terminal_session'
-alias gx='npx https://github.com/google-gemini/gemini-cli'
 alias ff='clear && fastfetch'
 alias buninit='br ~/.bun_scripts/initialize_git_and_git_flow_with_bun.mjs'
 
@@ -359,7 +358,7 @@ alias refresh-nvim-nightly='asdf uninstall neovim nightly && asdf install neovim
 alias refresh-nvim-master='asdf uninstall neovim ref:master && asdf install neovim ref:master'
 
 # update by direct reinstall as global bun package
-alias refresh-gemini='bun add -g @google/gemini-cli@latest'
+alias refresh-gemini='npm install -g @google/gemini-cli@latest'
 alias refresh-codex='bun add -g @openai/codex@latest'
 
 # see the related functions in .functions
