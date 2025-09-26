@@ -325,38 +325,6 @@ update_dotfiles() {
   gl -3
 }
 
-# Outputs a sorted, combined list of functions and aliases
-# Can be used to pipe to fzf to quickly find bash functions and aliases.
-function fna() {
-    local show_all_entries=false
-    local alias_list=()
-    local function_list=()
-
-    # Check if the user passed the '-all' flag
-    if [[ "$1" == "-all" ]]; then
-        show_all_entries=true
-    fi
-
-    # Retrieve aliases
-    mapfile -t alias_list < <(show_aliases)
-
-    # Retrieve functions
-    if [[ "$show_all_entries" == true ]]; then
-        mapfile -t function_list < <(show_functions -all)
-    else
-        mapfile -t function_list < <(show_functions)
-    fi
-
-    # Print the combined list of aliases and functions
-    {
-        printf "%s\n" "${alias_list[@]}"
-        printf "%s\n" "${function_list[@]}"
-    } | grep --color=auto -v '^$' | sort | column
-
-    # Print the source information
-    echo -e "\nThese entries are based on the current shell environment."
-}
-
 # Ensure the SSH agent is running and add the SSH key (so users don't have to enter their password each time)
 # works in conjunction with git settings set in .extra
 prime_ssh() {
@@ -784,3 +752,212 @@ openInBrowser () {
     # Return non-zero only on critical errors (no input, file not found, OS unsupported, critical commands missing)
     return 0
 }
+
+#################################################################
+# FZF Functions for Aliases and Shell Functions
+#################################################################
+
+# Outputs a sorted, combined list of functions and aliases with color and duplicate detection.
+function fna() {
+    local dups_only=0
+    local force_color=0
+    # Process arguments like --dups-only and --color
+    for arg in "$@"; do
+        case "$arg" in
+            --dups-only) dups_only=1; shift ;;
+            --color|--color=always) force_color=1; shift ;;
+        esac
+    done
+
+    local alias_list=() function_list=() combined=()
+    mapfile -t alias_list < <(show_aliases)
+    # Pass along any remaining arguments (like -all) to show_functions
+    mapfile -t function_list < <(show_functions "$@")
+
+    # Track types
+    declare -A _is_alias=() _is_func=()
+    for a in "${alias_list[@]}"; do [[ -n "$a" ]] && _is_alias["$a"]=1; done
+    for f in "${function_list[@]}"; do [[ -n "$f" ]] && _is_func["$f"]=1; done
+
+    # Merge, strip blanks, and sort
+    mapfile -t combined < <(
+        { printf "%s\n" "${alias_list[@]}"; printf "%s\n" "${function_list[@]}"; } |
+        grep --color=never -v '^[[:space:]]*$' |
+        sort
+    )
+
+    # Count occurrences and detect duplicate names
+    declare -A _count=() _dups=()
+    for name in "${combined[@]}"; do
+        (( _count["$name"]++ ))
+        if (( _count["$name"] > 1 )); then
+            _dups["$name"]=1
+        fi
+    done
+    # Also mark alias<->function collisions
+    for name in "${!_count[@]}"; do
+        if [[ -n "${_is_alias[$name]}" && -n "${_is_func[$name]}" ]]; then
+            _dups["$name"]=1
+        fi
+    done
+
+    local colorize=0
+    if (( force_color )) || [[ -t 1 ]]; then
+        colorize=1
+    fi
+
+    local RESET=$'\033[0m'
+    local ALIAS_COLOR=$'\033[34m' # blue
+    local FUNC_COLOR=$'\033[31m'  # red
+    local ERR_COLOR=$'\033[91m'   # bright red
+
+    # Handle --dups-only mode
+    if (( dups_only )); then
+        if (( ${#_dups[@]} > 0 )); then
+            { for k in "${!_dups[@]}"; do printf "%s\n" "$k"; done } | sort | while read -r k; do
+                if (( colorize )); then
+                    if [[ -n "${_is_alias[$k]}" && -n "${_is_func[$k]}" ]]; then
+                        printf '%s%s%s\n' "${ERR_COLOR}" "$k" "${RESET}"
+                    elif [[ -n "${_is_alias[$k]}" ]]; then
+                        printf '%s%s%s\n' "${ALIAS_COLOR}" "$k" "${RESET}"
+                    else
+                        printf '%s%s%s\n' "${FUNC_COLOR}" "$k" "${RESET}"
+                    fi
+                else
+                    printf '%s\n' "$k"
+                fi
+            done
+            return 1
+        else
+            return 0
+        fi
+    fi
+
+    # Normal mode: print unique, sorted, colored list
+    local unique_lines
+    mapfile -t unique_lines < <(printf "%s\n" "${combined[@]}" | uniq)
+    for line in "${unique_lines[@]}"; do
+        if (( colorize )); then
+            if [[ -n "${_is_alias[$line]}" && -n "${_is_func[$line]}" ]]; then
+                printf '%s%s%s\n' "${ERR_COLOR}" "$line" "${RESET}"
+            elif [[ -n "${_is_func[$line]}" ]]; then
+                printf '%s%s%s\n' "${FUNC_COLOR}" "$line" "${RESET}"
+            else
+                printf '%s%s%s\n' "${ALIAS_COLOR}" "$line" "${RESET}"
+            fi
+        else
+            printf '%s\n' "$line"
+        fi
+    done
+
+    # Print duplicate report to stderr
+    if (( ${#_dups[@]} > 0 )); then
+        {
+            if [[ -t 2 ]]; then
+                printf '\n%sDUPLICATES:%s\n' "${ERR_COLOR}" "${RESET}" >&2
+            else
+                printf '\nDUPLICATES:\n' >&2
+            fi
+            { for k in "${!_dups[@]}"; do printf "%s\n" "$k"; done } | sort | while read -r k; do
+                if [[ -t 2 ]]; then
+                    if [[ -n "${_is_alias[$k]}" && -n "${_is_func[$k]}" ]]; then
+                        printf '  %s%s%s (alias & function)\n' "${ERR_COLOR}" "$k" "${RESET}" >&2
+                    elif [[ -n "${_is_alias[$k]}" ]]; then
+                        printf '  %s%s%s (alias)\n' "${ALIAS_COLOR}" "$k" "${RESET}" >&2
+                    else
+                        printf '  %s%s%s (function)\n' "${FUNC_COLOR}" "$k" "${RESET}" >&2
+                    fi
+                else
+                    # Plain text for stderr when not a tty
+                    if [[ -n "${_is_alias[$k]}" && -n "${_is_func[$k]}" ]]; then
+                        printf '  %s (alias & function)\n' "$k" >&2
+                    elif [[ -n "${_is_alias[$k]}" ]]; then
+                        printf '  %s (alias)\n' "$k" >&2
+                    else
+                        printf '  %s (function)\n' "$k" >&2
+                    fi
+                fi
+            done
+        }
+        return 1
+    fi
+    return 0
+}
+
+# Displays the output of `fna` in dynamically sized, colored columns.
+fnat() {
+    # This script uses a two-pass approach. First, it captures the output
+    # to calculate the layout. Second, it pipes that same output to awk
+    # with the calculated layout parameters to perform the printing.
+
+    local output
+    output=$(fna --color "$@")
+
+    # If there's no output, we can exit early.
+    if [[ -z "$output" ]]; then
+        return 0
+    fi
+
+    # PASS 1: Calculate the best layout
+    local term_width max_item_width
+    term_width=${COLUMNS:-80} # Get terminal width, fallback to 80
+
+    # Use awk to find the length of the longest line (ignoring color codes)
+    max_item_width=$(echo "$output" | awk '
+        {
+            nocolor = $0
+            gsub(/\x1b\[[0-9;]*m/, "", nocolor)
+            l = length(nocolor)
+            if (l > max) { max = l }
+        }
+        END { print max }
+    ')
+
+    # Determine number of columns that can fit
+    local num_columns=$(( term_width / (max_item_width + 2) ))
+    if (( num_columns == 0 )); then
+        num_columns=1
+    fi
+
+    # PASS 2: Print with the calculated layout
+    echo "$output" | awk -v pad="$max_item_width" -v cols="$num_columns" '
+        {
+            # Store all lines in an array
+            lines[NR] = $0
+        }
+        END {
+            for (i = 1; i <= NR; i++) {
+                # Print the item, padded to the max width for its column
+                printf "%-" pad "s  ", lines[i]
+                # If we are at the end of a row or the very last item, print a newline
+                if (i % cols == 0 || i == NR) {
+                    printf "\n"
+                }
+            }
+        }
+    '
+}
+
+# Finds and executes a function/alias immediately upon selection.
+fnaf() {
+    local sel_with_color sel
+
+    echo "Running fnaf..."
+
+    # Run fzf and capture the selected command.
+    sel_with_color=$(fna --color "$@" | fzf --ansi --no-sort --prompt='alias/func> ' --height=40%)
+
+    # If a selection was made, execute it in the CURRENT shell.
+    if [[ -n "$sel_with_color" ]]; then
+        # Clean the color codes.
+        sel=$(echo "$sel_with_color" | sed 's/\x1b\[[0-9;]*m//g')
+
+        # --- ADDED LINE ---
+        # Print the command that is about to be executed.
+        printf "+ %s\n" "$sel"
+
+        # This `eval` will now run after the command has been printed.
+        eval "$sel"
+    fi
+}
+
