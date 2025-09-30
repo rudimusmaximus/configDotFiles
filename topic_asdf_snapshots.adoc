@@ -1,0 +1,40 @@
+= ASDF Snapshot Troubleshooting (In Progress)
+
+== Status
+Work paused after resolving the immediate `printf -v url_q` identifier issue and clearing current ShellCheck warnings. Further adjustments are planned later today.
+
+== Symptom
+Running `fnaf` (which calls `create-snapshot-of-asdf-plugins-for-new-install`) printed repeated warnings like:
+
+```
+bash: printf: `url_q ': not a valid identifier
+```
+
+The snapshot script still finished, but the loop emitted the warning once per plugin.
+
+== Root Cause
+Inside `.functions`, the line that builds the quoted URL looked ordinary:
+
+```
+printf -v url_q '%q' "$url"
+```
+
+However, the character between `url_q` and `'%q'` was actually a non-breaking space (U+00A0). Bash therefore treated the identifier as `url_q` followed by that hidden codepoint, so `printf -v` rejected it and complained for every plugin entry.
+
+== Fix (Applied)
+Replace the non-breaking space with a standard space (or remove it entirely):
+
+```
+printf -v url_q '%q' "$url"
+```
+
+With `url_q` now a valid identifier, the warnings disappear and the generated restore script contains the correct plugin URLs.
+
+== Additional Cleanup
+- Replaced the ANSI stripping `sed` pipeline with Bash pattern substitution in `fnaf`, matching ShellCheck guidance.
+- Regenerated the snapshot helper using heredocs, which keeps behaviour the same while satisfying ShellCheck about intended expansion.
+- Annotated the conditional `source /etc/os-release` with `# shellcheck disable=SC1091` so the linter accepts the optional dependency.
+
+== Next Steps
+- Resume later today to continue refining `create-snapshot-of-asdf-plugins-for-new-install` or any surrounding tooling as planned.
+- Re-run `shellcheck .functions` after the next set of edits to keep the file lint-clean.

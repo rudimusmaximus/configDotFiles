@@ -352,6 +352,7 @@ prime_ssh() {
             echo "Error: Failed to add SSH key to macOS keychain."
         fi
     elif [[ -f /etc/os-release ]]; then
+        # shellcheck disable=SC1091
         if ! source /etc/os-release 2>/dev/null; then
             echo "Error: Failed to source /etc/os-release."
             return 1
@@ -949,8 +950,8 @@ fnaf() {
 
     # If a selection was made, execute it in the CURRENT shell.
     if [[ -n "$sel_with_color" ]]; then
-        # Clean the color codes.
-        sel=$(echo "$sel_with_color" | sed 's/\x1b\[[0-9;]*m//g')
+        # Strip ANSI color codes so eval sees the raw command.
+        sel="${sel_with_color//$'\e''['[0-9;]*m/}"
 
         # --- ADDED LINE ---
         # Print the command that is about to be executed.
@@ -961,3 +962,126 @@ fnaf() {
     fi
 }
 
+# Create a script to re-add all plugins with original URLs
+# Usage on existing machine: create-snapshot-of-asdf-plugins-for-new-install
+# On new machine after dot files have been installed:
+# source the output file name with datestamp after reviewing the file
+# Create a script to re-add all plugins with original URLs
+# Usage on existing machine: create-snapshot-of-asdf-plugins-for-new-install
+# On new machine after dot files have been installed:
+# source the output file name with datestamp after reviewing the file
+create-snapshot-of-asdf-plugins-for-new-install() {
+  # Declare all local variables at the top of the function
+  local _NEW_ASDF_INSTALL_DATESTAMP _NEW_ASDF_INSTALL_OUTFILE _NEW_ASDF_INSTALL_TOOL_VERSIONS_BACKUP
+  local p name url name_q url_q
+
+  # file name friendly utc
+  _NEW_ASDF_INSTALL_DATESTAMP="$(date -u +%Y%m%d_%H%M%S)"
+
+  # Obscure Dotfile names
+  _NEW_ASDF_INSTALL_OUTFILE="$HOME/.new_install_asdf_plugins_restore_${_NEW_ASDF_INSTALL_DATESTAMP}"
+  _NEW_ASDF_INSTALL_TOOL_VERSIONS_BACKUP="$HOME/.new_install_asdf_tool_versions_snapshot_${_NEW_ASDF_INSTALL_DATESTAMP}"
+
+  # ----------------------------------------------------
+  # 1. Back up ~/.tool-versions (Snapshot Creation)
+  # ----------------------------------------------------
+  if [ -f "$HOME/.tool-versions" ]; then
+    cp "$HOME/.tool-versions" "$_NEW_ASDF_INSTALL_TOOL_VERSIONS_BACKUP"
+    printf '✅ Backed up ~/.tool-versions to %s\n' "$_NEW_ASDF_INSTALL_TOOL_VERSIONS_BACKUP"
+    printf '   Add this file to your dotfiles repository for the new machine.\n'
+  else
+    printf '⚠️ No existing ~/.tool-versions found. Proceeding without a backup.\n' >&2
+  fi
+
+  # ----------------------------------------------------
+  # 2. Create the plugin reinstall script (Restoration Script)
+  # ----------------------------------------------------
+
+  # Create/overwrite the file with the script header, guards, and helper
+  cat <<EOF > "$_NEW_ASDF_INSTALL_OUTFILE"
+#!/usr/bin/env bash
+
+# ==========================================================
+# ASDF Plugin and Version Restoration Script (idempotent)
+# Generated on: $(date)
+# Source this file to re-add all plugins and restore ~/.tool-versions
+# ==========================================================
+
+_NEW_ASDF_INSTALL_DATETAG="$_NEW_ASDF_INSTALL_DATESTAMP"
+_NEW_ASDF_INSTALL_TOOL_VERSIONS_SNAPSHOT="\$HOME/.new_install_asdf_tool_versions_snapshot_\${_NEW_ASDF_INSTALL_DATETAG}"
+
+if ! command -v asdf >/dev/null 2>&1; then
+  echo "❌ asdf not found in PATH. Please install asdf first." >&2
+  return 1 2>/dev/null || exit 1
+fi
+
+if [ -f "\$HOME/.tool-versions" ]; then
+  echo "❌ Existing ~/.tool-versions found. Please review or remove it before running this script."
+  echo "If you want to use the snapshot, delete ~/.tool-versions and re-run." >&2
+  return 1 2>/dev/null || exit 1
+fi
+
+# Verify and place the backed-up .tool-versions file
+if [ ! -f "\$_NEW_ASDF_INSTALL_TOOL_VERSIONS_SNAPSHOT" ]; then
+  echo "❌ Snapshot tool-versions file not found: \$_NEW_ASDF_INSTALL_TOOL_VERSIONS_SNAPSHOT"
+  echo "Ensure this file (generated on the old machine) has been copied to your home directory." >&2
+  return 1 2>/dev/null || exit 1
+fi
+echo "→ Restoring snapshot tool-versions as ~/.tool-versions"
+mv "\$_NEW_ASDF_INSTALL_TOOL_VERSIONS_SNAPSHOT" "\$HOME/.tool-versions"
+
+add_plugin() {
+  local name="\$1" url="\$2"
+  if [ -d "\$HOME/.asdf/plugins/\$name" ]; then
+    echo "↩︎ plugin '\$name' already present; skipping"
+    return 0
+  fi
+  if [ -n "\$url" ]; then
+    asdf plugin add "\$name" "\$url"
+  else
+    asdf plugin add "\$name"
+  fi
+}
+EOF
+
+  # Gather current plugins and their origin URLs
+  if [ -d "$HOME/.asdf/plugins" ]; then
+    for p in "$HOME/.asdf/plugins"/*; do
+      [ -d "$p" ] || continue
+
+      # Variables are already declared local to the function
+      name="$(basename "$p")"
+      url="$(git -C "$p" remote get-url origin 2>/dev/null || true)"
+
+      # Quote safely for bash source
+      printf -v name_q '%q' "$name"
+      printf -v url_q '%q' "$url"
+
+      if [[ -n "$url" ]]; then
+        printf 'add_plugin %s %s\n' "$name_q" "$url_q" >> "$_NEW_ASDF_INSTALL_OUTFILE"
+      else
+        # Fallback to index-only install (still idempotent)
+        printf 'add_plugin %s ""\n' "$name_q" >> "$_NEW_ASDF_INSTALL_OUTFILE"
+      fi
+    done
+  fi
+
+  # Final install step
+  cat <<'EOF' >> "$_NEW_ASDF_INSTALL_OUTFILE"
+
+echo "→ Installing versions from ~/.tool-versions..."
+# This installs all versions specified in the newly restored ~/.tool-versions
+asdf install
+
+echo "✅ Restoration complete. Tool versions installed according to ~/.tool-versions."
+EOF
+
+  # Note: chmod +x is removed as the file is intended to be 'source'd
+  printf "✅ Wrote plugin reinstall script to %s\n" "$_NEW_ASDF_INSTALL_OUTFILE"
+  printf "   To restore on a new system:\n"
+  printf "   1. Copy %s (if created) to the new \$HOME.\n" "$_NEW_ASDF_INSTALL_TOOL_VERSIONS_BACKUP"
+  printf "   2. Copy %s to the new \$HOME.\n" "$_NEW_ASDF_INSTALL_OUTFILE"
+  printf "   3. Source the script: source %s\n" "$_NEW_ASDF_INSTALL_OUTFILE"
+  # TODO update for adding to dotfiles and add restore asdf snapshot to install function
+# along  with setup ssh instructions for new machines
+}
