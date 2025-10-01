@@ -347,7 +347,156 @@ cat ~/.ssh/id_ed25519_pi3b+.pub
 
 Your public key will be printed to the terminal. It will be a single line of text starting with `ssh-ed25519...`. Highlight this entire line of text and copy it. You can now paste this public key into the appropriate location on your server or service.
 
-== LEGAL NOTE
+= Fedora 43 Beta Workstation (Intel iMac)
+
+These steps set up a new SSH key and configure Fedora to use it with GitHub.
+
+== Step 1: Generate a New SSH Key
+
+Run the following:
+
+[source,bash]
+----
+ssh-keygen -t ed25519 -C "your_email@example.com" -f ~/.ssh/id_ed25519_imac
+----
+
+This creates:
+* `~/.ssh/id_ed25519_imac` (private key)
+* `~/.ssh/id_ed25519_imac.pub` (public key)
+
+Use a descriptive comment (your email) so GitHub shows which machine the key belongs to.
+
+== Step 2: Start the SSH Agent
+
+On Fedora Workstation, GNOME Keyring usually handles SSH automatically.
+Check which agent is running:
+
+[source,bash]
+----
+echo $SSH_AUTH_SOCK
+----
+
+If the path includes `/run/user/.../keyring/ssh`, GNOME Keyring is active.
+Otherwise, start a manual agent:
+
+[source,bash]
+----
+eval "$(ssh-agent -s)"
+----
+
+== Step 3: Add the New Key
+
+[source,bash]
+----
+ssh-add ~/.ssh/id_ed25519_imac
+----
+
+* If GNOME Keyring is active, a GUI prompt will appear.
+* Choose **“Automatically unlock key whenever I log in”** if you want it remembered across reboots.
+* Without keyring, the passphrase is cached until logout.
+
+== Step 4: Configure SSH
+
+Edit your SSH config:
+
+[source,bash]
+----
+nano ~/.ssh/config
+----
+
+Add:
+
+[source]
+----
+Host github.com
+  HostName github.com
+  User git
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ed25519_imac
+----
+
+Save and exit.
+
+== Step 5: Display and Copy the Public Key
+
+[source,bash]
+----
+cat ~/.ssh/id_ed25519_imac.pub
+----
+
+Manually copy it, or install `xclip` and run:
+
+[source,bash]
+----
+cat ~/.ssh/id_ed25519_imac.pub | xclip -selection clipboard
+----
+
+Then paste into GitHub → Settings → SSH and GPG keys → **New SSH key**.
+
+== Step 6: Test with GitHub
+
+Run:
+
+[source,bash]
+----
+ssh -T git@github.com
+----
+
+Notes:
+* First time, you’ll be asked to confirm GitHub’s host key. Type `yes`.
+* If everything is set up, you’ll see a message like:
+
+----
+Hi your-username! You've successfully authenticated, but GitHub does not provide shell access.
+----
+
+== Troubleshooting
+
+* If you see `Permission denied (publickey)`, run:
+
+[source,bash]
+----
+ssh -vT git@github.com
+----
+
+This will print debug info showing which key SSH is trying to use.
+Confirm that `~/.ssh/id_ed25519_imac` is listed and matches the key uploaded to GitHub.
+
+== Multiple GitHub Accounts
+
+If you use **more than one GitHub account** (e.g., personal + work), create a separate SSH key for each account:
+
+[source,bash]
+----
+ssh-keygen -t ed25519 -C "work_email@example.com" -f ~/.ssh/id_ed25519_work
+----
+
+Then add a second host entry in your SSH config:
+
+[source]
+----
+Host github-work
+  HostName github.com
+  User git
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ed25519_work
+----
+
+Now you can clone repos like this:
+
+[source,bash]
+----
+git clone git@github-work:your-work-org/repo.git
+----
+
+And still use your personal account with:
+
+[source,bash]
+----
+git clone git@github.com:your-username/repo.git
+----
+
+= LEGAL NOTE
 
 Any use of this project's code by GitHub Copilot, past or present, is done
 without our permission.  We do not consent to GitHub's use of this project's
