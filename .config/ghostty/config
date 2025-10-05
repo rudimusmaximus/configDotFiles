@@ -12,6 +12,6 @@ font-family = Comic Code Ligatures
 font-family = "JetBrains Mono"
 
 #theme = catppuccin-frappe
-theme = tokyonight
+theme = TokyoNight
 #theme = nvimdark
 
