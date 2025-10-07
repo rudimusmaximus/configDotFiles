@@ -1,27 +1,43 @@
 #!/usr/bin/env bash
 
+# HELPER FUNCTIONS
+# ================
+# Prepend a directory to the PATH, but only if it exists and is not already in the PATH.
+path_prepend() {
+    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+        PATH="$1:$PATH"
+    fi
+}
+
+# Append a directory to the PATH, but only if it exists and is not already in the PATH.
+path_append() {
+    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+        PATH="$PATH:$1"
+    fi
+}
+
 # COMMON CONFIGURATION
 # ====================
 
 # Bun (see https://bun.sh/)
 export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+path_prepend "$BUN_INSTALL/bin"
 
 # Jetbrains toolbox - shell scripts path
-export PATH="$HOME/bin:$PATH"
+path_prepend "$HOME/bin"
 
 # Pyenv
 export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
+path_prepend "$PYENV_ROOT/bin"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
 
 # local bin use by python pip installs
-export PATH="$HOME/.local/bin:$PATH"
+path_prepend "$HOME/.local/bin"
 
 # tmuxifier for session layouts (installed via TPM in .tmux.conf) see $HOME/.tmux/plugins
-export PATH="$HOME/.tmux/plugins/tmuxifier/bin:$PATH"
+path_prepend "$HOME/.tmux/plugins/tmuxifier/bin"
 
 # OS SPECIFIC CONFIGURATION
 # =========================
@@ -48,7 +64,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
     architecture=$(sysctl -n machdep.cpu.brand_string)
 
     # edgedb-cli
-    export PATH="$HOME/Library/Application Support/edgedb/bin:$PATH"
+    path_prepend "$HOME/Library/Application Support/edgedb/bin"
 
     # Check for Apple Silicon iMac
     if [[ "$architecture" == *"Apple"* ]]; then
@@ -95,11 +111,11 @@ if [[ "$(uname)" == "Darwin" ]]; then
     # Java OpenJDK
     # for running google closure compiler from jar file (brew caveats as apple
     # installs similar files so take care of install instructions)
-    export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+    path_prepend "/opt/homebrew/opt/openjdk/bin"
     export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
 
     # MIT Scheme
-    export PATH="$PATH:$HOME/projects/mit-scheme-12.1/src/mit-scheme.app/Contents/Resources"
+    path_append "$HOME/projects/mit-scheme-12.1/src/mit-scheme.app/Contents/Resources"
 fi
 
 # Other Linux related items
@@ -126,6 +142,6 @@ fi
 # For fzf, if installed locally then put it on the path in Linux where
 # not using a package manager (should be in local .mrconfig for updates)
 if [ "$(uname -s)" = "Linux" ] && [ -d "$HOME/.fzf/bin" ]; then
-  PATH="$HOME/.fzf/bin:$PATH"
+  path_prepend "$HOME/.fzf/bin"
 fi
 

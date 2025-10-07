@@ -35,7 +35,7 @@ output_help() {
     printf "  -v       Display script version\n"
     printf "  -r       Remove existing dotfiles if .cfg is local - otherwise backed up during installs.\n"
     printf "  -p       Prepare for reinstall. Remove existing cloned directories if present.\n"
-    printf "  -q       Check expected prequisites for planed use.\n\n"
+    printf "  -q       Check expected prequisites for planned use.\n\n"
     printf "Maintenance after first install (see .cfg_README.adoc):\n"
     printf "  cfgInstallScript       Alias for running script remotely. Just add [options].\n\n"
     printf "NOTE: RAW_CODE_URL above is the GitHub URL to the raw shell script.\n"
