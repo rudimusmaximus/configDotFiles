@@ -36,3 +36,18 @@ set -o vi
 eval "$(zoxide init bash)"
 
 verbLog 1 "Finished ~/.bashrc"
+
+# >>> juliaup initialize >>>
+
+# !! Contents within this block are managed by juliaup !!
+
+case ":$PATH:" in
+    *:/home/rfjr/.juliaup/bin:*)
+        ;;
+
+    *)
+        export PATH=/home/rfjr/.juliaup/bin${PATH:+:${PATH}}
+        ;;
+esac
+
+# <<< juliaup initialize <<<
