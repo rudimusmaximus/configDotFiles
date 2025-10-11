@@ -6,21 +6,20 @@ verbLog 1 "Entering ~/.bashrc..."
 
 # the things we need every time
 declare -a rc_config_files=(
+    "${HOME}/.bash_prompt"
     "${HOME}/.aliases"
     "${HOME}/.functions"
     "${HOME}/.keybindings"
-    "${HOME}/.bash_prompt"
 )
 
 for file in "${rc_config_files[@]}"; do
     if [ -r "${file}" ] && [ -f "${file}" ]; then
-        verbLog 1 "Sourcing ${file} from ~/.bashrc..."
+        verbLog 2 "Sourcing ${file} from ~/.bashrc..."
         # shellcheck source=/dev/null
         source "${file}"
     else
-        verbLog 1 "Skipped $file (not readable or does not exist)."
+        verbLog 2 "Skipped $file (not readable or does not exist)."
     fi
-    verbLog 1 "Done."
 done
 unset file
 
