@@ -16,10 +16,10 @@ function cfg_greet_with_diagnostics() {
 if [ "${CFG_DOT_FILES_VERBOSE_MODE:-false}" = true ]; then
   cfg_greet_with_diagnostics
 else
-   # Only print "hello" if the shell is interactive
-   # plain non-interactive shells (e.g. cron) do not have $- set
-   # helps with some command line tools like scp in ssh
-  if [[ $- == *i* ]]; then
+  # Only print "hello" if the shell for local interactive sessions
+  # plain non-interactive shells (e.g. cron) do not have $- set
+  # helps with some command line tools like scp in ssh
+  if [[ $- == *i* && -z "$SSH_CONNECTION" ]]; then
     printf 'hello,\n'
   fi
 fi
