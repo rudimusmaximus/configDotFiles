@@ -15,3 +15,7 @@ font-family = "JetBrains Mono"
 theme = TokyoNight
 #theme = nvimdark
 
+cursor-style = block
+cursor-style-blink = false
+keybind = shift+enter=text:\n
+shell-integration-features = no-cursor
