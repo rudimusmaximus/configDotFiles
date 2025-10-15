@@ -32,6 +32,7 @@ output_help() {
     printf "  -f       [Fedora] Upgrade dnf with refresh\n"
     printf "  -m       [all]    Myrepo updates using local .mrconfig file\n"
     printf "  -a       [all]    Update asdf plugins (then you can refresh-nvim-stable or nighlty)\n"
+    printf "  -r       [all]    Refresh nvim nightly\n"
     printf "  -b       [all]    Upgrade bun\n"
     printf "  -n       [all]    Check node LTS versions (installed vs available from plugin)\n"
     printf "  -g       [all]    Set current node LTS version to be global active version\n"
@@ -69,7 +70,7 @@ run() {
     # command -v git >/dev/null 2>&1 || error_exit "git is required but it's not installed. Aborting."
     handle_not_a_flag_edge_cases "$@"
     # Parse options using getopts
-    while getopts ":wfmabnghv" opt; do
+    while getopts ":wfmarbnghv" opt; do
         case $opt in
             w)
                 printf "\n  'brew upgrade'...\n"
@@ -92,6 +93,11 @@ run() {
                 printf "\n  'asdf plugin updtate --all'\n"
                 asdf plugin update --all
                 ;;
+            r)
+                print "\n  'refresh-nvim-nightly'\n"
+                refresh-nvim-nightly
+                ;;
+
             b)
                 printf "\n  'bun upgrade'\n"
                 bun upgrade
