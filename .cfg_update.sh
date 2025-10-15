@@ -32,7 +32,7 @@ output_help() {
     printf "  -f       [Fedora] Upgrade dnf with refresh\n"
     printf "  -m       [all]    Myrepo updates using local .mrconfig file\n"
     printf "  -a       [all]    Update asdf plugins (then you can refresh-nvim-stable or nighlty)\n"
-    printf "  -r       [all]    Refresh nvim nightly\n"
+    printf "  -r       [all]    Refresh nvim nightly via asdf\n"
     printf "  -b       [all]    Upgrade bun\n"
     printf "  -n       [all]    Check node LTS versions (installed vs available from plugin)\n"
     printf "  -g       [all]    Set current node LTS version to be global active version\n"
@@ -94,8 +94,8 @@ run() {
                 asdf plugin update --all
                 ;;
             r)
-                print "\n  'refresh-nvim-nightly'\n"
-                refresh-nvim-nightly
+                printf "\n  'asdf uninstall neovim nightly && asdf install neovim nightly'\n"
+                asdf uninstall neovim nightly && asdf install neovim nightly
                 ;;
 
             b)
