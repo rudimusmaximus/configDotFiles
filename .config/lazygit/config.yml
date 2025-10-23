@@ -9,3 +9,7 @@ git:
   autoForwardBranches: none
 os:
   shellFunctionsFile: ~/.config/lazygit/.shell_startup_file
+gui:
+  theme:
+    selectedLineBgColor:
+      - reverse

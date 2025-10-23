@@ -7,14 +7,6 @@
 # This script file does NOT set a "source once" guard for itself.
 # It relies on its internal logic to perform one-time actions only when needed,
 # and performs shell initializations (sourcing asdf.sh, PATH, completions) every time.
-# Configure asdf (see https://asdf-vm.com/guide/getting-started.html)
-# Prefer urls when installing plugins see https://github.com/asdf-vm/asdf-plugins?tab=readme-ov-file#plugin-list
-# VerbLog function is defined globally and available before this script is sourced
-# This script file does NOT set a "source once" guard for itself.
-# It relies on its internal logic to perform one-time actions only when needed,
-# and performs shell initializations (sourcing asdf.sh, PATH, completions) every time.
-
-#!/usr/bin/env bash
 # asdf setup — brew on macOS/Linuxbrew when present; otherwise use pre-copied binary asset
 # Complies with asdf docs: binary on PATH, add shims to PATH, Bash completions via `asdf completion bash`.
 
@@ -24,7 +16,9 @@ if ! declare -f _cfg_command_exists >/dev/null 2>&1; then
 fi
 
 _asdf_expected_asset_hint() {
-  local os="$(uname -s)" arch="$(uname -m)"
+  local os arch
+  os="$(uname -s)"
+  arch="$(uname -m)"
   case "$os/$arch" in
     Darwin/arm64)   echo "asdf-<VERSION>-darwin-arm64.tar.gz" ;;
     Darwin/x86_64)  echo "asdf-<VERSION>-darwin-amd64.tar.gz" ;;
@@ -41,7 +35,6 @@ _cfg_asdf_setup_main() {
   # asdf data dir (plugins/installs/shims) per docs
   export ASDF_DATA_DIR="${HOME}/.asdf"  # must be absolute path
   local ASDF_FRESH_FLAG="${ASDF_DATA_DIR}/.cfg_asdf_plugins_pending"
-  local os="$(uname -s)"
 
   verbLog 2 "ASDF_SETUP: start (OS=$(uname -s) ARCH=$(uname -m))"
 
@@ -83,6 +76,21 @@ _cfg_asdf_setup_main() {
     fi
   else
     verbLog 2 "ASDF_SETUP: asdf already present."
+  fi
+
+  # 1.5) Initialize asdf's shell functions and command wrappers (critical for Java/javac detection)
+  if _cfg_command_exists asdf; then
+    if asdf init bash &>/dev/null; then
+      # Use 'asdf init' if available, as it is the modern way to set up the shell environment
+      source <(asdf init bash)
+      verbLog 3 "ASDF_SETUP: executed 'asdf init bash' for shell setup."
+    else
+      # Fallback to sourcing the old asdf.sh if init isn't found/working
+      if [ -f "${ASDF_DATA_DIR}/asdf.sh" ]; then
+        source "${ASDF_DATA_DIR}/asdf.sh"
+        verbLog 3 "ASDF_SETUP: sourced legacy asdf.sh for shell setup."
+      fi
+    fi
   fi
 
   # 2) Ensure shims path (required by docs)
@@ -128,9 +136,11 @@ _cfg_asdf_setup_main() {
       )
       for plugin_name in "${!plugins_to_add[@]}"; do
         verbLog 1 "ASDF_SETUP: adding plugin: ${plugin_name}"
-        asdf plugin add "${plugin_name}" "${plugins_to_add[$plugin_name]}" \
-          && verbLog 2 "ASDF_SETUP: ${plugin_name} added." \
-          || verbLog 0 "ASDF_SETUP: failed to add ${plugin_name}."
+        if asdf plugin add "${plugin_name}" "${plugins_to_add[$plugin_name]}"; then
+          verbLog 2 "ASDF_SETUP: ${plugin_name} added."
+        else
+          verbLog 0 "ASDF_SETUP: failed to add ${plugin_name}."
+        fi
       done
     else
       verbLog 0 "ASDF_SETUP: 'asdf' not available; skipping plugin additions."
