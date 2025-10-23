@@ -17,6 +17,7 @@ import { which } from 'bun';
 import { $ } from 'bun';
 
 try {
+  await gitCoreEditorIsSet(); // Ensure core.editor is set
   console.log(
     (await initializeGitAndGitFlow({
       featureBranchName: 'baseline',
@@ -26,6 +27,31 @@ try {
 } catch (error) {
   console.error({ note: `❌ An error occured during initialization: `, error });
   process.exit(1); // Exit with an error code
+}
+
+/**
+ * Ensures that Git's global core.editor is set to use Neovim in foreground mode.
+ * Throws an Error if it's not set correctly.
+ *
+ * @returns {Promise<void>}
+ * @throws {Error} If core.editor is not set to nvim -f
+ */
+export async function gitCoreEditorIsSet() {
+  // Run git config and normalize stdout to a string
+  const result = await $`git config --global core.editor`.quiet();
+  const stdoutStr = result.stdout?.toString().trim() ?? "";
+
+  // Validate the setting
+  if (!stdoutStr || !stdoutStr.includes("nvim")) {
+    throw new Error(
+      `⚠️  Git core.editor is not set to Neovim.\n\n` +
+      `This script requires core.editor to be configured like this:\n\n` +
+      `   git config --global core.editor "$(command -v nvim) -f"\n\n` +
+      `👉 Add that line to your ~/.extra file and re-run the script.`
+    );
+  }
+
+  console.log(`✅ Git core.editor is correctly set to: ${stdoutStr}`);
 }
 
 /**
@@ -133,7 +159,7 @@ async function initializeGitAndGitFlow(spec) {
 
     // Step 10: Finish the feature branch
     logStep(`Finishing Git Flow feature branch: "${featureBranchName}"...`);
-    await $`git flow feature finish ${featureBranchName}`;
+    await $`GIT_EDITOR=true git flow feature finish ${featureBranchName}`;
 
     // Step 11: Start the release branch
     const releaseVersion = currentVersion.split('-')[0];
@@ -149,9 +175,13 @@ async function initializeGitAndGitFlow(spec) {
     await $`git add ${packageJsonPath}`;
     await $`git commit -m "chore: v${releaseVersion} RC.0 semver only"`;
 
-    // Step 14: Finish the release branch
-    logStep(`Finishing Git Flow release branch: "${releaseVersion}"...`);
-    await $`bash -ic "source ~/.functions; git flow release finish ${releaseVersion}`;
+    // Step 14: Finish the release but DON'T create a tag yet
+    logStep(`Finishing Git Flow release branch: "${releaseVersion}" (no tag)...`);
+    await $`GIT_MERGE_AUTOEDIT=no git flow release finish -n ${releaseVersion}`;
+
+    // Step 15: Tag the release
+    // Create an annotated tag with a clean message (no quotes added by git)
+    await $`git tag -a v${releaseVersion} -m "Project is git-flow ready"`;
 
     console.log(`
 🎉 Repository setup complete!`);

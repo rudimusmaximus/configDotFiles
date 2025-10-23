@@ -85,6 +85,21 @@ _cfg_asdf_setup_main() {
     verbLog 2 "ASDF_SETUP: asdf already present."
   fi
 
+  # 1.5) Initialize asdf's shell functions and command wrappers (critical for Java/javac detection)
+  if _cfg_command_exists asdf; then
+    if asdf init bash &>/dev/null; then
+      # Use 'asdf init' if available, as it is the modern way to set up the shell environment
+      source <(asdf init bash)
+      verbLog 3 "ASDF_SETUP: executed 'asdf init bash' for shell setup."
+    else
+      # Fallback to sourcing the old asdf.sh if init isn't found/working
+      if [ -f "${ASDF_DATA_DIR}/asdf.sh" ]; then
+        source "${ASDF_DATA_DIR}/asdf.sh"
+        verbLog 3 "ASDF_SETUP: sourced legacy asdf.sh for shell setup."
+      fi
+    fi
+  fi
+
   # 2) Ensure shims path (required by docs)
   if [[ ":$PATH:" != *":${ASDF_DATA_DIR}/shims:"* ]]; then
     export PATH="${ASDF_DATA_DIR}/shims:$PATH"
