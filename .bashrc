@@ -36,6 +36,11 @@ eval "$(zoxide init bash)"
 
 verbLog 1 "Finished ~/.bashrc"
 
+# For non-login shells, unset verbosity mode so it's not inherited by child processes
+if ! shopt -q login_shell; then
+    unset CFG_DOT_FILES_VERBOSE_MODE
+fi
+
 # >>> juliaup initialize >>>
 
 # !! Contents within this block are managed by juliaup !!

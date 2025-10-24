@@ -30,6 +30,9 @@ unset file
 
 verbLog 1 "Finished ~/.bash_profile"
 
+# Unset verbosity mode so it's not inherited by child processes
+unset CFG_DOT_FILES_VERBOSE_MODE
+
 # >>> juliaup initialize >>>
 
 # !! Contents within this block are managed by juliaup !!
