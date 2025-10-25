@@ -90,7 +90,7 @@ run() {
                 mr -j"$cores" update
                 ;;
             a)
-                printf "\n  'asdf plugin updtate --all'\n"
+                printf "\n  'asdf plugin update --all'\n"
                 asdf plugin update --all
                 ;;
             r)
