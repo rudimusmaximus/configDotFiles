@@ -144,7 +144,7 @@ alias nup="n-refresh -y"
 
 #npm shortcuts
 alias appcheck="bx npm-check --refresh"
-alias appup="ncu --interactive --format group" # great list of updates grouped by patch, minor, major (DON'T use npm updates) see bun update or outdated
+alias appup="ncu --interactive --format group --packageManager bun" # great list of updates grouped by patch, minor, major
 
 #nnn shortcuts
 alias f="nnn" #start The unorthodox terminal file manager

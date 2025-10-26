@@ -1,8 +1,13 @@
 # ignore .extra where we keep user config for git and anything else
-# and also backups and loggin fromt he function cfgstash
+# and also backups and login from the function cfgstash
 .extra
 .extra.backup.*
 cfgstash.log
+
+# Bun Lockfile (COMMIT bun.lockb) as reminder to use bun pm
+# NPM/Yarn Lockfiles (IGNORE THESE)
+package-lock.json
+yarn.lock
 
 # ignore mr config file, we incude an example in the repo as these are a little like customized .extra files
 # TODO if you have forked this repo you should include your mr config file

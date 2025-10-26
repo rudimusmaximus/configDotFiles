@@ -1,0 +1,163 @@
+:icons: font
+:sectnums:
+:toc:
+:toc-placement: left
+:toclevels: 4
+:imagesdir: adoc_images
+:source-highlighter: rouge
+:source-linenums-option: true
+
+// tag::topic[]
+== Cross-Machine Global Tool Management
+
+[.text-center]
+*_This strategy uses a hybrid approach combining `asdf`, `bun`, and `npm` to manage global CLI tools alongside project runtimes. It addresses specific compatibility issues encountered with `gemini-cli` and ensures consistency across machines. This configuration, including aliases and the global manifest (`~/package.json`), is managed within the user's dotfiles project._*
+
+=== Overview - Core Components & Roles
+
+* **`asdf` (Runtime Version Manager):**
+    * Manages specific versions of runtimes like **Node.js** and **Bun** using `.tool-versions`.
+    * **Node.js v22+** (e.g., `22.18.0`) should be set globally (`asdf set -u nodejs 22.18.0`) for `@google/gemini-cli` compatibility.
+    * **Bun** (e.g., `1.3.1`) should also be managed (`asdf plugin add bun https://github.com/cometkim/asdf-bun.git`, `asdf install bun 1.3.1`, `asdf set -u bun 1.3.1`).
+    * `asdf` shims (`~/.asdf/shims`) route commands to the correct runtime.
+
+* **`bun` (Primary Global Package Manager):**
+    * Installs/manages *most* global CLI tools (e.g., `@openai/codex`, `cowsay`, `ncu`, `lighthouse`) via `bun add -g <package>`.
+    * Executables reside in `~/.bun/bin` (must be in `$PATH`).
+    * Updates handled via aliases (e.g., `refresh-codex`) or `appup -g`.
+
+* **`npm` (Specific Global Package Manager):**
+    * Installs/manages only `@google/gemini-cli` globally (`npm install -g ...`) due to Bun install issues and Node v20 conflicts.
+    * Executable resides within the `asdf`-managed Node.js directory.
+    * **Requires `asdf reshim nodejs`** after every update via `npm`.
+
+* **`~/package.json` (Manifest for Bun Globals):**
+    * Lists global packages managed ONLY by **Bun**.
+    * Used by `ncu -g --packageManager bun` (via `appup -g`) to check for updates for these specific tools. **Does NOT list or manage `gemini-cli`.**
+    * Synchronized across machines via dotfiles.
+        [source,json]
+        ----
+        // ~/package.json
+        {
+          "//": "Manifest for Bun-managed global packages ONLY",
+          "dependencies": {
+            "@openai/codex": "^0.49.0",
+            "cowsay": "^1.6.0",
+            "js-yaml": "^4.1.0",
+            "lighthouse": "^13.0.1",
+            "npm-check-updates": "^19.1.1",
+            "sort-package-json": "^3.4.0"
+            // Add other Bun-managed global CLIs here
+          }
+        }
+        ----
+
+---
+=== Initial Setup on a New Machine
+
+1.  Bootstrap machine using dotfiles (installs `asdf`, plugins, sets up shell).
+2.  Install desired runtime versions: `asdf install nodejs 22.18.0`, `asdf install bun 1.3.1`.
+3.  Set global defaults: `asdf set -u nodejs 22.18.0`, `asdf set -u bun 1.3.1`.
+4.  Install `gemini-cli` using its specific alias: `refresh-gemini` (this runs `npm install -g ... && asdf reshim nodejs`).
+5.  Install all Bun global packages listed in `~/package.json`. **`bun install -g` does not read `~/package.json`. Use `bun add -g` explicitly:**
+    [source,bash]
+    ----
+    # Example command (sync package list with ~/package.json manually or via script)
+    bun add -g @openai/codex@latest cowsay@latest js-yaml@latest lighthouse@latest npm-check-updates@latest sort-package-json@latest
+    ----
+
+---
+
+=== Maintenance - Aliases & Checking for Updates
+
+* **Aliases (defined in dotfiles):**
+    [source,bash]
+    ----
+    # Check LOCAL project dependencies using Bun
+    alias appup='ncu --interactive --format group --packageManager bun'
+
+    # Update gemini-cli via npm and reshim asdf's nodejs plugin
+    alias refresh-gemini='npm install -g @google/gemini-cli@latest && asdf reshim nodejs'
+
+    # Update codex via bun
+    alias refresh-codex='bun add -g @openai/codex@latest'
+    ----
+
+* **Checking for Runtime Updates:**
+    * **Node.js:** Requires manual check.
+        1.  `asdf plugin update nodejs`
+        2.  `asdf list nodejs && asdf latest nodejs` (Compare installed vs latest)
+        3.  If needed: `asdf install nodejs $(asdf latest nodejs) && asdf set -u nodejs $(asdf latest nodejs)`
+    * **Bun:** Requires manual check.
+        1.  `asdf plugin update bun`
+        2.  `asdf list bun && asdf latest bun` (Compare installed vs latest)
+        3.  If needed: `asdf install bun $(asdf latest bun) && asdf set -u bun $(asdf latest bun)`
+
+* **Checking for Global Package Updates:**
+    * **Bun Packages (`codex`, `ncu`, etc.):** Run `appup -g` from the home (`~`) directory. This checks packages listed in `~/package.json`.
+    * **Gemini CLI (npm package):** This package often checks for updates itself upon execution. Alternatively, manually run the `refresh-gemini` alias. **`appup -g` will NOT check or update `gemini-cli`.**
+
+---
+=== Summary of Workflow
+
+1.  Use `asdf` to manage Node.js (v22+) and Bun versions. Manually check for runtime updates periodically using the `asdf plugin update` and `asdf latest` commands.
+2.  Install most global tools using `bun add -g`.
+3.  Install `gemini-cli` using the `refresh-gemini` alias (which handles `npm install -g` and `asdf reshim nodejs`).
+4.  Keep `~/package.json` synced via dotfiles, listing *only* Bun-managed global packages.
+5.  Use `appup` for local project updates.
+6.  Use `appup -g` (from `~`) for checking updates on global Bun tools listed in `~/package.json`.
+7.  Use specific `refresh-<tool>` aliases for targeted global updates (`refresh-gemini` for the npm-managed tool, `refresh-codex` etc. for Bun tools). Rely on Gemini CLI's self-update prompt when available.
+
+==== History, Background
+* History detail one
+* History detail two
+
+==== Known Issues
+* Known issue one
+* Known issue two
+
+=== Solution Design
+Images and notes captured from all methods.
+
+==== Working Notes
+.Emerging Rules to Maintain
+* Rule one
+* Rule two
+
+==== Sketches and Early Iterations
+
+=== Research (I wish I knew if/whether xyz)
+
+.IWIK
+. [ ] **Research question** - answer
+
+=== Problems to address (H2s)
+Document how you overcame each “how to” challenge or deviation.
+
+.H2s
+. [ ] **Problem/issue/challenge to solve** - answer
+
+=== Technical Hurdles
+List any new technical hurdles you had to solve. Include source files if possible.
+
+.Ability to
+. [ ] **Ability to** - answer
+
+=== Detailed Design (for what will be implemented here)
+What is needed to start iterating.
+
+=== Externals
+Links to the designs for externals (template sheets, 3rd party docs, etc.)
+
+==== Templates (replaced by materialize)
+
+==== Sample Input Data
+
+==== Expected Results Using Sample Data
+
+=== Implementation
+As defined for this project.
+
+==== Actual Results Using Sample Data
+
+// end::topic[]
