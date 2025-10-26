@@ -32,7 +32,7 @@ output_help() {
   printf "  -f       [Fedora] Upgrade dnf with refresh\n"
   printf "  -m       [all]    Myrepo updates using local .mrconfig file\n"
   printf "  -a       [all]    Update asdf plugins (then you can refresh-nvim-stable or nighlty)\n"
-  printf "  -r       [all]    Refresh PDE with the right tools -- nvim nightly, gemini, codex,\n"
+  printf "  -r       [all]    Refresh right tools with right tools -- bun, codex, gemini, & nvim nightly\n"
   printf "  -c       [all]    Check installed & set vs available from UPDATED asdf plugins for key items\n"
   printf "  -t       [all]    Set current node LTS version to be global active version\n"
   printf "  -v       [all]    Display script version\n"
@@ -93,22 +93,22 @@ run() {
                 asdf plugin update --all
                 ;;
             c)
-                printf "\nCheck node LTS versions (installed & *set vs available from updated plugin)\n"
-                printf "\n  'asdf cmd nodjs update-nodebuild > /dev/null 2>&1 && asdf list nodejs && asdf cmd nodejs resolve lts'\n"
-                asdf cmd nodejs update-nodebuild > /dev/null 2>&1 && asdf list nodejs && asdf cmd nodejs resolve lts
-
                 printf "\nCheck bun versions (installed & *set vs available from updated plugin)\n"
                 printf "\n  'asdf list bun && asdf latest bun'\n"
                 asdf list bun && asdf latest bun
 
-                printf "\nRun and appup global on packages in the ~/package.json file from the dot files\n"
+                printf "\nCheck node LTS versions (installed & *set vs available from updated plugin)\n"
+                printf "\n  'asdf cmd nodjs update-nodebuild > /dev/null 2>&1 && asdf list nodejs && asdf cmd nodejs resolve lts'\n"
+                asdf cmd nodejs update-nodebuild > /dev/null 2>&1 && asdf list nodejs && asdf cmd nodejs resolve lts
+
+                printf "\nRun an appup global on packages in the ~/package.json file from the dot files\n"
                 printf "\n  'ncu --interactive --format group --packageManager bun' or 'appup -g'\n"
                 ncu --interactive --format group --packageManager bun
                 ;;
             r)
-                printf "\nLatest nvim nightly\n"
-                printf "\n  'asdf uninstall neovim nightly && asdf install neovim nightly' or 'refresh-nvim-nightly'\n"
-                asdf uninstall neovim nightly && asdf install neovim nightly
+                printf "\nLatest bun via asdf\n"
+                printf "\n  'asdf install bun $(asdf latest bun) && asdf set -u bun $(asdf latest bun)' or 'refresh-bun'\n"
+                asdf install bun $(asdf latest bun) && asdf set -u bun $(asdf latest bun)
 
                 printf "\nLatest codex via bun. Also, member of home/package.json; update here to avoid entering version\n"
                 printf "\n  'bun add -g @openai/codex@latest' or 'refresh-codex'\n"
@@ -117,8 +117,11 @@ run() {
                 printf "\nLatest gemini via npm in asdf node. Important as it will try to update itself and expects npm\n"
                 printf "\n  'npm install -g @google/gemini-cli@latest && asdf reshim nodejs'\n"
                 npm install -g @google/gemini-cli@latest && asdf reshim nodejs
-                ;;
 
+                printf "\nLatest nvim nightly via asdf\n"
+                printf "\n  'asdf uninstall neovim nightly && asdf install neovim nightly' or 'refresh-nvim-nightly'\n"
+                asdf uninstall neovim nightly && asdf install neovim nightly
+                ;;
             t)
                 printf "\n  'asdf install nodejs $(asdf cmd nodejs resolve lts) && asdf set --home nodejs $(asdf cmd nodejs resolve lts)'\n"
                 asdf install nodejs $(asdf cmd nodejs resolve lts) && asdf set --home nodejs $(asdf cmd nodejs resolve lts)
