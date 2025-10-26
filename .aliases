@@ -358,7 +358,8 @@ alias refresh-nvim-stable='asdf uninstall neovim stable && asdf install neovim s
 alias refresh-nvim-nightly='asdf uninstall neovim nightly && asdf install neovim nightly'
 alias refresh-nvim-master='asdf uninstall neovim ref:master && asdf install neovim ref:master'
 
-# update by direct reinstall as global bun package
+# update by direct reinstall
+alias refresh-bun='asdf install bun $(asdf latest bun) && asdf set -u bun $(asdf latest bun)'
 alias refresh-gemini='npm install -g @google/gemini-cli@latest && asdf reshim nodejs'
 alias refresh-codex='bun add -g @openai/codex@latest'
 
