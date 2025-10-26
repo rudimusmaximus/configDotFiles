@@ -205,14 +205,18 @@ private repository on GitHub and set it as your remote 'origin'.
 \x1b[1m------------------------------------------------------------------\x1b[0m
 This is the fastest and most efficient method.
 
-\x1b[36m1. Create the repository and set the remote in one step:\x1b[0m
-   Run the following command, replacing '[your-org]/[repo-name]' with your
-   GitHub username/organization and desired repository name.
+\x1b[36m1. Set 'gh' to use SSH:\x1b[0m
+   Run this command to ensure 'gh' uses SSH for new repositories:
+   \x1b[35mgh config set git_protocol ssh\x1b[0m
+
+\x1b[36m2. Create the repository and set the remote:\x1b[0m
+   Replace '[your-org]/[repo-name]' with your GitHub username/organization
+   and desired repository name.
 
    \x1b[35mgh repo create [your-org]/[repo-name] --private --source=. --remote=origin\x1b[0m
 
-\x1b[36m2. Push your initial code to GitHub:\x1b[0m
-   This pushes your 'main' and 'develop' branches and any tags.
+\x1b[36m3. Push your code to GitHub:\x1b[0m
+   This pushes your 'main' and 'develop' branches, and all tags.
 
    \x1b[35mgit push -u origin --all && git push -u origin --tags\x1b[0m
 
