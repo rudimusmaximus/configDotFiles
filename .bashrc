@@ -41,17 +41,3 @@ if ! shopt -q login_shell; then
     unset CFG_DOT_FILES_VERBOSE_MODE
 fi
 
-# >>> juliaup initialize >>>
-
-# !! Contents within this block are managed by juliaup !!
-
-case ":$PATH:" in
-    *:/home/rfjr/.juliaup/bin:*)
-        ;;
-
-    *)
-        export PATH=/home/rfjr/.juliaup/bin${PATH:+:${PATH}}
-        ;;
-esac
-
-# <<< juliaup initialize <<<

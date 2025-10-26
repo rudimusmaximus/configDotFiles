@@ -25,20 +25,19 @@ fi
 # Display usage information
 output_help() {
   printf "\nUsage (from home directory in this order for applicable system type):\n"
-    printf "  To run locally :  bash .cfg_update.sh [options]\n"
-    printf "              or :  cfgUpdateScript [options]\n\n"
-    printf "Options:   [System] Action\n"
-    printf "  -w       [macOS]  Upgrade homebrew packages\n"
-    printf "  -f       [Fedora] Upgrade dnf with refresh\n"
-    printf "  -m       [all]    Myrepo updates using local .mrconfig file\n"
-    printf "  -a       [all]    Update asdf plugins (then you can refresh-nvim-stable or nighlty)\n"
-    printf "  -r       [all]    Refresh nvim nightly via asdf\n"
-    printf "  -b       [all]    Upgrade bun\n"
-    printf "  -n       [all]    Check node LTS versions (installed vs available from plugin)\n"
-    printf "  -g       [all]    Set current node LTS version to be global active version\n"
-    printf "  -h       [all]    Display this message\n"
-    printf "  -v       [all]    Display script version\n\n"
-    printf "NOTE: assumes rudimusmaximus/cfgDotFiles is already installed and updated.\n\n"
+  printf "  To run locally :  bash .cfg_update.sh [options]\n"
+  printf "              or :  cfgUpdateScript [options]\n\n"
+  printf "Options:   [System] Action\n"
+  printf "  -w       [macOS]  Upgrade homebrew packages\n"
+  printf "  -f       [Fedora] Upgrade dnf with refresh\n"
+  printf "  -m       [all]    Myrepo updates using local .mrconfig file\n"
+  printf "  -a       [all]    Update asdf plugins (then you can refresh-nvim-stable or nighlty)\n"
+  printf "  -r       [all]    Refresh PDE with the right tools -- nvim nightly, gemini, codex,\n"
+  printf "  -c       [all]    Check installed & set vs available from UPDATED asdf plugins for key items\n"
+  printf "  -t       [all]    Set current node LTS version to be global active version\n"
+  printf "  -v       [all]    Display script version\n"
+  printf "  -h       [all]    Display this message\n\n"
+  printf "NOTE: assumes rudimusmaximus/cfgDotFiles is already installed and updated.\n\n"
 }
 
 tbd() {
@@ -70,7 +69,7 @@ run() {
     # command -v git >/dev/null 2>&1 || error_exit "git is required but it's not installed. Aborting."
     handle_not_a_flag_edge_cases "$@"
     # Parse options using getopts
-    while getopts ":wfmarbnghv" opt; do
+    while getopts ":wfmacrtvh" opt; do
         case $opt in
             w)
                 printf "\n  'brew upgrade'...\n"
@@ -90,23 +89,37 @@ run() {
                 mr -j"$cores" update
                 ;;
             a)
-                printf "\n  'asdf plugin updtate --all'\n"
+                printf "\n  'asdf plugin update --all'\n"
                 asdf plugin update --all
                 ;;
-            r)
-                printf "\n  'asdf uninstall neovim nightly && asdf install neovim nightly'\n"
-                asdf uninstall neovim nightly && asdf install neovim nightly
-                ;;
-
-            b)
-                printf "\n  'bun upgrade'\n"
-                bun upgrade
-                ;;
-            n)
+            c)
+                printf "\nCheck node LTS versions (installed & *set vs available from updated plugin)\n"
                 printf "\n  'asdf cmd nodjs update-nodebuild > /dev/null 2>&1 && asdf list nodejs && asdf cmd nodejs resolve lts'\n"
                 asdf cmd nodejs update-nodebuild > /dev/null 2>&1 && asdf list nodejs && asdf cmd nodejs resolve lts
+
+                printf "\nCheck bun versions (installed & *set vs available from updated plugin)\n"
+                printf "\n  'asdf list bun && asdf latest bun'\n"
+                asdf list bun && asdf latest bun
+
+                printf "\nRun and appup global on packages in the ~/package.json file from the dot files\n"
+                printf "\n  'ncu --interactive --format group --packageManager bun' or 'appup -g'\n"
+                ncu --interactive --format group --packageManager bun
                 ;;
-            g)
+            r)
+                printf "\nLatest nvim nightly\n"
+                printf "\n  'asdf uninstall neovim nightly && asdf install neovim nightly' or 'refresh-nvim-nightly'\n"
+                asdf uninstall neovim nightly && asdf install neovim nightly
+
+                printf "\nLatest codex via bun. Also, member of home/package.json; update here to avoid entering version\n"
+                printf "\n  'bun add -g @openai/codex@latest' or 'refresh-codex'\n"
+                bun add -g @openai/codex@latest
+
+                printf "\nLatest gemini via npm in asdf node. Important as it will try to update itself and expects npm\n"
+                printf "\n  'npm install -g @google/gemini-cli@latest && asdf reshim nodejs'\n"
+                npm install -g @google/gemini-cli@latest && asdf reshim nodejs
+                ;;
+
+            t)
                 printf "\n  'asdf install nodejs $(asdf cmd nodejs resolve lts) && asdf set --home nodejs $(asdf cmd nodejs resolve lts)'\n"
                 asdf install nodejs $(asdf cmd nodejs resolve lts) && asdf set --home nodejs $(asdf cmd nodejs resolve lts)
                 ;;
