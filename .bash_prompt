@@ -113,7 +113,7 @@ PS1=""; # Start with an empty string to build the prompt
 
 # Username and host
 PS1+="\[${userStyle}\]\u"; # username
-PS1+="\[${white}\]@"; 
+PS1+="\[${white}\]@";
 PS1+="\[${hostStyle}\]\h"; # host
 
 # Working directory
@@ -126,10 +126,8 @@ PS1+="\$(prompt_git \"\[${white}\] project \[${blue}\]\" \"\[${blue}\]\")";
 # Space before the `$` prompt symbol and ensure it's on the same line
 PS1+=" "; # Add a space before the prompt symbol
 
-# Conditional newline for any non warp terminal
-if [[ $TERM_PROGRAM != "WarpTerminal" ]]; then
-  PS1+="\n";
-fi
+# newline
+PS1+="\n";
 
 # `$` prompt symbol
 PS1+="\[${white}\]\$ \[${reset}\]"; # `$` (with a space before it) and reset color
