@@ -147,6 +147,15 @@ git config --global diff.colorMoved default
 '.extra.template' is a template for creating the '.extra' file. This avoids overwrites of changing local
 '.extra' file over time. Use `cfgstash` to backup '.extra' and stash any current uncommitted changes in the home directory.
 
+=== Recent refactor improving login vs non interactive shells
+
+The .bashrc and .bash_profile were mac centric in the treating of every new session was a log in session starting with the bash profile and then sourcing the bashrc. The reasoning was to minimuze duplicate work and separate things done once per session from things done every new shell like tabs for example. We noticed issues with path not being equal in new tmux sessions or on fedora and also that ssh utilities would have problems which we tried to work around. This new refactor pushes the files loaded into the bash profile and makes the profile just call the bashrc. Much simpler. Since the rework is negligible in performance, we needed to make sure the path would not keep growing so we worked some helper functions to prepend and postpend the path and not add duplicates. This should allow for consisntent and less troublesome experience across environments and be more consistent with the rest of the unix and linux worlds.
+TODO areas to test:
+- macos with and without tmux
+- fedora with and without tmux
+- ssh with and without tmux
+- that asdf shim paths are not shadowed by macos paths in checkhealth for nvim namely with python version and also not catching asdf runtimes like java checkhealth requirements and others
+
 == LEGAL NOTE
 
 Any use of this project's code by GitHub Copilot, past or present, is done

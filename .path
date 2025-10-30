@@ -71,9 +71,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
         # Homebrew
         HOMEBREW_PREFIX="/opt/homebrew"
         BASH_HOMEBREW_HOME="${HOMEBREW_PREFIX}/bin"
-        if ! [[ "$PATH" =~ (^|:)"$BASH_HOMEBREW_HOME"(:|$) ]]; then
-          export PATH="$BASH_HOMEBREW_HOME:$PATH"
-        fi
+        path_prepend "$BASH_HOMEBREW_HOME"
 
         # Establish bash-completion
         # shellcheck disable=SC1091
@@ -94,9 +92,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
         # Homebrew
         HOMEBREW_PREFIX="/usr/local"
         BASH_HOMEBREW_HOME="${HOMEBREW_PREFIX}/bin"
-        if ! [[ "$PATH" =~ (^|:)"$BASH_HOMEBREW_HOME"(:|$) ]]; then
-          export PATH="$BASH_HOMEBREW_HOME:$PATH"
-        fi
+        path_prepend "$BASH_HOMEBREW_HOME"
 
         # Establish bash-completion
         # shellcheck disable=SC1091
@@ -107,12 +103,6 @@ if [[ "$(uname)" == "Darwin" ]]; then
             printf "⚠️  %s\n" "Warning: bash-completion not found in expected Homebrew location on Intel macOS location."
         fi
     fi
-
-    # Java OpenJDK
-    # for running google closure compiler from jar file (brew caveats as apple
-    # installs similar files so take care of install instructions)
-    path_prepend "/opt/homebrew/opt/openjdk/bin"
-    export CPPFLAGS="-I/opt/homebrew/opt/openjdk/include"
 
     # MIT Scheme
     path_append "$HOME/projects/mit-scheme-12.1/src/mit-scheme.app/Contents/Resources"
