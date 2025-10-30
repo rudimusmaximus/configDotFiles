@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 # non-login, interactive shell
 
-source "${HOME}/.verbosity_logging_and_refresh_terminal_session" # provides log and refresh_terminal_session functions
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+source "${HOME}/.enable_verbosity_logging_and_terminal_refresh"
 verbLog 1 "Entering ~/.bashrc..."
 
 # the things we need every time
@@ -10,6 +16,11 @@ declare -a rc_config_files=(
     "${HOME}/.aliases"
     "${HOME}/.functions"
     "${HOME}/.keybindings"
+    "${HOME}/.path"     # Can be used to extend `$PATH`
+    "${HOME}/.exports"  # Set environment variables including default editor
+    "${HOME}/.extra"    # Can be used for machine specific or secret settings
+    "${HOME}/.multiple_runtime_version_management" # asdf for languages and nvim
+    "${HOME}/.greeting" # fastfetch for verbose mode
 )
 
 for file in "${rc_config_files[@]}"; do
