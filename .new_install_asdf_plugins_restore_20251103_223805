@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# ==========================================================
+# ASDF Plugin and Version Restoration Script (idempotent)
+# Generated on: Mon Nov  3 16:38:05 CST 2025
+# Source this file to re-add all plugins and restore ~/.tool-versions
+# ==========================================================
+
+_NEW_ASDF_INSTALL_DATETAG="20251103_223805"
+_NEW_ASDF_INSTALL_TOOL_VERSIONS_SNAPSHOT="$HOME/.new_install_asdf_tool_versions_snapshot_${_NEW_ASDF_INSTALL_DATETAG}"
+
+if ! command -v asdf >/dev/null 2>&1; then
+  echo "❌ asdf not found in PATH. Please install asdf first." >&2
+  return 1 2>/dev/null || exit 1
+fi
+
+if [ -f "$HOME/.tool-versions" ]; then
+  echo "❌ Existing ~/.tool-versions found. Please review or remove it before running this script."
+  echo "If you want to use the snapshot, delete ~/.tool-versions and re-run." >&2
+  return 1 2>/dev/null || exit 1
+fi
+
+# Verify and place the backed-up .tool-versions file
+if [ ! -f "$_NEW_ASDF_INSTALL_TOOL_VERSIONS_SNAPSHOT" ]; then
+  echo "❌ Snapshot tool-versions file not found: $_NEW_ASDF_INSTALL_TOOL_VERSIONS_SNAPSHOT"
+  echo "Ensure this file (generated on the old machine) has been copied to your home directory." >&2
+  return 1 2>/dev/null || exit 1
+fi
+echo "→ Restoring snapshot tool-versions as ~/.tool-versions"
+mv "$_NEW_ASDF_INSTALL_TOOL_VERSIONS_SNAPSHOT" "$HOME/.tool-versions"
+
+add_plugin() {
+  local name="$1" url="$2"
+  if [ -d "$HOME/.asdf/plugins/$name" ]; then
+    echo "↩︎ plugin '$name' already present; skipping"
+    return 0
+  fi
+  if [ -n "$url" ]; then
+    asdf plugin add "$name" "$url"
+  else
+    asdf plugin add "$name"
+  fi
+}
+add_plugin bun https://github.com/cometkim/asdf-bun.git
+add_plugin golang https://github.com/asdf-community/asdf-golang.git
+add_plugin java https://github.com/halcyon/asdf-java.git
+add_plugin julia https://github.com/rkyleg/asdf-julia.git
+add_plugin lua https://github.com/Stratus3D/asdf-lua.git
+add_plugin neovim https://github.com/richin13/asdf-neovim.git
+add_plugin nodejs https://github.com/asdf-vm/asdf-nodejs.git
+add_plugin python https://github.com/danhper/asdf-python.git
+add_plugin ruby https://github.com/asdf-vm/asdf-ruby.git
+add_plugin rust https://github.com/code-lever/asdf-rust.git
+add_plugin tree-sitter https://github.com/ivanvc/asdf-tree-sitter.git
+
+echo "→ Installing versions from ~/.tool-versions..."
+# This installs all versions specified in the newly restored ~/.tool-versions
+asdf install
+
+echo "✅ Restoration complete. Tool versions installed according to ~/.tool-versions."
