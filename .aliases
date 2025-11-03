@@ -47,15 +47,16 @@ alias config='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias cfg='$CONFIG_DOT_FILES_GIT_COMMAND';
 alias cfgamend='echo "cfg commit --amend -S -m"; cfg commit --amend -S -m';
 alias cfgb='cp ~/.extra ~/backup.extra';
+alias cfgc='echo "\$CONFIG_DOT_FILES_GIT_COMMAND commit -S -m"; cfg commit -S -m'
+alias cfgd='echo "\$CONFIG_DOT_FILES_GIT_COMMAND diff"; cfg diff'
 alias cfgf='echo "Stop tracking .extra file"; config refresh-index --assume-unchanged .extra' # cfg forget .extra
 alias cfgl='echo "\$CONFIG_DOT_FILES_GIT_COMMAND log --oneline"; cfg log --oneline' # try adding -10 or -5 for last few
+alias cfglg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias cfgls='cfg ls-tree --full-tree -r --name-only HEAD' #list files in cconfigDotFiles repo
 alias cfgs='echo "\$CONFIG_DOT_FILES_GIT_COMMAND status"; cfg status'
-alias cfgd='echo "\$CONFIG_DOT_FILES_GIT_COMMAND diff"; cfg diff'
-alias cfgc='echo "\$CONFIG_DOT_FILES_GIT_COMMAND commit -S -m"; cfg commit -S -m'
-alias configlg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
-alias cfglg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
+alias cfgt='git tag -l -n1';
 alias cfgu='echo "Stage changes to tracked cfg dot files"; cfg add --refresh';
+alias configlg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 
 # configDotFiles install script help
 # you can use this to also remove files and prepare for reinstall as you like
