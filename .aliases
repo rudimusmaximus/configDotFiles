@@ -54,7 +54,7 @@ alias cfgl='echo "\$CONFIG_DOT_FILES_GIT_COMMAND log --oneline"; cfg log --oneli
 alias cfglg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias cfgls='cfg ls-tree --full-tree -r --name-only HEAD' #list files in cconfigDotFiles repo
 alias cfgs='echo "\$CONFIG_DOT_FILES_GIT_COMMAND status"; cfg status'
-alias cfgt='git tag -l -n1';
+alias cfgt='cfg tag -l -n1';
 alias cfgu='echo "Stage changes to tracked cfg dot files"; cfg add --refresh';
 alias configlg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 
