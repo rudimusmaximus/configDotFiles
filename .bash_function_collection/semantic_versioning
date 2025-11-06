@@ -1,0 +1,155 @@
+#!/usr/bin/env bash
+
+## FOR G APPS SCRIPT PROJECTS (OPINIONATED) -------------------------------------
+
+# sometimes used as prepush script in certain projects
+# examine file for logic details
+# requires local package.json leaves a local file named
+# a_semantic_version.js with same version as the one in package.json
+injectSemver(){
+  bun -b run ~/.bun_scripts/inject_semantic_version.mjs;
+}
+
+# assumes version alias and if injectSemver() HAD BEEN OPTIONALLY RUN
+# not all projects use the second version file; part of a proprietary workflow
+semver() {
+  printf "\n%s\n" "Determining version (use injectSemver() to refresh or sync if needed)..."
+  if [[ -f ./a_semantic_version.js ]]; then
+    printf "%s\n" "Running ./a_semantic_version.js..."
+    bun -b run ./a_semantic_version.js
+  else
+    printf "%s\n" "No a_semantic_version.js file; run the function 'injectSemver' if you want one."
+  fi
+  printf "%s\n" "Using package.json, this semver is in your clipboard..."
+  version
+}
+
+## FOR GIT FLOW SEMVER WHERE NODE IS LEVERAGED FOR PACKAGE.JSON VERSIONING ------------
+
+## --- Clipboard helpers -------------------------------------------------------
+# Portable clipboard helper
+_copy_portable() {
+  local data="$1"
+
+  # If we're in SSH, try OSC52 first so it copies to the *local* clipboard.
+  if [[ -n "$SSH_TTY" || -n "$SSH_CONNECTION" ]]; then
+    _osc52_copy "$data" && return 0
+    # If OSC52 fails (e.g., mosh), fall back to remote clipboard tools below.
+  fi
+
+  # Native clipboards by platform/session
+  if [[ "$OSTYPE" == darwin* ]] && command -v pbcopy >/dev/null 2>&1; then
+    printf %s "$data" | pbcopy && return 0
+  fi
+  if command -v wl-copy >/dev/null 2>&1 && [[ -n "$WAYLAND_DISPLAY" ]]; then
+    printf %s "$data" | wl-copy && return 0
+  fi
+  if command -v xclip >/dev/null 2>&1; then
+    printf %s "$data" | xclip -selection clipboard -in && return 0
+  fi
+  if command -v xsel >/dev/null 2>&1; then
+    printf %s "$data" | xsel --clipboard --input && return 0
+  fi
+
+  # Last resort: OSC52 to whatever terminal supports it
+  _osc52_copy "$data"
+}
+
+# OSC52 clipboard (works over SSH in modern terminals like iTerm2/kitty/Alacritty)
+_osc52_copy() {
+  local str="$1"
+  # Base64 without newlines
+  local b64; b64="$(printf %s "$str" | base64 | tr -d '\r\n')"
+
+  # tmux/screen need special wrapping
+  if [[ -n "$TMUX" ]]; then
+    printf '\ePtmux;\e\e]52;c;%s\a\e\\' "$b64"
+  elif [[ "${TERM%%-*}" == "screen" ]]; then
+    printf '\eP\e]52;c;%s\a\e\\' "$b64"
+  else
+    printf '\e]52;c;%s\a' "$b64"
+  fi
+}
+
+## --- version functions --------------------------------------------------
+
+# vp function with portable clipboard
+# increments or sets the prerelease version and copies it to the clipboard
+# eg. v1.0.0-beta.0
+# uses pbcopy on macOS and xclip on Linux
+vp () {
+  local preid new_version
+  if [[ -n "$1" ]]; then
+    preid="$1"
+    new_version=$(npm --no-git-tag-version version prerelease --preid="$preid" 2>/dev/null) || return 1
+  else
+    new_version=$(npm --no-git-tag-version version prerelease 2>/dev/null) || return 1
+  fi
+
+  # Prefix with 'v' and remove the 'v' added by npm
+  new_version="v${new_version#v}"
+  # Output the new version and copy it to the clipboard
+  printf '%s\n' "$new_version"
+  _copy_portable "$new_version"
+}
+
+# Robust package.json version reader with fallbacks if jq not present
+_get_pkg_version() {
+  if command -v jq >/dev/null 2>&1; then
+    jq -r '.version' package.json 2>/dev/null && return 0
+  fi
+
+  # Node: avoid require() (breaks in "type":"module"); use fs+JSON.parse
+  if command -v node >/dev/null 2>&1; then
+    node -e 'console.log(JSON.parse(require("fs").readFileSync("package.json", "utf8")).version)' 2>/dev/null && return 0
+  fi
+
+  # Bun: same trick as Node to avoid import semantics in a one-liner
+  if command -v bun >/dev/null 2>&1; then
+    bun -e 'console.log(JSON.parse(require("fs").readFileSync("package.json", "utf8")).version)' 2>/dev/null && return 0
+  fi
+
+  # Python: no heredoc; simple -c one-liner
+  if command -v python3 >/dev/null 2>&1; then
+    python3 -c 'import json,sys; print(json.load(open("package.json"))["version"])' 2>/dev/null && return 0
+  fi
+
+  return 1
+}
+
+# directly sets the version string (you must dictate a valid semver string)
+# and copies it to the clipboard with a prefix v
+# v: set a specific semver in package.json (no git tag), echo "vX.Y.Z" and copy it
+v () {
+  if [[ -z "$1" ]]; then
+    echo "Usage: v <version>" >&2
+    return 1
+  fi
+
+  local new_version
+  if ! new_version=$(npm --no-git-tag-version version "$1" 2>/dev/null); then
+    echo "npm version failed. Is this a Node project with a valid package.json?" >&2
+    return 1
+  fi
+
+  new_version="v${new_version#v}"
+  printf '%s\n' "$new_version"
+  _copy_portable "$new_version"
+}
+
+
+# Lists the semver prefixed with 'v' from the local package.json
+# and copies it to the clipboard.
+# Example output: v1.0.0
+version () {
+  local ver
+  if ! ver=$(_get_pkg_version); then
+    echo "Unable to read version from package.json (tried jq/node/bun/python)." >&2
+    return 1
+  fi
+
+  local out="v${ver#v}"
+  printf '%s\n' "$out"
+  _copy_portable "$out"
+}
+

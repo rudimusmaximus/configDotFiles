@@ -1,8 +1,8 @@
 {
   "//": "dummy file for semver workflow by @rudimusmaximus part of configDotFiles",
-  "version": "0.4.84",
+  "version": "0.4.85",
   "dependencies": {
-    "@openai/codex": "^0.53.0",
+    "@openai/codex": "^0.55.0",
     "cowsay": "^1.6.0",
     "js-yaml": "^4.1.0",
     "lighthouse": "^13.0.1",
