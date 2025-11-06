@@ -7,9 +7,10 @@
 # clear fonts
 font-family = ""
 # set preferred licensed font on mac
-font-family = Comic Code Ligatures
+font-family = "Comic Code Ligatures"
+font-style = "Regular"
 # set ghostty default as backup
-font-family = "JetBrains Mono"
+# font-family = "JetBrains Mono"
 
 #theme = catppuccin-frappe
 theme = TokyoNight

@@ -2,11 +2,11 @@
 
 # ==========================================================
 # ASDF Plugin and Version Restoration Script (idempotent)
-# Generated on: Mon Sep 29 00:31:07 CDT 2025
+# Generated on: Thu Nov  6 04:01:32 PM CST 2025
 # Source this file to re-add all plugins and restore ~/.tool-versions
 # ==========================================================
 
-_NEW_ASDF_INSTALL_DATETAG="20250929_053107"
+_NEW_ASDF_INSTALL_DATETAG="20251106_220132"
 _NEW_ASDF_INSTALL_TOOL_VERSIONS_SNAPSHOT="$HOME/.new_install_asdf_tool_versions_snapshot_${_NEW_ASDF_INSTALL_DATETAG}"
 
 if ! command -v asdf >/dev/null 2>&1; then
@@ -41,12 +41,15 @@ add_plugin() {
     asdf plugin add "$name"
   fi
 }
+add_plugin bun https://github.com/cometkim/asdf-bun.git
 add_plugin golang https://github.com/asdf-community/asdf-golang.git
 add_plugin java https://github.com/halcyon/asdf-java.git
+add_plugin julia https://github.com/rkyleg/asdf-julia.git
 add_plugin lua https://github.com/Stratus3D/asdf-lua.git
 add_plugin neovim https://github.com/richin13/asdf-neovim.git
 add_plugin nodejs https://github.com/asdf-vm/asdf-nodejs.git
 add_plugin python https://github.com/danhper/asdf-python.git
+add_plugin r https://github.com/asdf-community/asdf-r.git
 add_plugin ruby https://github.com/asdf-vm/asdf-ruby.git
 add_plugin rust https://github.com/code-lever/asdf-rust.git
 add_plugin tree-sitter https://github.com/ivanvc/asdf-tree-sitter.git
