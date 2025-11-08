@@ -363,6 +363,7 @@ alias refresh-nvim-master='asdf uninstall neovim ref:master && asdf install neov
 alias refresh-bun='asdf install bun $(asdf latest bun) && asdf set -u bun $(asdf latest bun)'
 alias refresh-gemini='npm install -g @google/gemini-cli@latest && asdf reshim nodejs'
 alias refresh-codex='bun add -g @openai/codex@latest'
+alias refresh-python-conform-formatters='pip install --upgrade black isort && asdf reshim python'
 
 # see the related functions in .functions
 alias aliases='show_aliases | column'
