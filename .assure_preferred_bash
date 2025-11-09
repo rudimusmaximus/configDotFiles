@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+# ~/.assure_preferred_bash
+# Ensure the right Bash is always used, even if ASDF or path_helper reorders PATH.
+# Safe: sourced only for interactive shells.
+
+_preferred_bash_absolute_path=''
+case "$(uname -s)" in
+  Darwin) _preferred_bash_absolute_path="/opt/homebrew/bin/bash" ;;   # Homebrew on Apple Silicon
+  Linux)
+    for p in /usr/local/bin/bash /usr/bin/bash /bin/bash; do
+      [ -x "$p" ] && { _preferred_bash_absolute_path="$p"; break; }
+    done
+    ;;
+esac
+[ -x "$_preferred_bash_absolute_path" ] || return 0
+
+# 1) Prepend its directory using your helper
+_bash_dir="$(dirname "$_preferred_bash_absolute_path")"
+path_prepend "$_bash_dir"
+export PATH
+hash -r  # clear cached command lookups
+
+# 2) Bind the name “bash” to the chosen binary so it wins over PATH order
+hash -p "$_preferred_bash_absolute_path" bash 2>/dev/null
+
+# 3) Optional, but just to make clear; make typing “bash” clearly use that one
+alias bash="$_preferred_bash_absolute_path"
+
+# 4) Re-assert the binding each prompt (protects against PATH mutation)
+# This re-pins bash silenlty every prompt as an ongoing safeguard;
+# hash -p is nearly free as it just touches the in-memory hash table
+# it is normally just before a new prompt is drawn
+_rebind_bash() { hash -p "$_preferred_bash_absolute_path" bash 2>/dev/null; :; }
+case "${PROMPT_COMMAND-}" in
+  *"_rebind_bash"*) : ;;
+  "") PROMPT_COMMAND="_rebind_bash" ;;
+  *)  PROMPT_COMMAND="_rebind_bash;$PROMPT_COMMAND" ;;
+esac
+
+unset _preferred_bash_absolute_path _bash_dir
+

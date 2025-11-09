@@ -5,6 +5,7 @@ verbLog 3 "Entering ~/.functions..."
 
 ## load our function collections
 declare -a bash_function_collection_files=(
+    "${HOME}/.bash_function_collection/bash_shell_info"
     "${HOME}/.bash_function_collection/organize_into_more_files"
     "${HOME}/.bash_function_collection/semantic_versioning"
 )

@@ -12,9 +12,9 @@ font-style = "Regular"
 # set ghostty default as backup
 # font-family = "JetBrains Mono"
 
-#theme = catppuccin-frappe
-theme = TokyoNight
-#theme = nvimdark
+#theme = Catppuccin Frappe
+theme = TokyoNight Night
+#theme = Nvim Dark
 #theme = Apple System Colors Light
 
 cursor-style = block
