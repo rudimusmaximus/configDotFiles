@@ -31,27 +31,52 @@ semver() {
 _copy_portable() {
   local data="$1"
 
-  # If we're in SSH, try OSC52 first so it copies to the *local* clipboard.
+  # In an SSH session, clipboard handling is complex, especially with tmux.
+  # This logic attempts to update BOTH the remote and local clipboards.
   if [[ -n "$SSH_TTY" || -n "$SSH_CONNECTION" ]]; then
-    _osc52_copy "$data" && return 0
-    # If OSC52 fails (e.g., mosh), fall back to remote clipboard tools below.
+    printf "--- SSH session detected ---\n" >&2
+
+    # 1. Update the REMOTE clipboard first. This is the most reliable step.
+    if [[ "$OSTYPE" == darwin* ]] && command -v pbcopy >/dev/null 2>&1; then
+      # Use echo -n on macOS, as its printf can be problematic in some shells.
+      echo -n "$data" | pbcopy
+      printf "SUCCESS: Copied to the REMOTE (macOS) clipboard using 'pbcopy'.\n" >&2
+    elif command -v wl-copy >/dev/null 2>&1 && [[ -n "$WAYLAND_DISPLAY" ]]; then
+      printf %s "$data" | wl-copy && printf %s "$data" | wl-copy --primary
+      printf "SUCCESS: Copied to the REMOTE (Wayland) clipboard & primary selection.\n" >&2
+    elif command -v xclip >/dev/null 2>&1; then
+      printf %s "$data" | xclip -selection clipboard -in && printf %s "$data" | xclip -selection primary -in
+      printf "SUCCESS: Copied to the REMOTE (X11) clipboard & primary selection.\n" >&2
+    else
+      printf "WARNING: No remote clipboard tool found. Only local copy will be attempted.\n" >&2
+    fi
+
+    # 2. Attempt to update the LOCAL clipboard via OSC52.
+    # This may be intercepted by tmux but is the best chance to bridge the gap.
+    printf "Attempting to update LOCAL clipboard via OSC52 sequence...\n" >&2
+    _osc52_copy "$data"
+    printf "OSC52 sequence sent. Keyboard paste may now work if your terminal/tmux supports it.\n" >&2
+    return 0
   fi
 
-  # Native clipboards by platform/session
+  # For local (non-SSH) sessions, use native clipboard tools.
   if [[ "$OSTYPE" == darwin* ]] && command -v pbcopy >/dev/null 2>&1; then
     printf %s "$data" | pbcopy && return 0
   fi
   if command -v wl-copy >/dev/null 2>&1 && [[ -n "$WAYLAND_DISPLAY" ]]; then
-    printf %s "$data" | wl-copy && return 0
+    printf %s "$data" | wl-copy && printf %s "$data" | wl-copy --primary
+    return 0
   fi
   if command -v xclip >/dev/null 2>&1; then
-    printf %s "$data" | xclip -selection clipboard -in && return 0
+    printf %s "$data" | xclip -selection clipboard -in && printf %s "$data" | xclip -selection primary -in
+    return 0
   fi
   if command -v xsel >/dev/null 2>&1; then
-    printf %s "$data" | xsel --clipboard --input && return 0
+    printf %s "$data" | xsel --clipboard --primary --input
+    return 0
   fi
 
-  # Last resort: OSC52 to whatever terminal supports it
+  # Final fallback for local sessions.
   _osc52_copy "$data"
 }
 

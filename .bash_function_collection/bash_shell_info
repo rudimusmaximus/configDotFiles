@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# --- bash_shell_info ---------------------------------------------------------
+# Inspect real vs apparent shell configuration across macOS, Fedora, and Pi.
+# Highlights version/path differences and common macOS-only issues.
+
+bash_shell_info() {
+  local _cur_bin _login_shell
+
+  # current process binary
+  if [ -L "/proc/$$/exe" ]; then
+    _cur_bin="$(readlink /proc/$$/exe 2>/dev/null)"
+  elif command -v lsof >/dev/null 2>&1; then
+    _cur_bin="$(lsof -p $$ 2>/dev/null | awk '$4=="txt"{print $9; exit}')"
+  fi
+
+  # OS-configured login shell
+  case "$(uname -s)" in
+    Darwin)
+      _login_shell="$(dscl . -read /Users/"$USER" UserShell 2>/dev/null | awk '{print $2}')"
+      ;;
+    *)
+      _login_shell="$(getent passwd "$USER" 2>/dev/null | awk -F: '{print $7}')"
+      ;;
+  esac
+
+  # --- normalize env vars (strip embedded newlines and trailing spaces) ---
+  local _bash_clean _ver_clean _shell_env
+  _bash_clean="$(printf '%s' "${BASH:-<unset>}" | tr -d '\n' | sed 's/[[:space:]]*$//')"
+  _ver_clean="$(printf '%s' "${BASH_VERSION:-<unset>}" | tr -d '\n' | sed 's/[[:space:]]*$//')"
+  _shell_env="$(printf '%s' "${SHELL:-<unset>}" | tr -d '\n' | sed 's/[[:space:]]*$//')"
+
+  printf "=== CURRENT PROCESS ===\n"
+  printf "proc binary : %s\n" "${_cur_bin:-<unknown>}"
+  printf "BASH        : %s\n" "$_bash_clean"
+  printf "BASH_VERSION: %s\n" "$_ver_clean"
+
+  printf "\n=== LOGIN CONFIG ===\n"
+  printf "UserShell   : %s\n" "${_login_shell:-<unknown>}"
+  printf "SHELL env   : %s\n" "$_shell_env"
+
+  printf "\n=== PATH RESOLUTION ===\n"
+  printf "command -v bash : %s\n" "$(command -v bash 2>/dev/null || printf '<not found>')"
+  printf "type -a bash    :\n"
+  type -a bash 2>/dev/null | sed 's/^/  - /'
+
+  printf "\n=== NOTES ===\n"
+  printf "• echo \$BASH_VERSION shows the CURRENT shell process.\n"
+  printf "  bash --version starts a NEW shell from the FIRST bash in \$PATH.\n"
+  printf "• If 'type -a bash' lists /bin/bash before Homebrew, reorder PATH after macOS path_helper and ASDF.\n"
+  printf "• If 'UserShell' != Homebrew bash, run: chsh -s /opt/homebrew/bin/bash (and ensure it’s in /etc/shells).\n"
+  printf "• These PATH/order quirks are primarily a macOS issue; on Fedora or Pi you’ll normally have a single bash.\n"
+}
+

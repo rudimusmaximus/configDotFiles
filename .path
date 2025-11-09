@@ -63,7 +63,7 @@ function enhance_bash_completion() {
 if [[ "$(uname)" == "Darwin" ]]; then
     architecture=$(sysctl -n machdep.cpu.brand_string)
 
-    # edgedb-cli
+    # edgedb-cli TODO check if needed
     path_prepend "$HOME/Library/Application Support/edgedb/bin"
 
     # Check for Apple Silicon iMac

@@ -20,6 +20,7 @@ declare -a rc_config_files=(
     "${HOME}/.exports"  # Set environment variables including default editor
     "${HOME}/.extra"    # Can be used for machine specific or secret settings
     "${HOME}/.multiple_runtime_version_management" # asdf for languages and nvim
+    "${HOME}/.assure_preferred_bash" # esp for macos, make sure the right bash is used
     "${HOME}/.greeting" # fastfetch for verbose mode
 )
 
