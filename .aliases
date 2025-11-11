@@ -3,7 +3,7 @@
 
 alias rts='refresh_terminal_session'
 alias ff='clear && fastfetch'
-alias buninit='br ~/.bun_scripts/initialize_git_and_git_flow_with_bun.mjs'
+alias buninit='br ~/.cfg_bun_script_collection/initialize_git_and_git_flow_with_bun.mjs'
 
 alias cloud='cd "$CLOUD"'
 alias cld='cd "$CLOUD"'
@@ -121,7 +121,7 @@ alias s="cd ~/Library/Application\ Support/JetBrains/WebStorm2022.1/scratches/"
 
 alias e="edgedb"
 
-alias reflect-sem-ver="bun ~/.bun_scripts/inject_semantic_version.mjs"
+alias reflect-sem-ver="bun ~/.cfg_bun_script_collection/inject_semantic_version.mjs"
 alias g="git"
 alias ga="git add"
 alias gall='echo "Stage all new, modified, and deleted files in the current directory and all sub directories."; git add .'
@@ -349,10 +349,10 @@ alias package="(echo 'import data from \"./package.json\"; console.log({[\"from 
 alias project="(echo 'import data from \"./package.json\"; console.log({name: data.name, version: data.version, description: data.description, scripts: Object.keys(data.scripts)});' > temp.js && br temp.js && rm temp.js)"
 alias scripts="(echo 'import data from \"./package.json\"; console.log({scripts: Object.keys(data.scripts)});' > temp.js && br temp.js && rm temp.js)"
 
-alias recent='bun -b run ~/.bun_scripts/list_most_recent_files.mjs'
+alias recent='bun -b run ~/.cfg_bun_script_collection/list_most_recent_files.mjs'
 
 # helper for keymaps related to completion in nvim and fzf usage in the terminal
-alias keymapsfuzzy='bun -b run ~/.bun_scripts/list_keymap_tips_fuzzy.mjs'
+alias keymapsfuzzy='bun -b run ~/.cfg_bun_script_collection/list_keymap_tips_fuzzy.mjs'
 
 # manage asdf neovim versions
 alias refresh-nvim-stable='asdf uninstall neovim stable && asdf install neovim stable'
@@ -370,5 +370,5 @@ alias aliases='show_aliases | column'
 alias functions='show_functions | column'
 
 # see relate script
-alias watch_project_adocs='bun -b run ~/.bun_scripts/watch_project_adocs.js'
+alias watch_project_adocs='bun -b run ~/.cfg_bun_script_collection/watch_project_adocs.js'
 

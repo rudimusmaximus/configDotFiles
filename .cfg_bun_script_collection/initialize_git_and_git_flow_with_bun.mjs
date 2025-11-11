@@ -10,7 +10,7 @@
  * 7. Sorts the package.json file if 'sort-package-json' is installed.
  *
  * @usage
- * bun run ~/.bun_scripts/initialize_git_and_git_flow_with_bun.mjs
+ * bun run ~/.cfg_bun_script_collection/initialize_git_and_git_flow_with_bun.mjs
  */
 
 import { which } from 'bun';

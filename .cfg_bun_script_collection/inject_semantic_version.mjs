@@ -1,7 +1,7 @@
 /**
  * @fileoverview This script can be used by adding a package script that calls it and
  * therefore can be run on systems with bun.sh installed as 'bun packageScriptName'
- * "scripts": { "semver": "bun ~/.bun_scripts/inject_semantic_version.mjs", ... }
+ * "scripts": { "semver": "bun ~/.cfg_bun_script_collection/inject_semantic_version.mjs", ... }
  * bun semver to run inside the project with the package.json script
  * THIS SCRIPT injects the semantic version into a google apps script editor addon
  * as an updated or created file ./a_semantic_version.js
