@@ -27,7 +27,7 @@ error_exit() {
 output_help() {
   printf "\nUsage (from home directory):\n"
     printf "  To run remotely:  bash <(curl -sSf RAW_CODE_URL) [options]\n"
-    printf "  To run locally :  bash .cfg_install.sh [options]\n\n"
+    printf "  To run locally :  bash .cfg_bash_script_collection/cfg_install_script.sh [options]\n\n"
     printf "Options:\n"
     printf "  -b       Basic install of bare repo into .cfg\n"
     printf "  -c       Clone configDotFiles repo into ~/configDotFiles for traditional workflow\n"
@@ -39,7 +39,7 @@ output_help() {
     printf "Maintenance after first install (see .cfg_README.adoc):\n"
     printf "  cfgInstallScript       Alias for running script remotely. Just add [options].\n\n"
     printf "NOTE: RAW_CODE_URL above is the GitHub URL to the raw shell script.\n"
-    printf "      https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_install.sh\n\n"
+    printf "      https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_bash_script_collection/cfg_install_script.sh\n\n"
     printf "      However, the script uses the SSH URL for cloning which requires github account with a SSH key.\n"
 }
 
