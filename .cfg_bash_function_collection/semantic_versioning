@@ -7,7 +7,7 @@
 # requires local package.json leaves a local file named
 # a_semantic_version.js with same version as the one in package.json
 injectSemver(){
-  bun -b run ~/.bun_scripts/inject_semantic_version.mjs;
+  bun -b run ~/.cfg_bun_script_collection/inject_semantic_version.mjs;
 }
 
 # assumes version alias and if injectSemver() HAD BEEN OPTIONALLY RUN

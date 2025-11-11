@@ -35,9 +35,9 @@ This sort of repository is commonly called a "dot files repository" - hence the 
 In a fresh terminal, from your home directory:
 
 ```shell script will execute and delete itself
-curl -sSf https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_install.sh | bash -s -- -v -h
+curl -sSf https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_bash_script_collection/cfg_install_script.sh | bash -s -- -v -h
 ```
-The script lives in [this repository](https://github.com/rudimusmaximus/configDotFiles/blob/main/.cfg_install.sh). Review first if you like.
+The script lives in [this repository](https://github.com/rudimusmaximus/configDotFiles/blob/main/.cfg_bash_script_collection/cfg_install_script.sh). Review first if you like.
 
 Any backups of `.files` that would have been overwritten can be found in `.cfg-backup` folder.
 After you restart the terminal, type 'alias' or 'aliases' to see our shortcuts. The cursor now has magic powers in git repos. Some aliases assume certain tools are installed.
@@ -150,26 +150,10 @@ git config --global diff.colorMoved default
 === Recent refactor improving login vs non interactive shells
 
 The .bashrc and .bash_profile were mac centric in the treating of every new session was a log in session starting with the bash profile and then sourcing the bashrc. The reasoning was to minimuze duplicate work and separate things done once per session from things done every new shell like tabs for example. We noticed issues with path not being equal in new tmux sessions or on fedora and also that ssh utilities would have problems which we tried to work around. This new refactor pushes the files loaded into the bash profile and makes the profile just call the bashrc. Much simpler. Since the rework is negligible in performance, we needed to make sure the path would not keep growing so we worked some helper functions to prepend and postpend the path and not add duplicates. This should allow for consisntent and less troublesome experience across environments and be more consistent with the rest of the unix and linux worlds.
+
 TODO areas to test:
+
 - macos with and without tmux
 - fedora with and without tmux
 - ssh with and without tmux
 - that asdf shim paths are not shadowed by macos paths in checkhealth for nvim namely with python version and also not catching asdf runtimes like java checkhealth requirements and others
-
-== LEGAL NOTE
-
-Any use of this project's code by GitHub Copilot, past or present, is done
-without our permission.  We do not consent to GitHub's use of this project's
-code in Copilot.
-
-**We're Using GitHub Under Protest.** For our organization, we mostly use GitHub for private repositories.  We do not recommend it for public or open source work. This project is currently hosted on GitHub.  This is not ideal; GitHub is a
-proprietary, trade-secret system that is not Free and Open Souce Software(FOSS).  We are deeply concerned about using a proprietary system like GitHub
-to develop our FOSS projects.
-
-We urge you to read about the https://GiveUpGitHub.org[Give up GitHub campaign] from https://sfconservancy.org[the Software Freedom Conservancy] to understand
-some reasons why GitHub is not a good place to host FOSS projects.
-
-We are considering other options for any open source work we might do in the future.
-
-image::give_up_git_hub.png[caption="Figure 1: ", title="Logo of the GiveUpGitHub campaign", alt="GitHub character holding bag of money and crushing the words 'user rights'", width="300", height="200", link="http://www.flickr.com/photos/javh/5448336655"]
-

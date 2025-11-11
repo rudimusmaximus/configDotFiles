@@ -103,7 +103,7 @@ git clone git@github.com:RedCrowConsulting/nvim-config.git .
 curl -fsSL https://bun.sh/install | bash
 
 # install the dotfiles
-curl -sSf https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_install.sh | bash -s -- -v -h
+curl -sSf https://raw.githubusercontent.com/rudimusmaximus/configDotFiles/refs/heads/main/.cfg_bash_script_collection/cfg_install_script.sh | bash -s -- -v -h
 
 # restart or source .bashrc
 
