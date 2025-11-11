@@ -27,5 +27,5 @@ some reasons why GitHub is not a good place to host FOSS projects.
 
 We are considering other options for any future open source offered to the public.
 
-image::./.adoc_images/give_up_git_hub.png[caption="Figure 1: ", title="Logo of the GiveUpGitHub campaign", alt="GitHub character holding bag of money and crushing the words 'user rights'", width="300", height="200", link="http://www.flickr.com/photos/javh/5448336655"]
+image::./.cfg_documentation/.adoc_images/give_up_git_hub.png[caption="Figure 1: ", title="Logo of the GiveUpGitHub campaign", alt="GitHub character holding bag of money and crushing the words 'user rights'", width="300", height="200", link="http://www.flickr.com/photos/javh/5448336655"]
 
