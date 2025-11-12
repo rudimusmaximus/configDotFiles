@@ -170,9 +170,6 @@ alias copen="clasp open"
 # 	export LSCOLORS='BxBxhxDxfxhxhxhxhxcxcx'
 # fi
 alias ls='ls -G' # enable color everywhere we use ls
-alias l=list # function call to list color long
-alias ll='echo "ls in color -laF"; ls -laF'
-alias la='echo "ls in color -a"; ls -a'
 
 ## List all files colorized in long format, excluding . and ..
 #alias la="ls -lAF ${colorflag}"
@@ -181,6 +178,13 @@ alias la='echo "ls in color -a"; ls -a'
 alias lsd="ls -d -- */"
 alias lsda='ls -d -- */ .[^.]*/'
 alias llsd='ls -lF | grep --color=never "^d"'
+
+# alternative to `ls`, 'eza' alias for keyboard ease
+alias l='eza'
+alias lt='eza -T --git-ignore'
+alias lta='eza -Ta --git-ignore'
+alias ll='eza -l'
+alias la='eza -a'
 
 # Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.

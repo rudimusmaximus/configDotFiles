@@ -29,11 +29,6 @@ file_exists() {
     done
 }
 
-list() {
-  echo "ls in color with -F designations"
-  ls -F
-}
-
 go_home() {
   echo "Welcome ~ \$HOME"
   cd ~ || exit
