@@ -144,8 +144,13 @@ remove_tracked_files_and_empty_directories_when_done() {
 # apps, files, directories, etc
 check_for_expected_prerequisites() {
   clear # clear the screen
+  local prereq_file="${HOME}/.prerequisite_check"
+  if [[ ! -f "$prereq_file" ]]; then
+    printf "\n%s\n" "[LOG] ✖ ~/.prerequisite_check not found. Try again after installing/checking out the dotfiles into \$HOME."
+    return 1
+  fi
   printf "\n%s\n" "[LOG] ✔ Sourcing ~/.prerequisite_check..."
-  source "${HOME}/.prerequisite_check"
+  source "$prereq_file"
   printf "%s\n" "[LOG] ✔ Finished ~/.prerequisite_check"
 }
 
@@ -198,6 +203,8 @@ handle_not_a_flag_edge_cases() {
 
 # Main function to run the script
 run() {
+    clear
+    cd "$HOME" || error_exit "Error: Unable to change to home directory."
     # Check if required commands are available first
     command -v git >/dev/null 2>&1 || error_exit "git is required but it's not installed. Aborting."
     handle_not_a_flag_edge_cases "$@"
@@ -245,4 +252,3 @@ run() {
 }
 
 run "$@"
-
