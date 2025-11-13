@@ -25,7 +25,7 @@ fi
 # Display usage information
 output_help() {
   printf "\nUsage (from home directory in this order for applicable system type):\n"
-  printf "  To run locally :  bash .cfg_bash_script_collection/cfg_update.sh [options]\n"
+  printf "  To run locally :  bash .cfg_bash_script_collection/cfg_update_script.sh [options]\n"
   printf "              or :  cfgUpdateScript [options]\n\n"
   printf "Options:   [System] Action\n"
   printf "  -w       [macOS]  Upgrade homebrew packages\n"
