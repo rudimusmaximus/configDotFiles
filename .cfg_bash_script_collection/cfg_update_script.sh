@@ -25,7 +25,7 @@ fi
 # Display usage information
 output_help() {
   printf "\nUsage (from home directory in this order for applicable system type):\n"
-  printf "  To run locally :  bash .cfg_bash_script_collection/cfg_update.sh [options]\n"
+  printf "  To run locally :  bash .cfg_bash_script_collection/cfg_update_script.sh [options]\n"
   printf "              or :  cfgUpdateScript [options]\n\n"
   printf "Options:   [System] Action\n"
   printf "  -w       [macOS]  Upgrade homebrew packages\n"
@@ -65,6 +65,8 @@ handle_not_a_flag_edge_cases() {
 
 # Main function to run the script
 run() {
+    clear
+    cd "$HOME" || error_exit "Error: Unable to change to home directory."
     # Check if required commands are available first
     # command -v git >/dev/null 2>&1 || error_exit "git is required but it's not installed. Aborting."
     handle_not_a_flag_edge_cases "$@"
@@ -147,4 +149,3 @@ run() {
 }
 
 run "$@"
-
