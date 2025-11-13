@@ -34,7 +34,7 @@ _copy_portable() {
   # In an SSH session, clipboard handling is complex, especially with tmux.
   # This logic attempts to update BOTH the remote and local clipboards.
   if [[ -n "$SSH_TTY" || -n "$SSH_CONNECTION" ]]; then
-    printf "--- SSH session detected ---\n" >&2
+    printf '%s\n' "--- SSH session detected ---" >&2
 
     # 1. Update the REMOTE clipboard first. This is the most reliable step.
     if [[ "$OSTYPE" == darwin* ]] && command -v pbcopy >/dev/null 2>&1; then
@@ -177,4 +177,3 @@ version () {
   printf '%s\n' "$out"
   _copy_portable "$out"
 }
-
