@@ -12,21 +12,19 @@
 #   This will append a line like:
 #   "2024-10-11 14:00:00 - Operation successful" to /path/to/logfile.log
 log_message() {
-    local MESSAGE="$1"
-    local LOG_FILE="$2"
-    printf "%s - %s\n" "$(date +"%Y-%m-%d %H:%M:%S")" "$MESSAGE" >> "$LOG_FILE"
+  local MESSAGE="$1"
+  local LOG_FILE="$2"
+  printf "%s - %s\n" "$(date +"%Y-%m-%d %H:%M:%S")" "$MESSAGE" >>"$LOG_FILE"
 }
 
 file_exists() {
 
   # Using argument expansion to capture all files provided as arguments.
-  for FILE in "${@}"
-    do
-      if [[ ! -f $FILE ]]
-      then
-        echo "The file ${FILE} does not exist!"
-      fi
-    done
+  for FILE in "${@}"; do
+    if [[ ! -f $FILE ]]; then
+      echo "The file ${FILE} does not exist!"
+    fi
+  done
 }
 
 go_home() {
@@ -36,55 +34,55 @@ go_home() {
 }
 
 show_aliases() {
-  mapfile -t my_array < <( compgen -A alias );
+  mapfile -t my_array < <(compgen -A alias)
   printf "%s\n" "${my_array[@]}" | sort
 }
 
 show_functions() {
-    local all=false
-    local my_array=()
+  local all=false
+  local my_array=()
 
-    # Check if the user passed the '-all' flag
-    if [[ "$1" == "-all" ]]; then
-        all=true
-    fi
+  # Check if the user passed the '-all' flag
+  if [[ "$1" == "-all" ]]; then
+    all=true
+  fi
 
-    mapfile -t my_array < <(compgen -A function)
+  mapfile -t my_array < <(compgen -A function)
 
-    # Filter out functions starting with an underscore unless '-all' is passed
-    if [[ "$all" == false ]]; then
-        local temp_array
-        temp_array=$(printf "%s\n" "${my_array[@]}" | grep -v '^_')
-        mapfile -t my_array <<<"$temp_array"
-    fi
+  # Filter out functions starting with an underscore unless '-all' is passed
+  if [[ "$all" == false ]]; then
+    local temp_array
+    temp_array=$(printf "%s\n" "${my_array[@]}" | grep -v '^_')
+    mapfile -t my_array <<<"$temp_array"
+  fi
 
-    printf "%s\n" "${my_array[@]}" | grep --color=auto -v '^$' | sort
+  printf "%s\n" "${my_array[@]}" | grep --color=auto -v '^$' | sort
 }
 
 findAndReplaceBsd() {
   echo "
    OK ---> FIND '$1' and
-   REPLACE WITH '$2' (on a BSD system like macOS or FreeBSD)...";
-  foo="$1";
-  bar="$2";
+   REPLACE WITH '$2' (on a BSD system like macOS or FreeBSD)..."
+  foo="$1"
+  bar="$2"
   echo "
    --- AFTER CHANGES --- RIPGREP '$2' ---"
-  rg --files-with-matches "$foo" | xargs sed -i '' "s|$foo|$bar|g";
-  rg "$2";
-  echo "";
+  rg --files-with-matches "$foo" | xargs sed -i '' "s|$foo|$bar|g"
+  rg "$2"
+  echo ""
 }
 
 findAndReplaceBsdF() {
   echo "
    OK ---> FIND Fixed String '$1' and
-   REPLACE WITH '$2' (on a BSD system like macOS or FreeBSD)...";
-  foo="$1";
-  bar="$2";
+   REPLACE WITH '$2' (on a BSD system like macOS or FreeBSD)..."
+  foo="$1"
+  bar="$2"
   echo "
    --- AFTER CHANGES --- RIPGREP '$2' ---"
-  rg --files-with-matches -F "$foo" | xargs sed -i '' "s|$foo|$bar|g";
-  rg -F "$2";
-  echo "";
+  rg --files-with-matches -F "$foo" | xargs sed -i '' "s|$foo|$bar|g"
+  rg -F "$2"
+  echo ""
 }
 
 # initiates a FaceTime call to a phone number using the open command
@@ -100,7 +98,7 @@ findAndReplaceBsdF() {
 # it opens FaceTime and initiates a call to the phone number specified.
 # calls with iphone if setup or to person if they are a messages user
 call() {
-    open -a FaceTime "tel://$1"
+  open -a FaceTime "tel://$1"
 }
 
 crypto() {
@@ -123,102 +121,100 @@ md() {
 # Usage:
 #   Simply type `cfgstash` in the terminal to execute the stash and backup operations.
 cfgstash() {
-    # ----------------------------
-    # Configuration Variables
-    # ----------------------------
+  # ----------------------------
+  # Configuration Variables
+  # ----------------------------
 
-    # Stash Message
-    local STASH_MESSAGE="dot_wip"
+  # Stash Message
+  local STASH_MESSAGE="dot_wip"
 
-    # Paths for .extra and its backup
-    local EXTRA_FILE="$HOME/.extra"
+  # Paths for .extra and its backup
+  local EXTRA_FILE="$HOME/.extra"
 
-    # Timestamp format: YYYYMMDD_HHMMSS
-    local TIMESTAMP
-    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+  # Timestamp format: YYYYMMDD_HHMMSS
+  local TIMESTAMP
+  TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 
-    # Backup File with Timestamp
-    local BACKUP_FILE="$HOME/.extra.backup.$TIMESTAMP"
+  # Backup File with Timestamp
+  local BACKUP_FILE="$HOME/.extra.backup.$TIMESTAMP"
 
-    # Log File Path
-    local LOG_FILE="$HOME/cfgstash.log"
+  # Log File Path
+  local LOG_FILE="$HOME/cfgstash.log"
 
+  # ----------------------------
+  # Start of cfgstash Operations
+  # ----------------------------
 
+  # Log the start of the operation
+  log_message "Starting cfgstash operation." "$LOG_FILE"
 
-    # ----------------------------
-    # Start of cfgstash Operations
-    # ----------------------------
+  # ----------------------------
+  # Stash Operations
+  # ----------------------------
 
-    # Log the start of the operation
-    log_message "Starting cfgstash operation." "$LOG_FILE"
+  # Attempt to stash changes with the specified message using the cfg alias
+  cfg stash push -m "$STASH_MESSAGE" 2>&1
+  local STASH_STATUS=$?
 
-    # ----------------------------
-    # Stash Operations
-    # ----------------------------
+  # Analyze stash outcome
+  if [ $STASH_STATUS -eq 0 ]; then
+    log_message "Git stash successful with message: \"$STASH_MESSAGE\"." "$LOG_FILE"
+    echo "Git stash successful."
+  elif [ $STASH_STATUS -eq 1 ]; then
+    # Exit status 1 typically means there were no changes to stash
+    log_message "Git stash: No local changes to save." "$LOG_FILE"
+    echo "No local changes to stash."
+  else
+    # Any other exit status indicates an error
+    log_message "Git stash failed with exit status $STASH_STATUS." "$LOG_FILE"
+    echo "Error: Git stash failed with exit status $STASH_STATUS."
+  fi
 
-    # Attempt to stash changes with the specified message using the cfg alias
-    cfg stash push -m "$STASH_MESSAGE" 2>&1
-    local STASH_STATUS=$?
+  # ----------------------------
+  # Backup Operations
+  # ----------------------------
 
-    # Analyze stash outcome
-    if [ $STASH_STATUS -eq 0 ]; then
-        log_message "Git stash successful with message: \"$STASH_MESSAGE\"." "$LOG_FILE"
-        echo "Git stash successful."
-    elif [ $STASH_STATUS -eq 1 ]; then
-        # Exit status 1 typically means there were no changes to stash
-        log_message "Git stash: No local changes to save." "$LOG_FILE"
-        echo "No local changes to stash."
+  # Check if .extra exists before attempting to copy
+  if [ -f "$EXTRA_FILE" ]; then
+    # Attempt to copy .extra to the time stamped backup file
+    cp "$EXTRA_FILE" "$BACKUP_FILE" 2>&1
+    local COPY_STATUS=$?
+
+    if [ $COPY_STATUS -eq 0 ]; then
+      echo ".extra has been successfully backed up to $BACKUP_FILE."
+      log_message "Successfully backed up .extra to $BACKUP_FILE." "$LOG_FILE"
     else
-        # Any other exit status indicates an error
-        log_message "Git stash failed with exit status $STASH_STATUS." "$LOG_FILE"
-        echo "Error: Git stash failed with exit status $STASH_STATUS."
+      echo "Error: Failed to create backup of .extra. Please check file permissions and paths."
+      log_message "Error: Failed to create backup of .extra to $BACKUP_FILE." "$LOG_FILE"
     fi
+  else
+    echo "Warning: .extra file does not exist. No backup created."
+    log_message "Warning: .extra file does not exist at $EXTRA_FILE. No backup created." "$LOG_FILE"
+  fi
 
-    # ----------------------------
-    # Backup Operations
-    # ----------------------------
+  # ----------------------------
+  # Final Logging and Feedback
+  # ----------------------------
 
-    # Check if .extra exists before attempting to copy
-    if [ -f "$EXTRA_FILE" ]; then
-        # Attempt to copy .extra to the time stamped backup file
-        cp "$EXTRA_FILE" "$BACKUP_FILE" 2>&1
-        local COPY_STATUS=$?
-
-        if [ $COPY_STATUS -eq 0 ]; then
-            echo ".extra has been successfully backed up to $BACKUP_FILE."
-            log_message "Successfully backed up .extra to $BACKUP_FILE." "$LOG_FILE"
-        else
-            echo "Error: Failed to create backup of .extra. Please check file permissions and paths."
-            log_message "Error: Failed to create backup of .extra to $BACKUP_FILE." "$LOG_FILE"
-        fi
-    else
-        echo "Warning: .extra file does not exist. No backup created."
-        log_message "Warning: .extra file does not exist at $EXTRA_FILE. No backup created." "$LOG_FILE"
-    fi
-
-    # ----------------------------
-    # Final Logging and Feedback
-    # ----------------------------
-
-    if [ "$STASH_STATUS" -eq 0 ] && [ "$COPY_STATUS" -eq 0 ]; then
-        echo "cfgstash operation completed successfully."
-        log_message "cfgstash operation completed successfully." "$LOG_FILE"
-    elif [ "$STASH_STATUS" -eq 0 ] && [ "$COPY_STATUS" -ne 0 ]; then
-        echo "cfgstash operation completed with errors during backup."
-        log_message "cfgstash operation completed with errors during backup." "$LOG_FILE"
-    elif [ "$STASH_STATUS" -eq 1 ] && [ "$COPY_STATUS" -eq 0 ]; then
-        echo "cfgstash operation completed successfully (no changes to stash)."
-        log_message "cfgstash operation completed successfully (no changes to stash)." "$LOG_FILE"
-    elif [ "$STASH_STATUS" -eq 1 ] && [ "$COPY_STATUS" -ne 0 ]; then
-        echo "cfgstash operation had no changes to stash and encountered errors during backup."
-        log_message "cfgstash operation had no changes to stash and encountered errors during backup." "$LOG_FILE"
-    elif [ "$STASH_STATUS" -ne 0 ] && [ "$COPY_STATUS" -eq 0 ]; then
-        echo "cfgstash operation failed during stash but backup was successful."
-        log_message "cfgstash operation failed during stash but backup was successful." "$LOG_FILE"
-    else
-        echo "cfgstash operation failed during stash and backup."
-        log_message "cfgstash operation failed during stash and backup." "$LOG_FILE"
-    fi
+  if [ "$STASH_STATUS" -eq 0 ] && [ "$COPY_STATUS" -eq 0 ]; then
+    echo "cfgstash operation completed successfully."
+    log_message "cfgstash operation completed successfully." "$LOG_FILE"
+  elif [ "$STASH_STATUS" -eq 0 ] && [ "$COPY_STATUS" -ne 0 ]; then
+    echo "cfgstash operation completed with errors during backup."
+    log_message "cfgstash operation completed with errors during backup." "$LOG_FILE"
+  elif [ "$STASH_STATUS" -eq 1 ] && [ "$COPY_STATUS" -eq 0 ]; then
+    echo "cfgstash operation completed successfully (no changes to stash)."
+    log_message "cfgstash operation completed successfully (no changes to stash)." "$LOG_FILE"
+  elif [ "$STASH_STATUS" -eq 1 ] && [ "$COPY_STATUS" -ne 0 ]; then
+    echo "cfgstash operation had no changes to stash and encountered errors during backup."
+    log_message "cfgstash operation had no changes to stash and encountered errors during backup." "$LOG_FILE"
+  elif [ "$STASH_STATUS" -ne 0 ] && [ "$COPY_STATUS" -eq 0 ]; then
+    echo "cfgstash operation failed during stash but backup was successful."
+    log_message "cfgstash operation failed during stash but backup was successful." "$LOG_FILE"
+  else
+    echo "cfgstash operation failed during stash and backup."
+    log_message "cfgstash operation failed during stash and backup." "$LOG_FILE"
+  fi
 }
 
 # Print sorted environment variables
@@ -237,7 +233,10 @@ update_dotfiles() {
 
   printf "Done.\nNow cd to ~/configDotFiles and pull latest changes\n"
   cd "$HOME/configDotFiles" ||
-    { echo "Failed to change directory to $HOME/configDotFiles"; return 1; }
+    {
+      echo "Failed to change directory to $HOME/configDotFiles"
+      return 1
+    }
 
   # Pull the latest changes from the repository
   git pull
@@ -249,61 +248,61 @@ update_dotfiles() {
 # Ensure the SSH agent is running and add the SSH key (so users don't have to enter their password each time)
 # works in conjunction with git settings set in .extra
 prime_ssh() {
-    # Check if SSH_IDENTITY_FILE is set
-    if [ -z "$SSH_IDENTITY_FILE" ]; then
-        echo "Error: SSH_IDENTITY_FILE is not set."
-        echo "Please declare the SSH_IDENTITY_FILE in this computer's .extra file."
-        echo "This setting is not included in the configDotFiles repository."
-        echo "See the configDotFiles repository's README for instructions."
-        return 1
-    fi
+  # Check if SSH_IDENTITY_FILE is set
+  if [ -z "$SSH_IDENTITY_FILE" ]; then
+    echo "Error: SSH_IDENTITY_FILE is not set."
+    echo "Please declare the SSH_IDENTITY_FILE in this computer's .extra file."
+    echo "This setting is not included in the configDotFiles repository."
+    echo "See the configDotFiles repository's README for instructions."
+    return 1
+  fi
 
-    # Check if the SSH agent is already running
-    if [ -z "$SSH_AUTH_SOCK" ]; then
-        echo "Starting SSH agent..."
-        eval "$(ssh-agent -s)"
-    else
-        echo "SSH agent is already running."
-    fi
+  # Check if the SSH agent is already running
+  if [ -z "$SSH_AUTH_SOCK" ]; then
+    echo "Starting SSH agent..."
+    eval "$(ssh-agent -s)"
+  else
+    echo "SSH agent is already running."
+  fi
 
-    # Detect OS and add SSH key accordingly
-    if [[ "$(uname)" == "Darwin" ]]; then
-        echo "Running on macOS, adding SSH key to macOS keychain..."
-        if ! ssh-add --apple-use-keychain "$SSH_IDENTITY_FILE"; then
-            echo "Error: Failed to add SSH key to macOS keychain."
-        fi
-    elif [[ -f /etc/os-release ]]; then
-        # shellcheck disable=SC1091
-        if ! source /etc/os-release 2>/dev/null; then
-            echo "Error: Failed to source /etc/os-release."
-            return 1
-        fi
-        case "$ID" in
-            "fedora-asahi-remix")
-                echo "Running on Fedora Asahi Remix, adding SSH key..."
-                if ! ssh-add "$SSH_IDENTITY_FILE"; then
-                    echo "Error: Failed to add SSH key on Fedora."
-                fi
-                ;;
-            "fedora")
-                echo "Running on Fedora, adding SSH key..."
-                if ! ssh-add "$SSH_IDENTITY_FILE"; then
-                    echo "Error: Failed to add SSH key on Fedora."
-                fi
-                ;;
-            "ubuntu"|"debian")
-                echo "Running on $ID, adding SSH key..."
-                if ! ssh-add "$SSH_IDENTITY_FILE"; then
-                    echo "Error: Failed to add SSH key on $ID."
-                fi
-                ;;
-            *)
-                echo "Unrecognized Linux distribution, manual SSH setup may be required."
-                ;;
-        esac
-    else
-        echo "/etc/os-release not found. Unrecognized OS, manual SSH setup may be required."
+  # Detect OS and add SSH key accordingly
+  if [[ "$(uname)" == "Darwin" ]]; then
+    echo "Running on macOS, adding SSH key to macOS keychain..."
+    if ! ssh-add --apple-use-keychain "$SSH_IDENTITY_FILE"; then
+      echo "Error: Failed to add SSH key to macOS keychain."
     fi
+  elif [[ -f /etc/os-release ]]; then
+    # shellcheck disable=SC1091
+    if ! source /etc/os-release 2>/dev/null; then
+      echo "Error: Failed to source /etc/os-release."
+      return 1
+    fi
+    case "$ID" in
+    "fedora-asahi-remix")
+      echo "Running on Fedora Asahi Remix, adding SSH key..."
+      if ! ssh-add "$SSH_IDENTITY_FILE"; then
+        echo "Error: Failed to add SSH key on Fedora."
+      fi
+      ;;
+    "fedora")
+      echo "Running on Fedora, adding SSH key..."
+      if ! ssh-add "$SSH_IDENTITY_FILE"; then
+        echo "Error: Failed to add SSH key on Fedora."
+      fi
+      ;;
+    "ubuntu" | "debian")
+      echo "Running on $ID, adding SSH key..."
+      if ! ssh-add "$SSH_IDENTITY_FILE"; then
+        echo "Error: Failed to add SSH key on $ID."
+      fi
+      ;;
+    *)
+      echo "Unrecognized Linux distribution, manual SSH setup may be required."
+      ;;
+    esac
+  else
+    echo "/etc/os-release not found. Unrecognized OS, manual SSH setup may be required."
+  fi
 }
 
 # Debug using bun using selected set of files (one or more)
@@ -320,7 +319,7 @@ debug() {
   local temp_file="/tmp/combined_code_debug.js"
 
   # Concatenate the provided files into the temporary file, overwriting if it exists
-  cat "$@" > "$temp_file"
+  cat "$@" >"$temp_file"
 
   # Run Bun with --inspect-brk on the temporary file
   bun --inspect-brk "$temp_file"
@@ -335,7 +334,7 @@ batfunc() {
   fi
 
   # Check if the function exists
-  if declare -F "$1" > /dev/null; then
+  if declare -F "$1" >/dev/null; then
     # Output the function definition with syntax highlighting using bat
     declare -f "$1" | bat -l bash
   else
@@ -345,129 +344,129 @@ batfunc() {
 }
 
 # Function to display alias with syntax highlighting
-batalias ()
-{
-    if [[ -z $1 ]]; then
-        echo "Usage: batalias alias_name";
-        return 1;
-    fi;
-    if alias "$1" &> /dev/null; then
-        alias "$1" | bat -l bash;
-    else
-        echo "Alias '$1' not found.";
-        return 1;
-    fi
+batalias() {
+  if [[ -z $1 ]]; then
+    echo "Usage: batalias alias_name"
+    return 1
+  fi
+  if alias "$1" &>/dev/null; then
+    alias "$1" | bat -l bash
+  else
+    echo "Alias '$1' not found."
+    return 1
+  fi
 }
 
 # Function to display syntax-highlighted content of a shell script file
-batshell ()
-{
-    if [[ -z $1 ]]; then
-        echo "Usage: batshell file_path";
-        return 1;
-    fi;
-    if [[ -f $1 ]]; then
-        bat -l bash "$1";
-    else
-        echo "File '$1' not found.";
-        return 1;
-    fi
+batshell() {
+  if [[ -z $1 ]]; then
+    echo "Usage: batshell file_path"
+    return 1
+  fi
+  if [[ -f $1 ]]; then
+    bat -l bash "$1"
+  else
+    echo "File '$1' not found."
+    return 1
+  fi
 }
 
 # Function to display syntax-highlighted content of a text file
 # Usage: batl language file_path
-batl ()
-{
-    if [[ -z $1 || -z $2 ]]; then
-        echo "Usage: batl language file_path";
-        return 1;
-    fi;
-    if [[ -f $2 ]]; then
-        bat -l "$1" "$2";
-    else
-        echo "File '$2' not found.";
-        return 1;
-    fi
+batl() {
+  if [[ -z $1 || -z $2 ]]; then
+    echo "Usage: batl language file_path"
+    return 1
+  fi
+  if [[ -f $2 ]]; then
+    bat -l "$1" "$2"
+  else
+    echo "File '$2' not found."
+    return 1
+  fi
 }
 
 # Function to sync ~/.git-completion.bash with the one in the git-source directory
 # Usage: sync_git_completion
 # assumes you have clone git to ~/project/git
 sync_git_completion() {
-    # Variables
-    local GIT_SOURCE_DIR=~/project/git
-    local TARGET_FILE=~/.git-completion
-    local CURRENT_GIT_VERSION
-    CURRENT_GIT_VERSION=$(git --version | awk '{print $3}')
+  # Variables
+  local GIT_SOURCE_DIR=~/project/git
+  local TARGET_FILE=~/.git-completion
+  local CURRENT_GIT_VERSION
+  CURRENT_GIT_VERSION=$(git --version | awk '{print $3}')
 
-    # Pre-check
-    printf "Running precheck...\n"
+  # Pre-check
+  printf "Running precheck...\n"
 
-    # Check if the Git source directory exists
-    if [ ! -d "$GIT_SOURCE_DIR" ]; then
-        printf "⚠️  Missing Git source directory: %s\n" "$GIT_SOURCE_DIR"
-        return 1
+  # Check if the Git source directory exists
+  if [ ! -d "$GIT_SOURCE_DIR" ]; then
+    printf "⚠️  Missing Git source directory: %s\n" "$GIT_SOURCE_DIR"
+    return 1
+  fi
+
+  # Check if the destination file exists or its directory is valid
+  if [ ! -f "$TARGET_FILE" ]; then
+    if [ ! -d "$(dirname "$TARGET_FILE")" ]; then
+      printf "⚠️  Destination directory does not exist: %s\n" "$(dirname "$TARGET_FILE")"
+      return 1
     fi
+    printf "⚠️  Target file does not exist: %s\n" "$TARGET_FILE"
+  else
+    printf "✅ Target file exists: %s\n" "$TARGET_FILE"
+  fi
 
-    # Check if the destination file exists or its directory is valid
-    if [ ! -f "$TARGET_FILE" ]; then
-        if [ ! -d "$(dirname "$TARGET_FILE")" ]; then
-            printf "⚠️  Destination directory does not exist: %s\n" "$(dirname "$TARGET_FILE")"
-            return 1
-        fi
-        printf "⚠️  Target file does not exist: %s\n" "$TARGET_FILE"
-    else
-        printf "✅ Target file exists: %s\n" "$TARGET_FILE"
-    fi
+  # Report paths
+  printf "Confirmed paths:\n"
+  printf "  Git Source Directory: %s\n" "$GIT_SOURCE_DIR"
+  printf "  Destination File: %s\n" "$TARGET_FILE"
 
-    # Report paths
-    printf "Confirmed paths:\n"
-    printf "  Git Source Directory: %s\n" "$GIT_SOURCE_DIR"
-    printf "  Destination File: %s\n" "$TARGET_FILE"
+  # Prompt user to continue
+  printf "Do you want to continue syncing git-completion for Git version %s? [y/N]: " "$CURRENT_GIT_VERSION"
+  read -r response
+  case "$response" in
+  [yY][eE][sS] | [yY]) ;;
+  *)
+    printf "Sync aborted by user.\n"
+    return 0
+    ;;
+  esac
 
-    # Prompt user to continue
-    printf "Do you want to continue syncing git-completion for Git version %s? [y/N]: " "$CURRENT_GIT_VERSION"
-    read -r response
-    case "$response" in
-        [yY][eE][sS]|[yY]) ;;
-        *) printf "Sync aborted by user.\n"; return 0 ;;
-    esac
+  # Sync Process
+  printf "Starting sync...\n"
 
-    # Sync Process
-    printf "Starting sync...\n"
+  # Navigate to Git source directory and fetch updates
+  cd "$GIT_SOURCE_DIR" || {
+    printf "⚠️  Failed to navigate to Git source directory.\n"
+    return 1
+  }
+  git fetch --tags
+  if ! git checkout "v$CURRENT_GIT_VERSION"; then
+    printf "⚠️  Version v%s not found in %s\n" "$CURRENT_GIT_VERSION" "$GIT_SOURCE_DIR"
+    return 1
+  fi
 
-    # Navigate to Git source directory and fetch updates
-    cd "$GIT_SOURCE_DIR" || {
-        printf "⚠️  Failed to navigate to Git source directory.\n"
-        return 1
-    }
-    git fetch --tags
-    if ! git checkout "v$CURRENT_GIT_VERSION"; then
-        printf "⚠️  Version v%s not found in %s\n" "$CURRENT_GIT_VERSION" "$GIT_SOURCE_DIR"
-        return 1
-    fi
+  # Copy the git-completion script to the target location
+  if cp contrib/completion/git-completion.bash "$TARGET_FILE"; then
+    printf "✅ git-completion.bash synced successfully to %s\n" "$TARGET_FILE"
+  else
+    printf "⚠️  Failed to copy git-completion.bash to %s\n" "$TARGET_FILE"
+    return 1
+  fi
 
-    # Copy the git-completion script to the target location
-    if cp contrib/completion/git-completion.bash "$TARGET_FILE"; then
-        printf "✅ git-completion.bash synced successfully to %s\n" "$TARGET_FILE"
-    else
-        printf "⚠️  Failed to copy git-completion.bash to %s\n" "$TARGET_FILE"
-        return 1
-    fi
+  # Switch back to the main branch to avoid detached HEAD
+  printf "Restoring branch to avoid detached HEAD on subequent pulls...\n"
+  if git rev-parse --verify main &>/dev/null; then
+    git switch main
+  elif git rev-parse --verify master &>/dev/null; then
+    git switch master
+  else
+    printf "⚠️  Unable to determine the main branch (main or master). Please manually resolve.\n"
+    return 1
+  fi
 
-    # Switch back to the main branch to avoid detached HEAD
-    printf "Restoring branch to avoid detached HEAD on subequent pulls...\n"
-    if git rev-parse --verify main &>/dev/null; then
-        git switch main
-    elif git rev-parse --verify master &>/dev/null; then
-        git switch master
-    else
-        printf "⚠️  Unable to determine the main branch (main or master). Please manually resolve.\n"
-        return 1
-    fi
-
-    # Final message
-    printf "Sync complete for Git version %s.\n" "$CURRENT_GIT_VERSION"
+  # Final message
+  printf "Sync complete for Git version %s.\n" "$CURRENT_GIT_VERSION"
 }
 
 # Function to convert an AsciiDoc file to HTML or PDF
@@ -549,7 +548,6 @@ cast_adoc() {
   fi
 }
 
-
 # Tries to open a given file, prioritizing the Brave web browser before
 # falling back to the system's default application handler.
 # Works on macOS (using 'open') and Linux distributions (using 'xdg-open').
@@ -577,108 +575,108 @@ cast_adoc() {
 #   - Linux: xdg-utils (which provides xdg-open) as a fallback
 #   - macOS: Built-in 'open' command as a fallback
 #
-openInBrowser () {
-    local file_path="$1"
-    local browser_found=false
-    local open_cmd="" # Keep track of the fallback command if needed
-    local exit_status=0
+openInBrowser() {
+  local file_path="$1"
+  local browser_found=false
+  local open_cmd="" # Keep track of the fallback command if needed
+  local exit_status=0
 
-    # --- Input Validation ---
-    if [[ -z "$file_path" ]]; then
-        echo "Error: No file path provided." 1>&2
-        echo "Usage: openInBrowser <file_path>" 1>&2
-        return 1
-    fi
+  # --- Input Validation ---
+  if [[ -z "$file_path" ]]; then
+    echo "Error: No file path provided." 1>&2
+    echo "Usage: openInBrowser <file_path>" 1>&2
+    return 1
+  fi
 
-    if [[ ! -e "$file_path" ]]; then
-        echo "Error: File or path '$file_path' not found." 1>&2
-        return 1
-    fi
+  if [[ ! -e "$file_path" ]]; then
+    echo "Error: File or path '$file_path' not found." 1>&2
+    return 1
+  fi
 
-    # --- Try Preferred Browser First ---
-    # Define the preferred browser command/app based on user request
-    local linux_browsers=("brave-browser") # Linux: Try Brave first
-    local macos_apps=("Brave Browser")     # macOS: Try Brave first
+  # --- Try Preferred Browser First ---
+  # Define the preferred browser command/app based on user request
+  local linux_browsers=("brave-browser") # Linux: Try Brave first
+  local macos_apps=("Brave Browser")     # macOS: Try Brave first
 
-    echo "Attempting to find preferred browser (Brave) to open '$file_path'..."
+  echo "Attempting to find preferred browser (Brave) to open '$file_path'..."
 
-    if [[ "$(uname)" == "Darwin" ]]; then
-        # macOS Logic
-        local app_name="${macos_apps[0]}" # Get the single preferred app
-        echo "Checking for macOS browser: '$app_name'..."
-        # Use 'open -a' to attempt opening with the specific application
-        if open -a "$app_name" "$file_path"; then
-            echo "Successfully launched '$file_path' with '$app_name'."
-            browser_found=true
-        else
-            # open -a returns non-zero if app not found or fails to open file
-             echo "'$app_name' not found or failed to open the file."
-        fi
-
-        # Fallback for macOS if Brave Browser didn't work
-        if [[ "$browser_found" == false ]]; then
-            echo "Preferred browser (Brave) not found or failed. Falling back to default 'open' command (system default)..."
-            if command -v open &> /dev/null; then
-                open_cmd="open" # Set the fallback command
-                open "$file_path"
-                exit_status=$?
-            else
-                 echo "Error: macOS 'open' command not found!" 1>&2
-                 return 1 # Critical command missing
-            fi
-        fi
-
-    elif [[ "$(uname)" == "Linux" ]]; then
-        # Linux Logic
-        local browser_cmd="${linux_browsers[0]}" # Get the single preferred command
-        echo "Checking for Linux browser command: '$browser_cmd'..."
-        if command -v "$browser_cmd" &> /dev/null; then
-            echo "Found '$browser_cmd'. Attempting to open..."
-            # Run in background, suppress output
-            "$browser_cmd" "$file_path" &> /dev/null &
-            exit_status=$?
-            if [[ $exit_status -eq 0 ]]; then
-                echo "Successfully launched '$file_path' with '$browser_cmd'."
-                browser_found=true
-            else
-                 echo "Command '$browser_cmd' existed but failed to launch immediately (exit code $exit_status)."
-                 # Reset exit_status as we will try the fallback
-                 exit_status=0
-            fi
-        else
-             echo "'$browser_cmd' command not found."
-        fi
-
-        # Fallback for Linux if Brave didn't work
-        if [[ "$browser_found" == false ]]; then
-            echo "Preferred browser (Brave) not found or failed. Falling back to 'xdg-open' (system default)..."
-            if command -v xdg-open &> /dev/null; then
-                open_cmd="xdg-open" # Set the fallback command
-                xdg-open "$file_path" &> /dev/null &
-                exit_status=$?
-            else
-                echo "Warning: Neither Brave browser nor 'xdg-open' command found." 1>&2
-                echo "Cannot automatically open '$file_path'." 1>&2
-                return 2 # Indicate warning: command not found
-            fi
-        fi
+  if [[ "$(uname)" == "Darwin" ]]; then
+    # macOS Logic
+    local app_name="${macos_apps[0]}" # Get the single preferred app
+    echo "Checking for macOS browser: '$app_name'..."
+    # Use 'open -a' to attempt opening with the specific application
+    if open -a "$app_name" "$file_path"; then
+      echo "Successfully launched '$file_path' with '$app_name'."
+      browser_found=true
     else
-        echo "Error: Unsupported operating system '$(uname)'." 1>&2
-        return 1
+      # open -a returns non-zero if app not found or fails to open file
+      echo "'$app_name' not found or failed to open the file."
     fi
 
-    # --- Final Status ---
-    # Check the exit status of the *last attempted* command (Brave or fallback)
-    if [[ $exit_status -ne 0 ]]; then
-         echo "Note: The last launch command exited with status $exit_status. The file might still be opening, or there might have been an issue." 1>&2
-    elif [[ "$browser_found" == true || "$open_cmd" != "" ]]; then
-         # Only print success if we actually attempted an open (either preferred or fallback)
-         echo "'$file_path' should now be opening."
+    # Fallback for macOS if Brave Browser didn't work
+    if [[ "$browser_found" == false ]]; then
+      echo "Preferred browser (Brave) not found or failed. Falling back to default 'open' command (system default)..."
+      if command -v open &>/dev/null; then
+        open_cmd="open" # Set the fallback command
+        open "$file_path"
+        exit_status=$?
+      else
+        echo "Error: macOS 'open' command not found!" 1>&2
+        return 1 # Critical command missing
+      fi
     fi
 
-    # Return 0 if an attempt was made (preferred browser found or fallback executed)
-    # Return non-zero only on critical errors (no input, file not found, OS unsupported, critical commands missing)
-    return 0
+  elif [[ "$(uname)" == "Linux" ]]; then
+    # Linux Logic
+    local browser_cmd="${linux_browsers[0]}" # Get the single preferred command
+    echo "Checking for Linux browser command: '$browser_cmd'..."
+    if command -v "$browser_cmd" &>/dev/null; then
+      echo "Found '$browser_cmd'. Attempting to open..."
+      # Run in background, suppress output
+      "$browser_cmd" "$file_path" &>/dev/null &
+      exit_status=$?
+      if [[ $exit_status -eq 0 ]]; then
+        echo "Successfully launched '$file_path' with '$browser_cmd'."
+        browser_found=true
+      else
+        echo "Command '$browser_cmd' existed but failed to launch immediately (exit code $exit_status)."
+        # Reset exit_status as we will try the fallback
+        exit_status=0
+      fi
+    else
+      echo "'$browser_cmd' command not found."
+    fi
+
+    # Fallback for Linux if Brave didn't work
+    if [[ "$browser_found" == false ]]; then
+      echo "Preferred browser (Brave) not found or failed. Falling back to 'xdg-open' (system default)..."
+      if command -v xdg-open &>/dev/null; then
+        open_cmd="xdg-open" # Set the fallback command
+        xdg-open "$file_path" &>/dev/null &
+        exit_status=$?
+      else
+        echo "Warning: Neither Brave browser nor 'xdg-open' command found." 1>&2
+        echo "Cannot automatically open '$file_path'." 1>&2
+        return 2 # Indicate warning: command not found
+      fi
+    fi
+  else
+    echo "Error: Unsupported operating system '$(uname)'." 1>&2
+    return 1
+  fi
+
+  # --- Final Status ---
+  # Check the exit status of the *last attempted* command (Brave or fallback)
+  if [[ $exit_status -ne 0 ]]; then
+    echo "Note: The last launch command exited with status $exit_status. The file might still be opening, or there might have been an issue." 1>&2
+  elif [[ "$browser_found" == true || "$open_cmd" != "" ]]; then
+    # Only print success if we actually attempted an open (either preferred or fallback)
+    echo "'$file_path' should now be opening."
+  fi
+
+  # Return 0 if an attempt was made (preferred browser found or fallback executed)
+  # Return non-zero only on critical errors (no input, file not found, OS unsupported, critical commands missing)
+  return 0
 }
 
 #################################################################
@@ -687,151 +685,160 @@ openInBrowser () {
 
 # Outputs a sorted, combined list of functions and aliases with color and duplicate detection.
 function fna() {
-    local dups_only=0
-    local force_color=0
-    # Process arguments like --dups-only and --color
-    for arg in "$@"; do
-        case "$arg" in
-            --dups-only) dups_only=1; shift ;;
-            --color|--color=always) force_color=1; shift ;;
-        esac
-    done
+  local dups_only=0
+  local force_color=0
+  # Process arguments like --dups-only and --color
+  for arg in "$@"; do
+    case "$arg" in
+    --dups-only)
+      dups_only=1
+      shift
+      ;;
+    --color | --color=always)
+      force_color=1
+      shift
+      ;;
+    esac
+  done
 
-    local alias_list=() function_list=() combined=()
-    mapfile -t alias_list < <(show_aliases)
-    # Pass along any remaining arguments (like -all) to show_functions
-    mapfile -t function_list < <(show_functions "$@")
+  local alias_list=() function_list=() combined=()
+  mapfile -t alias_list < <(show_aliases)
+  # Pass along any remaining arguments (like -all) to show_functions
+  mapfile -t function_list < <(show_functions "$@")
 
-    # Track types
-    declare -A _is_alias=() _is_func=()
-    for a in "${alias_list[@]}"; do [[ -n "$a" ]] && _is_alias["$a"]=1; done
-    for f in "${function_list[@]}"; do [[ -n "$f" ]] && _is_func["$f"]=1; done
+  # Track types
+  declare -A _is_alias=() _is_func=()
+  for a in "${alias_list[@]}"; do [[ -n "$a" ]] && _is_alias["$a"]=1; done
+  for f in "${function_list[@]}"; do [[ -n "$f" ]] && _is_func["$f"]=1; done
 
-    # Merge, strip blanks, and sort
-    mapfile -t combined < <(
-        { printf "%s\n" "${alias_list[@]}"; printf "%s\n" "${function_list[@]}"; } |
-        grep --color=never -v '^[[:space:]]*$' |
-        sort
-    )
+  # Merge, strip blanks, and sort
+  mapfile -t combined < <(
+    {
+      printf "%s\n" "${alias_list[@]}"
+      printf "%s\n" "${function_list[@]}"
+    } |
+      grep --color=never -v '^[[:space:]]*$' |
+      sort
+  )
 
-    # Count occurrences and detect duplicate names
-    declare -A _count=() _dups=()
-    for name in "${combined[@]}"; do
-        (( _count["$name"]++ ))
-        if (( _count["$name"] > 1 )); then
-            _dups["$name"]=1
-        fi
-    done
-    # Also mark alias<->function collisions
-    for name in "${!_count[@]}"; do
-        if [[ -n "${_is_alias[$name]}" && -n "${_is_func[$name]}" ]]; then
-            _dups["$name"]=1
-        fi
-    done
-
-    local colorize=0
-    if (( force_color )) || [[ -t 1 ]]; then
-        colorize=1
+  # Count occurrences and detect duplicate names
+  declare -A _count=() _dups=()
+  for name in "${combined[@]}"; do
+    ((_count["$name"]++))
+    if ((_count["$name"] > 1)); then
+      _dups["$name"]=1
     fi
+  done
+  # Also mark alias<->function collisions
+  for name in "${!_count[@]}"; do
+    if [[ -n "${_is_alias[$name]}" && -n "${_is_func[$name]}" ]]; then
+      _dups["$name"]=1
+    fi
+  done
 
-    local RESET=$'\033[0m'
-    local ALIAS_COLOR=$'\033[34m' # blue
-    local FUNC_COLOR=$'\033[31m'  # red
-    local ERR_COLOR=$'\033[91m'   # bright red
+  local colorize=0
+  if ((force_color)) || [[ -t 1 ]]; then
+    colorize=1
+  fi
 
-    # Handle --dups-only mode
-    if (( dups_only )); then
-        if (( ${#_dups[@]} > 0 )); then
-            { for k in "${!_dups[@]}"; do printf "%s\n" "$k"; done } | sort | while read -r k; do
-                if (( colorize )); then
-                    if [[ -n "${_is_alias[$k]}" && -n "${_is_func[$k]}" ]]; then
-                        printf '%s%s%s\n' "${ERR_COLOR}" "$k" "${RESET}"
-                    elif [[ -n "${_is_alias[$k]}" ]]; then
-                        printf '%s%s%s\n' "${ALIAS_COLOR}" "$k" "${RESET}"
-                    else
-                        printf '%s%s%s\n' "${FUNC_COLOR}" "$k" "${RESET}"
-                    fi
-                else
-                    printf '%s\n' "$k"
-                fi
-            done
-            return 1
+  local RESET=$'\033[0m'
+  local ALIAS_COLOR=$'\033[34m' # blue
+  local FUNC_COLOR=$'\033[31m'  # red
+  local ERR_COLOR=$'\033[91m'   # bright red
+
+  # Handle --dups-only mode
+  if ((dups_only)); then
+    if ((${#_dups[@]} > 0)); then
+      { for k in "${!_dups[@]}"; do printf "%s\n" "$k"; done; } | sort | while read -r k; do
+        if ((colorize)); then
+          if [[ -n "${_is_alias[$k]}" && -n "${_is_func[$k]}" ]]; then
+            printf '%s%s%s\n' "${ERR_COLOR}" "$k" "${RESET}"
+          elif [[ -n "${_is_alias[$k]}" ]]; then
+            printf '%s%s%s\n' "${ALIAS_COLOR}" "$k" "${RESET}"
+          else
+            printf '%s%s%s\n' "${FUNC_COLOR}" "$k" "${RESET}"
+          fi
         else
-            return 0
+          printf '%s\n' "$k"
         fi
+      done
+      return 1
+    else
+      return 0
     fi
+  fi
 
-    # Normal mode: print unique, sorted, colored list
-    local unique_lines
-    mapfile -t unique_lines < <(printf "%s\n" "${combined[@]}" | uniq)
-    for line in "${unique_lines[@]}"; do
-        if (( colorize )); then
-            if [[ -n "${_is_alias[$line]}" && -n "${_is_func[$line]}" ]]; then
-                printf '%s%s%s\n' "${ERR_COLOR}" "$line" "${RESET}"
-            elif [[ -n "${_is_func[$line]}" ]]; then
-                printf '%s%s%s\n' "${FUNC_COLOR}" "$line" "${RESET}"
-            else
-                printf '%s%s%s\n' "${ALIAS_COLOR}" "$line" "${RESET}"
-            fi
+  # Normal mode: print unique, sorted, colored list
+  local unique_lines
+  mapfile -t unique_lines < <(printf "%s\n" "${combined[@]}" | uniq)
+  for line in "${unique_lines[@]}"; do
+    if ((colorize)); then
+      if [[ -n "${_is_alias[$line]}" && -n "${_is_func[$line]}" ]]; then
+        printf '%s%s%s\n' "${ERR_COLOR}" "$line" "${RESET}"
+      elif [[ -n "${_is_func[$line]}" ]]; then
+        printf '%s%s%s\n' "${FUNC_COLOR}" "$line" "${RESET}"
+      else
+        printf '%s%s%s\n' "${ALIAS_COLOR}" "$line" "${RESET}"
+      fi
+    else
+      printf '%s\n' "$line"
+    fi
+  done
+
+  # Print duplicate report to stderr
+  if ((${#_dups[@]} > 0)); then
+    {
+      if [[ -t 2 ]]; then
+        printf '\n%sDUPLICATES:%s\n' "${ERR_COLOR}" "${RESET}" >&2
+      else
+        printf '\nDUPLICATES:\n' >&2
+      fi
+      { for k in "${!_dups[@]}"; do printf "%s\n" "$k"; done; } | sort | while read -r k; do
+        if [[ -t 2 ]]; then
+          if [[ -n "${_is_alias[$k]}" && -n "${_is_func[$k]}" ]]; then
+            printf '  %s%s%s (alias & function)\n' "${ERR_COLOR}" "$k" "${RESET}" >&2
+          elif [[ -n "${_is_alias[$k]}" ]]; then
+            printf '  %s%s%s (alias)\n' "${ALIAS_COLOR}" "$k" "${RESET}" >&2
+          else
+            printf '  %s%s%s (function)\n' "${FUNC_COLOR}" "$k" "${RESET}" >&2
+          fi
         else
-            printf '%s\n' "$line"
+          # Plain text for stderr when not a tty
+          if [[ -n "${_is_alias[$k]}" && -n "${_is_func[$k]}" ]]; then
+            printf '  %s (alias & function)\n' "$k" >&2
+          elif [[ -n "${_is_alias[$k]}" ]]; then
+            printf '  %s (alias)\n' "$k" >&2
+          else
+            printf '  %s (function)\n' "$k" >&2
+          fi
         fi
-    done
-
-    # Print duplicate report to stderr
-    if (( ${#_dups[@]} > 0 )); then
-        {
-            if [[ -t 2 ]]; then
-                printf '\n%sDUPLICATES:%s\n' "${ERR_COLOR}" "${RESET}" >&2
-            else
-                printf '\nDUPLICATES:\n' >&2
-            fi
-            { for k in "${!_dups[@]}"; do printf "%s\n" "$k"; done } | sort | while read -r k; do
-                if [[ -t 2 ]]; then
-                    if [[ -n "${_is_alias[$k]}" && -n "${_is_func[$k]}" ]]; then
-                        printf '  %s%s%s (alias & function)\n' "${ERR_COLOR}" "$k" "${RESET}" >&2
-                    elif [[ -n "${_is_alias[$k]}" ]]; then
-                        printf '  %s%s%s (alias)\n' "${ALIAS_COLOR}" "$k" "${RESET}" >&2
-                    else
-                        printf '  %s%s%s (function)\n' "${FUNC_COLOR}" "$k" "${RESET}" >&2
-                    fi
-                else
-                    # Plain text for stderr when not a tty
-                    if [[ -n "${_is_alias[$k]}" && -n "${_is_func[$k]}" ]]; then
-                        printf '  %s (alias & function)\n' "$k" >&2
-                    elif [[ -n "${_is_alias[$k]}" ]]; then
-                        printf '  %s (alias)\n' "$k" >&2
-                    else
-                        printf '  %s (function)\n' "$k" >&2
-                    fi
-                fi
-            done
-        }
-        return 1
-    fi
-    return 0
+      done
+    }
+    return 1
+  fi
+  return 0
 }
 
 # Displays the output of `fna` in dynamically sized, colored columns.
 fnat() {
-    # This script uses a two-pass approach. First, it captures the output
-    # to calculate the layout. Second, it pipes that same output to awk
-    # with the calculated layout parameters to perform the printing.
+  # This script uses a two-pass approach. First, it captures the output
+  # to calculate the layout. Second, it pipes that same output to awk
+  # with the calculated layout parameters to perform the printing.
 
-    local output
-    output=$(fna --color "$@")
+  local output
+  output=$(fna --color "$@")
 
-    # If there's no output, we can exit early.
-    if [[ -z "$output" ]]; then
-        return 0
-    fi
+  # If there's no output, we can exit early.
+  if [[ -z "$output" ]]; then
+    return 0
+  fi
 
-    # PASS 1: Calculate the best layout
-    local term_width max_item_width
-    term_width=${COLUMNS:-80} # Get terminal width, fallback to 80
+  # PASS 1: Calculate the best layout
+  local term_width max_item_width
+  term_width=${COLUMNS:-80} # Get terminal width, fallback to 80
 
-    # Use awk to find the length of the longest line (ignoring color codes)
-    max_item_width=$(echo "$output" | awk '
+  # Use awk to find the length of the longest line (ignoring color codes)
+  max_item_width=$(echo "$output" | awk '
         {
             nocolor = $0
             gsub(/\x1b\[[0-9;]*m/, "", nocolor)
@@ -841,14 +848,14 @@ fnat() {
         END { print max }
     ')
 
-    # Determine number of columns that can fit
-    local num_columns=$(( term_width / (max_item_width + 2) ))
-    if (( num_columns == 0 )); then
-        num_columns=1
-    fi
+  # Determine number of columns that can fit
+  local num_columns=$((term_width / (max_item_width + 2)))
+  if ((num_columns == 0)); then
+    num_columns=1
+  fi
 
-    # PASS 2: Print with the calculated layout
-    echo "$output" | awk -v pad="$max_item_width" -v cols="$num_columns" '
+  # PASS 2: Print with the calculated layout
+  echo "$output" | awk -v pad="$max_item_width" -v cols="$num_columns" '
         {
             # Store all lines in an array
             lines[NR] = $0
@@ -868,25 +875,25 @@ fnat() {
 
 # Finds and executes a function/alias immediately upon selection.
 fnaf() {
-    local sel_with_color sel
+  local sel_with_color sel
 
-    echo "Running fnaf..."
+  echo "Running fnaf..."
 
-    # Run fzf and capture the selected command.
-    sel_with_color=$(fna --color "$@" | fzf --ansi --no-sort --prompt='alias/func> ' --height=40%)
+  # Run fzf and capture the selected command.
+  sel_with_color=$(fna --color "$@" | fzf --ansi --no-sort --prompt='alias/func> ' --height=40%)
 
-    # If a selection was made, execute it in the CURRENT shell.
-    if [[ -n "$sel_with_color" ]]; then
-        # Strip ANSI color codes so eval sees the raw command.
-        sel="${sel_with_color//$'\e''['[0-9;]*m/}"
+  # If a selection was made, execute it in the CURRENT shell.
+  if [[ -n "$sel_with_color" ]]; then
+    # Strip ANSI color codes so eval sees the raw command.
+    sel="${sel_with_color//$'\e''['[0-9;]*m/}"
 
-        # --- ADDED LINE ---
-        # Print the command that is about to be executed.
-        printf "+ %s\n" "$sel"
+    # --- ADDED LINE ---
+    # Print the command that is about to be executed.
+    printf "+ %s\n" "$sel"
 
-        # This `eval` will now run after the command has been printed.
-        eval "$sel"
-    fi
+    # This `eval` will now run after the command has been printed.
+    eval "$sel"
+  fi
 }
 
 # Create a script to re-add all plugins with original URLs
@@ -925,7 +932,7 @@ create-snapshot-of-asdf-plugins-for-new-install() {
   # ----------------------------------------------------
 
   # Create/overwrite the file with the script header, guards, and helper
-  cat <<EOF > "$_NEW_ASDF_INSTALL_OUTFILE"
+  cat <<EOF >"$_NEW_ASDF_INSTALL_OUTFILE"
 #!/usr/bin/env bash
 
 # ==========================================================
@@ -985,16 +992,16 @@ EOF
       printf -v url_q '%q' "$url"
 
       if [[ -n "$url" ]]; then
-        printf 'add_plugin %s %s\n' "$name_q" "$url_q" >> "$_NEW_ASDF_INSTALL_OUTFILE"
+        printf 'add_plugin %s %s\n' "$name_q" "$url_q" >>"$_NEW_ASDF_INSTALL_OUTFILE"
       else
         # Fallback to index-only install (still idempotent)
-        printf 'add_plugin %s ""\n' "$name_q" >> "$_NEW_ASDF_INSTALL_OUTFILE"
+        printf 'add_plugin %s ""\n' "$name_q" >>"$_NEW_ASDF_INSTALL_OUTFILE"
       fi
     done
   fi
 
   # Final install step
-  cat <<'EOF' >> "$_NEW_ASDF_INSTALL_OUTFILE"
+  cat <<'EOF' >>"$_NEW_ASDF_INSTALL_OUTFILE"
 
 echo "→ Installing versions from ~/.tool-versions..."
 # This installs all versions specified in the newly restored ~/.tool-versions
@@ -1010,20 +1017,19 @@ EOF
   printf "   2. Copy %s to the new \$HOME.\n" "$_NEW_ASDF_INSTALL_OUTFILE"
   printf "   3. Source the script: source %s\n" "$_NEW_ASDF_INSTALL_OUTFILE"
   # TODO update for adding to dotfiles and add restore asdf snapshot to install function
-# along  with setup ssh instructions for new machines
+  # along  with setup ssh instructions for new machines
 }
 
 # as of Ghostty 1.2.3 due to copyright fight 'ghostty +list-themes' viewer will not work.
 # this workaround installs a workaround by installing the iTerm2 color schemes
 # TODO remove when updates resolve
 function fix-ghostty-theme-viewer() {
-  mkdir -p ~/.config/ghostty/themes && \
-  tmpdir=$(mktemp -d) && \
-  git clone --depth 1 --filter=blob:none --sparse https://github.com/mbadolato/iTerm2-Color-Schemes.git "$tmpdir" && \
-  cd "$tmpdir" && \
-  git sparse-checkout set ghostty && \
-  rsync -a ghostty/ ~/.config/ghostty/themes/ && \
-  cd ~
+  mkdir -p ~/.config/ghostty/themes &&
+    tmpdir=$(mktemp -d) &&
+    git clone --depth 1 --filter=blob:none --sparse https://github.com/mbadolato/iTerm2-Color-Schemes.git "$tmpdir" &&
+    cd "$tmpdir" &&
+    git sparse-checkout set ghostty &&
+    rsync -a ghostty/ ~/.config/ghostty/themes/ &&
+    cd ~
   rm -rf "$tmpdir"
 }
-

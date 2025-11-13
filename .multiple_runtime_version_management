@@ -20,20 +20,20 @@ _asdf_expected_asset_hint() {
   os="$(uname -s)"
   arch="$(uname -m)"
   case "$os/$arch" in
-    Darwin/arm64)   echo "asdf-<VERSION>-darwin-arm64.tar.gz" ;;
-    Darwin/x86_64)  echo "asdf-<VERSION>-darwin-amd64.tar.gz" ;;
-    Linux/aarch64)  echo "asdf-<VERSION>-linux-arm64.tar.gz"  ;;
-    Linux/arm64)    echo "asdf-<VERSION>-linux-arm64.tar.gz"  ;;
-    Linux/x86_64)   echo "asdf-<VERSION>-linux-amd64.tar.gz"  ;;
-    Linux/i386|Linux/i686) echo "asdf-<VERSION>-linux-386.tar.gz" ;;
-    *)               echo "<unknown, choose correct asdf asset manually>" ;;
+  Darwin/arm64) echo "asdf-<VERSION>-darwin-arm64.tar.gz" ;;
+  Darwin/x86_64) echo "asdf-<VERSION>-darwin-amd64.tar.gz" ;;
+  Linux/aarch64) echo "asdf-<VERSION>-linux-arm64.tar.gz" ;;
+  Linux/arm64) echo "asdf-<VERSION>-linux-arm64.tar.gz" ;;
+  Linux/x86_64) echo "asdf-<VERSION>-linux-amd64.tar.gz" ;;
+  Linux/i386 | Linux/i686) echo "asdf-<VERSION>-linux-386.tar.gz" ;;
+  *) echo "<unknown, choose correct asdf asset manually>" ;;
   esac
 }
 
 # --- main ---
 _cfg_asdf_setup_main() {
   # asdf data dir (plugins/installs/shims) per docs
-  export ASDF_DATA_DIR="${HOME}/.asdf"  # must be absolute path
+  export ASDF_DATA_DIR="${HOME}/.asdf" # must be absolute path
   local ASDF_FRESH_FLAG="${ASDF_DATA_DIR}/.cfg_asdf_plugins_pending"
 
   verbLog 2 "ASDF_SETUP: start (OS=$(uname -s) ARCH=$(uname -m))"
@@ -106,9 +106,12 @@ _cfg_asdf_setup_main() {
       verbLog 3 "ASDF_SETUP: enabled Bash completions via 'asdf completion bash'."
     else
       local _c=""
-      if   [ -f "/usr/share/bash-completion/completions/asdf" ]; then _c="/usr/share/bash-completion/completions/asdf"
-      elif [ -f "/usr/share/asdf/completions/asdf.bash" ]; then        _c="/usr/share/asdf/completions/asdf.bash"
-      elif [ -f "${ASDF_DATA_DIR}/completions/asdf.bash" ]; then       _c="${ASDF_DATA_DIR}/completions/asdf.bash"
+      if [ -f "/usr/share/bash-completion/completions/asdf" ]; then
+        _c="/usr/share/bash-completion/completions/asdf"
+      elif [ -f "/usr/share/asdf/completions/asdf.bash" ]; then
+        _c="/usr/share/asdf/completions/asdf.bash"
+      elif [ -f "${ASDF_DATA_DIR}/completions/asdf.bash" ]; then
+        _c="${ASDF_DATA_DIR}/completions/asdf.bash"
       fi
       if [ -n "$_c" ]; then
         source "$_c"
@@ -132,7 +135,7 @@ _cfg_asdf_setup_main() {
         [python]="https://github.com/danhper/asdf-python.git"
         [ruby]="https://github.com/asdf-vm/asdf-ruby.git"
         [rust]="https://github.com/code-lever/asdf-rust.git"
-        [tree-sitter]="https://github.com/ivanvc/asdf-tree-sitter.git"
+        [tree - sitter]="https://github.com/ivanvc/asdf-tree-sitter.git"
       )
       for plugin_name in "${!plugins_to_add[@]}"; do
         verbLog 1 "ASDF_SETUP: adding plugin: ${plugin_name}"
@@ -165,4 +168,3 @@ if _cfg_asdf_setup_main; then
 else
   verbLog 0 "ASDF_SETUP: critical error."
 fi
-

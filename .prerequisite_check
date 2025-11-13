@@ -4,76 +4,75 @@ printf "[LOG] ✔ %s\n" "Entering .prerequisite_check..."
 
 # Function to check if a command exists
 function command_exists() {
-    command -v "$1" >/dev/null 2>&1
+  command -v "$1" >/dev/null 2>&1
 }
 
 # Function to check git-flow installation
 function check_git_flow() {
-    if command_exists git-flow; then
-        printf "[LOG] ✔✔ %s\n" "git-flow is installed."
-    else
-        printf "⚠️ %s\n" "git-flow is NOT installed."
-        printf "%s\n" "To install:"
-        printf "  %s\n" "Fedora: sudo dnf install git-flow"
-        printf "  %s\n" "macOS: brew install git-flow"
-    fi
+  if command_exists git-flow; then
+    printf "[LOG] ✔✔ %s\n" "git-flow is installed."
+  else
+    printf "⚠️ %s\n" "git-flow is NOT installed."
+    printf "%s\n" "To install:"
+    printf "  %s\n" "Fedora: sudo dnf install git-flow"
+    printf "  %s\n" "macOS: brew install git-flow"
+  fi
 }
 
 # Function to check bash-completion installation
 function check_bash_completion() {
-    if [[ -r "/usr/share/bash-completion/bash_completion" ]]; then
-        printf "[LOG] ✔✔ %s\n" "bash-completion is installed and available; likely linux."
-    elif [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
-        printf "[LOG] ✔✔ %s\n" "bash-completion is installed and available (Homebrew path); likely Intel, macOS."
-    elif [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
-        printf "[LOG] ✔✔ %s\n" "bash-completion is installed and available (Homebrew path); likely ARM, macOS."
-    else
-        printf "⚠️ %s\n" "bash-completion is NOT installed or not configured."
-        printf "%s\n" "To install:"
-        printf "  %s\n" "Fedora: sudo dnf install bash-completion"
-        printf "  %s\n" "macOS: brew install bash-completion"
-    fi
+  if [[ -r "/usr/share/bash-completion/bash_completion" ]]; then
+    printf "[LOG] ✔✔ %s\n" "bash-completion is installed and available; likely linux."
+  elif [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]]; then
+    printf "[LOG] ✔✔ %s\n" "bash-completion is installed and available (Homebrew path); likely Intel, macOS."
+  elif [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]]; then
+    printf "[LOG] ✔✔ %s\n" "bash-completion is installed and available (Homebrew path); likely ARM, macOS."
+  else
+    printf "⚠️ %s\n" "bash-completion is NOT installed or not configured."
+    printf "%s\n" "To install:"
+    printf "  %s\n" "Fedora: sudo dnf install bash-completion"
+    printf "  %s\n" "macOS: brew install bash-completion"
+  fi
 }
 
 # Function to check if git-flow bash completion is loaded
 function check_git_flow_completion() {
-    if [[ $(type -t _git_flow) == "function" ]]; then
-        printf "[LOG] ✔✔ %s\n" "git-flow bash completion is loaded."
-    else
-        printf "⚠️ %s\n" "git-flow bash completion is NOT loaded."
-        printf "%s\n" "configDotFile '.git-flow-completion.sh' was not sourced."
-    fi
+  if [[ $(type -t _git_flow) == "function" ]]; then
+    printf "[LOG] ✔✔ %s\n" "git-flow bash completion is loaded."
+  else
+    printf "⚠️ %s\n" "git-flow bash completion is NOT loaded."
+    printf "%s\n" "configDotFile '.git-flow-completion.sh' was not sourced."
+  fi
 }
 
 # Verify Node.js availability after initializing asdf
 # TODO: add notes for installing
 function check_node_availability() {
-    if ! command_exists node; then
-        printf "⚠️  %s\n" "Warning: Node.js is not available in this session."
-        printf "  %s\n" "Please check your asdf configuration or node installation."
-    else
-        printf "[LOG] ✔✔ %s\n" "Node.js is available."
-    fi
+  if ! command_exists node; then
+    printf "⚠️  %s\n" "Warning: Node.js is not available in this session."
+    printf "  %s\n" "Please check your asdf configuration or node installation."
+  else
+    printf "[LOG] ✔✔ %s\n" "Node.js is available."
+  fi
 }
 
 # Ensure TMUX Plugin Manager (TPM) is installed
 function check_tpm_installed() {
-    local tpm_path="$HOME/.tmux/plugins/tpm"
-    if [[ ! -d "$tpm_path" ]]; then
-        printf "⚠️  %s\n" "Warning: tmux plugin manager (TPM) is not installed."
-        printf "  %s\n" "Have you included it in your .mrconfig file?"
-    else
-        printf "[LOG] ✔✔ %s\n" "TMUX Plugin Manager (TPM) is installed."
-    fi
+  local tpm_path="$HOME/.tmux/plugins/tpm"
+  if [[ ! -d "$tpm_path" ]]; then
+    printf "⚠️  %s\n" "Warning: tmux plugin manager (TPM) is not installed."
+    printf "  %s\n" "Have you included it in your .mrconfig file?"
+  else
+    printf "[LOG] ✔✔ %s\n" "TMUX Plugin Manager (TPM) is installed."
+  fi
 }
-
 
 function check_tmuxifier_installed() {
   # Check if tmuxifier is installed
-  if command -v tmuxifier &> /dev/null; then
-      printf "[LOG] ✔✔ %s\n" "Tmuxifier for Tmux layouts is installed and available."
+  if command -v tmuxifier &>/dev/null; then
+    printf "[LOG] ✔✔ %s\n" "Tmuxifier for Tmux layouts is installed and available."
   else
-      printf "⚠️ %s\n" "Tmuxifier for Tmux layouts s not installed or not in PATH."
+    printf "⚠️ %s\n" "Tmuxifier for Tmux layouts s not installed or not in PATH."
   fi
 }
 
@@ -102,4 +101,3 @@ unset -f check_tmuxifier_installed
 # need to review all the ways we make these possible and make clean indipendent
 # check here that works across platforms and also consider making this work for
 # pi running debian bookworm
-

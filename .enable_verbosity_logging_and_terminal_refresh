@@ -6,81 +6,81 @@ if [ -n "${__VERBOSITY_AND_REFRESH_SCRIPT_SOURCED:-}" ]; then return 0; fi
 
 # Help function for refresh_terminal_session
 function refresh_terminal_session_help() {
-    # clear # Optional: some users prefer to clear the screen for help messages
-    printf "  Refresh Terminal Session - function 'refresh_terminal_session'\n"
-    printf "  Replaces the current shell session with a new one, reloading configuration.\n\n"
-    printf "  Usage:\n"
-    printf "    refresh_terminal_session [options]\n\n"
-    printf "  Options:\n"
-    printf "    -h    Display this help message.\n"
-    printf "    -v    Verbose mode (shows logging)\n"
+  # clear # Optional: some users prefer to clear the screen for help messages
+  printf "  Refresh Terminal Session - function 'refresh_terminal_session'\n"
+  printf "  Replaces the current shell session with a new one, reloading configuration.\n\n"
+  printf "  Usage:\n"
+  printf "    refresh_terminal_session [options]\n\n"
+  printf "  Options:\n"
+  printf "    -h    Display this help message.\n"
+  printf "    -v    Verbose mode (shows logging)\n"
 }
 
 # Log function to print messages based on CFG_DOT_FILES_VERBOSE_MODE
 # This verbLog will be used by startup scripts if this file is sourced early
 # and CFG_DOT_FILES_VERBOSE_MODE is exported by 'refresh_terminal_session -v'.
 function verbLog() {
-    # Usage: verbLog <level> <message string>
-    local level="$1"
-    shift # Remove level from arguments, rest is the message
+  # Usage: verbLog <level> <message string>
+  local level="$1"
+  shift # Remove level from arguments, rest is the message
 
-    # Only log if CFG_DOT_FILES_VERBOSE_MODE is explicitly true
-    if [ "${CFG_DOT_FILES_VERBOSE_MODE:-false}" = true ]; then
-        local prefix
-        case "$level" in
-            0) prefix="[ERROR] " ;;
-            1) prefix="[LOG] ✔ " ;;
-            2) prefix="[LOG] ✔ ✔ " ;;
-            3) prefix="[LOG] ✔ ✔ ✔ " ;;
-            *) prefix="[LOG] ✔ ✔ ✔ + " ;;
-        esac
-        # Use "$*" to treat all remaining arguments as a single message string
-        printf "%s%s\n" "$prefix" "$*"
-    fi
+  # Only log if CFG_DOT_FILES_VERBOSE_MODE is explicitly true
+  if [ "${CFG_DOT_FILES_VERBOSE_MODE:-false}" = true ]; then
+    local prefix
+    case "$level" in
+    0) prefix="[ERROR] " ;;
+    1) prefix="[LOG] ✔ " ;;
+    2) prefix="[LOG] ✔ ✔ " ;;
+    3) prefix="[LOG] ✔ ✔ ✔ " ;;
+    *) prefix="[LOG] ✔ ✔ ✔ + " ;;
+    esac
+    # Use "$*" to treat all remaining arguments as a single message string
+    printf "%s%s\n" "$prefix" "$*"
+  fi
 }
 
 # Function to refresh/reload the shell session by replacing the current process
 function refresh_terminal_session() {
-    OPTIND=1 # Reset OPTIND for getopts
-    local verbose_mode_requested=false
-    # Parse options using getopts
-    while getopts "hv" opt; do
-        case "$opt" in
-            h)
-                refresh_terminal_session_help
-                return 0
-                ;;
-            v)
-                verbose_mode_requested=true
-                CFG_DOT_FILES_VERBOSE_MODE=true
-                printf "\nVerbose mode enabled for the upcoming new session...\n"
-                export CFG_DOT_FILES_VERBOSE_MODE  # Make verbosity available to sourced files
-                ;;
-            \?)
-                # Print first unknown option
-                printf "Error: Unknown option '-%s'.\n" "$OPTARG"
-                refresh_terminal_session_help
-                return 1
-                ;;
-        esac
-    done
+  OPTIND=1 # Reset OPTIND for getopts
+  local verbose_mode_requested=false
+  # Parse options using getopts
+  while getopts "hv" opt; do
+    case "$opt" in
+    h)
+      refresh_terminal_session_help
+      return 0
+      ;;
+    v)
+      verbose_mode_requested=true
+      CFG_DOT_FILES_VERBOSE_MODE=true
+      printf "\nVerbose mode enabled for the upcoming new session...\n"
+      export CFG_DOT_FILES_VERBOSE_MODE # Make verbosity available to sourced files
+      ;;
+    \?)
+      # Print first unknown option
+      printf "Error: Unknown option '-%s'.\n" "$OPTARG"
+      refresh_terminal_session_help
+      return 1
+      ;;
+    esac
+  done
 
-    shift "$((OPTIND - 1))"
+  shift "$((OPTIND - 1))"
 
-    # If -h was specified, help was already shown and we returned.
-    # Now, handle the state of CFG_DOT_FILES_VERBOSE_MODE before exec.
+  # If -h was specified, help was already shown and we returned.
+  # Now, handle the state of CFG_DOT_FILES_VERBOSE_MODE before exec.
 
-    if ! "$verbose_mode_requested"; then
-        if [ -n "${CFG_DOT_FILES_VERBOSE_MODE+x}" ]; then
-            printf "Note: Verbose mode (CFG_DOT_FILES_VERBOSE_MODE) was previously active and is now being cleared for the new session.\n"
-            unset CFG_DOT_FILES_VERBOSE_MODE
-        fi
+  if ! "$verbose_mode_requested"; then
+    if [ -n "${CFG_DOT_FILES_VERBOSE_MODE+x}" ]; then
+      printf "Note: Verbose mode (CFG_DOT_FILES_VERBOSE_MODE) was previously active and is now being cleared for the new session.\n"
+      unset CFG_DOT_FILES_VERBOSE_MODE
     fi
+  fi
 
-    # If 'verbose_mode_requested' is true, CFG_DOT_FILES_VERBOSE_MODE was already set and exported.
-    printf "Reloading interactive session by replacing the current shell...\n"
-    exec "$SHELL" --login
- }
+  # If 'verbose_mode_requested' is true, CFG_DOT_FILES_VERBOSE_MODE was already set and exported.
+  printf "Reloading interactive session by replacing the current shell...\n"
+  exec "$SHELL" --login
+}
 
 __VERBOSITY_LOGGING_AND_REFRESH_SCRIPT_SOURCED="true"
 export __VERBOSITY_LOGGING_AND_REFRESH_SCRIPT_SOURCED

@@ -16,12 +16,12 @@ bash_shell_info() {
 
   # OS-configured login shell
   case "$(uname -s)" in
-    Darwin)
-      _login_shell="$(dscl . -read /Users/"$USER" UserShell 2>/dev/null | awk '{print $2}')"
-      ;;
-    *)
-      _login_shell="$(getent passwd "$USER" 2>/dev/null | awk -F: '{print $7}')"
-      ;;
+  Darwin)
+    _login_shell="$(dscl . -read /Users/"$USER" UserShell 2>/dev/null | awk '{print $2}')"
+    ;;
+  *)
+    _login_shell="$(getent passwd "$USER" 2>/dev/null | awk -F: '{print $7}')"
+    ;;
   esac
 
   # --- normalize env vars (strip embedded newlines and trailing spaces) ---
@@ -51,4 +51,3 @@ bash_shell_info() {
   printf "• If 'UserShell' != Homebrew bash, run: chsh -s /opt/homebrew/bin/bash (and ensure it’s in /etc/shells).\n"
   printf "• These PATH/order quirks are primarily a macOS issue; on Fedora or Pi you’ll normally have a single bash.\n"
 }
-

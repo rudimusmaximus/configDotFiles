@@ -6,8 +6,8 @@
 # examine file for logic details
 # requires local package.json leaves a local file named
 # a_semantic_version.js with same version as the one in package.json
-injectSemver(){
-  bun -b run ~/.cfg_bun_script_collection/inject_semantic_version.mjs;
+injectSemver() {
+  bun -b run ~/.cfg_bun_script_collection/inject_semantic_version.mjs
 }
 
 # assumes version alias and if injectSemver() HAD BEEN OPTIONALLY RUN
@@ -84,7 +84,8 @@ _copy_portable() {
 _osc52_copy() {
   local str="$1"
   # Base64 without newlines
-  local b64; b64="$(printf %s "$str" | base64 | tr -d '\r\n')"
+  local b64
+  b64="$(printf %s "$str" | base64 | tr -d '\r\n')"
 
   # tmux/screen need special wrapping
   if [[ -n "$TMUX" ]]; then
@@ -102,7 +103,7 @@ _osc52_copy() {
 # increments or sets the prerelease version and copies it to the clipboard
 # eg. v1.0.0-beta.0
 # uses pbcopy on macOS and xclip on Linux
-vp () {
+vp() {
   local preid new_version
   if [[ -n "$1" ]]; then
     preid="$1"
@@ -145,7 +146,7 @@ _get_pkg_version() {
 # directly sets the version string (you must dictate a valid semver string)
 # and copies it to the clipboard with a prefix v
 # v: set a specific semver in package.json (no git tag), echo "vX.Y.Z" and copy it
-v () {
+v() {
   if [[ -z "$1" ]]; then
     echo "Usage: v <version>" >&2
     return 1
@@ -162,11 +163,10 @@ v () {
   _copy_portable "$new_version"
 }
 
-
 # Lists the semver prefixed with 'v' from the local package.json
 # and copies it to the clipboard.
 # Example output: v1.0.0
-version () {
+version() {
   local ver
   if ! ver=$(_get_pkg_version); then
     echo "Unable to read version from package.json (tried jq/node/bun/python)." >&2

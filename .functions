@@ -5,19 +5,19 @@ verbLog 3 "Entering ~/.functions..."
 
 ## load our function collections
 declare -a bash_function_collection_files=(
-    "${HOME}/.cfg_bash_function_collection/bash_shell_info"
-    "${HOME}/.cfg_bash_function_collection/organize_into_more_files"
-    "${HOME}/.cfg_bash_function_collection/semantic_versioning"
+  "${HOME}/.cfg_bash_function_collection/bash_shell_info"
+  "${HOME}/.cfg_bash_function_collection/organize_into_more_files"
+  "${HOME}/.cfg_bash_function_collection/semantic_versioning"
 )
 
 for file in "${bash_function_collection_files[@]}"; do
-    if [ -r "${file}" ] && [ -f "${file}" ]; then
-        verbLog 4 "Sourcing ${file} from ~/.functions..."
-        # shellcheck source=/dev/null
-        source "${file}"
-    else
-        verbLog 4 "Skipped $file (not readable or does not exist)."
-    fi
+  if [ -r "${file}" ] && [ -f "${file}" ]; then
+    verbLog 4 "Sourcing ${file} from ~/.functions..."
+    # shellcheck source=/dev/null
+    source "${file}"
+  else
+    verbLog 4 "Skipped $file (not readable or does not exist)."
+  fi
 done
 unset file
 
@@ -25,6 +25,5 @@ verbLog 3 "Finished ~/.functions..."
 
 # For non-login shells, unset verbosity mode so it's not inherited by child processes
 if ! shopt -q login_shell; then
-    unset CFG_DOT_FILES_VERBOSE_MODE
+  unset CFG_DOT_FILES_VERBOSE_MODE
 fi
-
