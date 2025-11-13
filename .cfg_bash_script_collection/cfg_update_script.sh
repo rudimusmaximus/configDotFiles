@@ -65,6 +65,8 @@ handle_not_a_flag_edge_cases() {
 
 # Main function to run the script
 run() {
+    clear
+    cd "$HOME" || error_exit "Error: Unable to change to home directory."
     # Check if required commands are available first
     # command -v git >/dev/null 2>&1 || error_exit "git is required but it's not installed. Aborting."
     handle_not_a_flag_edge_cases "$@"
@@ -147,4 +149,3 @@ run() {
 }
 
 run "$@"
-
