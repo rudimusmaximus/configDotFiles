@@ -6,12 +6,15 @@
 
 _preferred_bash_absolute_path=''
 case "$(uname -s)" in
-  Darwin) _preferred_bash_absolute_path="/opt/homebrew/bin/bash" ;;   # Homebrew on Apple Silicon
-  Linux)
-    for p in /usr/local/bin/bash /usr/bin/bash /bin/bash; do
-      [ -x "$p" ] && { _preferred_bash_absolute_path="$p"; break; }
-    done
-    ;;
+Darwin) _preferred_bash_absolute_path="/opt/homebrew/bin/bash" ;; # Homebrew on Apple Silicon
+Linux)
+  for p in /usr/local/bin/bash /usr/bin/bash /bin/bash; do
+    [ -x "$p" ] && {
+      _preferred_bash_absolute_path="$p"
+      break
+    }
+  done
+  ;;
 esac
 [ -x "$_preferred_bash_absolute_path" ] || return 0
 
@@ -19,7 +22,7 @@ esac
 _bash_dir="$(dirname "$_preferred_bash_absolute_path")"
 path_prepend "$_bash_dir"
 export PATH
-hash -r  # clear cached command lookups
+hash -r # clear cached command lookups
 
 # 2) Bind the name “bash” to the chosen binary so it wins over PATH order
 hash -p "$_preferred_bash_absolute_path" bash 2>/dev/null
@@ -31,12 +34,14 @@ alias bash="$_preferred_bash_absolute_path"
 # This re-pins bash silenlty every prompt as an ongoing safeguard;
 # hash -p is nearly free as it just touches the in-memory hash table
 # it is normally just before a new prompt is drawn
-_rebind_bash() { hash -p "$_preferred_bash_absolute_path" bash 2>/dev/null; :; }
+_rebind_bash() {
+  hash -p "$_preferred_bash_absolute_path" bash 2>/dev/null
+  :
+}
 case "${PROMPT_COMMAND-}" in
-  *"_rebind_bash"*) : ;;
-  "") PROMPT_COMMAND="_rebind_bash" ;;
-  *)  PROMPT_COMMAND="_rebind_bash;$PROMPT_COMMAND" ;;
+*"_rebind_bash"*) : ;;
+"") PROMPT_COMMAND="_rebind_bash" ;;
+*) PROMPT_COMMAND="_rebind_bash;$PROMPT_COMMAND" ;;
 esac
 
 unset _preferred_bash_absolute_path _bash_dir
-

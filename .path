@@ -4,16 +4,16 @@
 # ================
 # Prepend a directory to the PATH, but only if it exists and is not already in the PATH.
 path_prepend() {
-    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-        PATH="$1:$PATH"
-    fi
+  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+    PATH="$1:$PATH"
+  fi
 }
 
 # Append a directory to the PATH, but only if it exists and is not already in the PATH.
 path_append() {
-    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-        PATH="$PATH:$1"
-    fi
+  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+    PATH="$PATH:$1"
+  fi
 }
 
 # COMMON CONFIGURATION
@@ -44,89 +44,89 @@ path_prepend "$HOME/.tmux/plugins/tmuxifier/bin"
 
 # Enhance bash-completion if completion is available
 function enhance_bash_completion() {
-    if [[ -r "${HOME}/.git-completion" ]]; then
-        source "${HOME}/.git-completion"
-        verbLog 2 ".git-completion is available and has been sourced. Remember to sync_git_completion on git updates."
-    else
-        printf "⚠️ %s\n" "expected .git-completion is NOT available."
-    fi
+  if [[ -r "${HOME}/.git-completion" ]]; then
+    source "${HOME}/.git-completion"
+    verbLog 2 ".git-completion is available and has been sourced. Remember to sync_git_completion on git updates."
+  else
+    printf "⚠️ %s\n" "expected .git-completion is NOT available."
+  fi
 
-    if [[ -r "${HOME}/.git-flow-completion" ]]; then
-        source "${HOME}/.git-flow-completion"
-        verbLog 2 ".git-flow-completion is available and has been sourced."
-    else
-        printf "⚠️ %s\n" "expected .git-flow-completion is NOT available."
-    fi
+  if [[ -r "${HOME}/.git-flow-completion" ]]; then
+    source "${HOME}/.git-flow-completion"
+    verbLog 2 ".git-flow-completion is available and has been sourced."
+  else
+    printf "⚠️ %s\n" "expected .git-flow-completion is NOT available."
+  fi
 }
 
 # Darwin (macOS)-specific items
 if [[ "$(uname)" == "Darwin" ]]; then
-    architecture=$(sysctl -n machdep.cpu.brand_string)
+  architecture=$(sysctl -n machdep.cpu.brand_string)
 
-    # edgedb-cli TODO check if needed
-    path_prepend "$HOME/Library/Application Support/edgedb/bin"
+  # edgedb-cli TODO check if needed
+  path_prepend "$HOME/Library/Application Support/edgedb/bin"
 
-    # Check for Apple Silicon iMac
-    if [[ "$architecture" == *"Apple"* ]]; then
-        # Homebrew
-        HOMEBREW_PREFIX="/opt/homebrew"
-        BASH_HOMEBREW_HOME="${HOMEBREW_PREFIX}/bin"
-        path_prepend "$BASH_HOMEBREW_HOME"
+  # Check for Apple Silicon iMac
+  if [[ "$architecture" == *"Apple"* ]]; then
+    # Homebrew
+    HOMEBREW_PREFIX="/opt/homebrew"
+    BASH_HOMEBREW_HOME="${HOMEBREW_PREFIX}/bin"
+    path_prepend "$BASH_HOMEBREW_HOME"
 
-        # Establish bash-completion
-        # shellcheck disable=SC1091
-        if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
-            source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
-            enhance_bash_completion
-        else
-            printf "⚠️  %s\n" "Warning: bash-completion not found in expected Homebrew Apple Silicon location."
-        fi
-        # The next line updates PATH for the Google Cloud SDK.
-        if [ -f "${HOME}/google-cloud-sdk/path.bash.inc" ]; then . "${HOME}/google-cloud-sdk/path.bash.inc"; fi
-
-        # The next line enables shell command completion for gcloud.
-        if [ -f "${HOME}/google-cloud-sdk/completion.bash.inc" ]; then . "${HOME}/google-cloud-sdk/completion.bash.inc"; fi
-
-    # Check for Intel macOS
-    elif [[ "$architecture" == "Intel"* ]]; then
-        # Homebrew
-        HOMEBREW_PREFIX="/usr/local"
-        BASH_HOMEBREW_HOME="${HOMEBREW_PREFIX}/bin"
-        path_prepend "$BASH_HOMEBREW_HOME"
-
-        # Establish bash-completion
-        # shellcheck disable=SC1091
-        if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
-            source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
-            enhance_bash_completion
-        else
-            printf "⚠️  %s\n" "Warning: bash-completion not found in expected Homebrew location on Intel macOS location."
-        fi
+    # Establish bash-completion
+    # shellcheck disable=SC1091
+    if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+      source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+      enhance_bash_completion
+    else
+      printf "⚠️  %s\n" "Warning: bash-completion not found in expected Homebrew Apple Silicon location."
     fi
+    # The next line updates PATH for the Google Cloud SDK.
+    if [ -f "${HOME}/google-cloud-sdk/path.bash.inc" ]; then . "${HOME}/google-cloud-sdk/path.bash.inc"; fi
 
-    # MIT Scheme
-    path_append "$HOME/projects/mit-scheme-12.1/src/mit-scheme.app/Contents/Resources"
+    # The next line enables shell command completion for gcloud.
+    if [ -f "${HOME}/google-cloud-sdk/completion.bash.inc" ]; then . "${HOME}/google-cloud-sdk/completion.bash.inc"; fi
+
+  # Check for Intel macOS
+  elif [[ "$architecture" == "Intel"* ]]; then
+    # Homebrew
+    HOMEBREW_PREFIX="/usr/local"
+    BASH_HOMEBREW_HOME="${HOMEBREW_PREFIX}/bin"
+    path_prepend "$BASH_HOMEBREW_HOME"
+
+    # Establish bash-completion
+    # shellcheck disable=SC1091
+    if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+      source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+      enhance_bash_completion
+    else
+      printf "⚠️  %s\n" "Warning: bash-completion not found in expected Homebrew location on Intel macOS location."
+    fi
+  fi
+
+  # MIT Scheme
+  path_append "$HOME/projects/mit-scheme-12.1/src/mit-scheme.app/Contents/Resources"
 fi
 
 # Other Linux related items
 # likely fedora or pi (Debian GNULinux bookworm on aarch64)
 # TODO: make sure no changes needed for adding git-flow and bash-completion elsewhere
 if [[ "$(uname)" == "Linux" ]]; then
-      # Establish bash-completion
-      # shellcheck disable=SC1091
-      if [[ -r "/usr/share/bash-completion/bash_completion" ]]; then
-          # Fedora default location
-          source "/usr/share/bash-completion/bash_completion"
-          enhance_bash_completion
-      else
-          printf "⚠️  %s\n" "Warning: bash-completion not found in expected Linux location."
-      fi
-      # check for linuxbrew
-      # Setup Homebrew on Linux (e.g., Raspberry Pi) if it exists
-      if [ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
-          verbLog 1 "Linuxbrew detected. Setting up environment..." # Assuming verbLog is available
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-      fi
+  # Establish bash-completion
+  # shellcheck disable=SC1091
+  if [[ -r "/usr/share/bash-completion/bash_completion" ]]; then
+    # Fedora default location
+    source "/usr/share/bash-completion/bash_completion"
+    enhance_bash_completion
+  else
+    printf "⚠️  %s\n" "Warning: bash-completion not found in expected Linux location."
+  fi
+  # check for linuxbrew
+  # Setup Homebrew on Linux (e.g., Raspberry Pi) if it exists
+  if [ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+    verbLog 1 "Linuxbrew detected. Setting up environment..." # Assuming verbLog is available
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  fi
 fi
 
 # For fzf, if installed locally then put it on the path in Linux where
@@ -134,4 +134,3 @@ fi
 if [ "$(uname -s)" = "Linux" ] && [ -d "$HOME/.fzf/bin" ]; then
   path_prepend "$HOME/.fzf/bin"
 fi
-

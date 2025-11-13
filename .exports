@@ -9,18 +9,18 @@
 #export PYTHONIOENCODING='UTF-8';
 
 # Increase Bash history size. Allow 32³ entries; the default is 500.
-export HISTSIZE='32768';
-export HISTFILESIZE="${HISTSIZE}";
+export HISTSIZE='32768'
+export HISTFILESIZE="${HISTSIZE}"
 
 # Omit duplicates and commands that begin with a space from history.
-export HISTCONTROL='ignoreboth';
+export HISTCONTROL='ignoreboth'
 
 # Prefer US English and use UTF-8.
-export LANG='en_US.UTF-8';
-export LC_ALL='en_US.UTF-8';
+export LANG='en_US.UTF-8'
+export LC_ALL='en_US.UTF-8'
 
 # Don’t clear the screen after quitting a manual page.
-export MANPAGER='less -X';
+export MANPAGER='less -X'
 
 # Avoid issues with `gpg` as installed via Homebrew and otherwise.
 # https://stackoverflow.com/a/42265848/96656
@@ -40,8 +40,8 @@ export GPG_TTY
 export NNN_BMS="D:$HOME/Documents;d:$HOME/Downloads/;p:$HOME/projects;P:$HOME/Pictures/Temp-Last100Screenshots/"
 
 # nnn cli filemanger environment variables used to configure usage
-export NNN_FIFO=/tmp/nnn.fifo;
-export NNN_PLUG='f:finder;o:fzopen;p:mocplay;d:diffs;t:nmount;v:imgview';
+export NNN_FIFO=/tmp/nnn.fifo
+export NNN_PLUG='f:finder;o:fzopen;p:mocplay;d:diffs;t:nmount;v:imgview'
 
 #Hide apple's pushing The default interactive shell is now zsh.
 #To update your account to use zsh, please run `chsh -s /bin/zsh`.
@@ -70,4 +70,3 @@ export FZF_COMPLETION_OPTS='--height=50% --reverse --border'
 # Change the trigger from ** to, say, .. (so you type ..<TAB> to fuzzy-complete)
 # Default is '**'. Keep it if you like.
 export FZF_COMPLETION_TRIGGER='..'
-

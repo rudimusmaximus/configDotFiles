@@ -4,27 +4,26 @@
 # see also exports for customization
 # file at level 3 logging start
 verbLog 3 "Checking if fzf is installed..."
-if command -v fzf > /dev/null 2>&1; then
-    verbLog 4 "fzf is installed. Setting up fzf key bindings..."
-    eval "$(fzf --bash)"
-    verbLog 4 "fzf key bindings set up successfully."
+if command -v fzf >/dev/null 2>&1; then
+  verbLog 4 "fzf is installed. Setting up fzf key bindings..."
+  eval "$(fzf --bash)"
+  verbLog 4 "fzf key bindings set up successfully."
 else
-    verbLog 4 "fzf is not installed. Skipping fzf setup."
+  verbLog 4 "fzf is not installed. Skipping fzf setup."
 fi
 
 # Check if fzf-git.sh exists and source it, otherwise prompt the user to clone the repository
 verbLog 3 "Checking if fzf-git.sh exists..."
 if [ -f "${HOME}/fzf-git.sh/fzf-git.sh" ]; then
-    verbLog 4 "Found fzf-git.sh. Sourcing it..."
-    # shellcheck source=/dev/null
-    source "${HOME}/fzf-git.sh/fzf-git.sh"
-    verbLog 4 "Sourced fzf-git.sh successfully."
+  verbLog 4 "Found fzf-git.sh. Sourcing it..."
+  # shellcheck source=/dev/null
+  source "${HOME}/fzf-git.sh/fzf-git.sh"
+  verbLog 4 "Sourced fzf-git.sh successfully."
 else
-    verbLog 4 "fzf-git.sh not found. Prompting user to clone repository..."
-    echo "fzf-git.sh not found. Please clone the repository and re-source your .bash_profile to enable better git integration with fzf."
-    echo "Run the following commands:"
-    echo "git clone https://github.com/junegunn/fzf-git.sh.git ~/fzf-git.sh"
-    echo "source ~/.bash_profile"
+  verbLog 4 "fzf-git.sh not found. Prompting user to clone repository..."
+  echo "fzf-git.sh not found. Please clone the repository and re-source your .bash_profile to enable better git integration with fzf."
+  echo "Run the following commands:"
+  echo "git clone https://github.com/junegunn/fzf-git.sh.git ~/fzf-git.sh"
+  echo "source ~/.bash_profile"
 fi
 verbLog 3 "Finished ~/.keybindings."
-
