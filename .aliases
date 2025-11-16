@@ -374,3 +374,18 @@ alias functions='show_functions | column'
 
 # see relate script
 alias watch_project_adocs='bun -b run ~/.cfg_bun_script_collection/watch_project_adocs.js'
+
+## TODO testing using these to work directly in home dir
+## may start a separate repo with heavier refactoring and string naming conventions
+# 1. Define your custom variables
+export DOTFILES_GIT_DIR="$HOME/.cfg"
+export DOTFILES_WORK_TREE="$HOME"
+
+# 2. Your 'dot' alias for regular Git commands
+alias dot='git --git-dir=$DOTFILES_GIT_DIR --work-tree=$DOTFILES_WORK_TREE'
+
+# 3. Your 'dot-lazy' alias (your idea, but using the variables)
+alias dot-lazy='lazygit --git-dir=$DOTFILES_GIT_DIR --work-tree=$DOTFILES_WORK_TREE'
+
+# 4. Your 'dot-nvim' alias (which is independent of Git)
+alias dot-nvim="nvim --cmd 'cd $HOME'"
