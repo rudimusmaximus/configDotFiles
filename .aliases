@@ -15,7 +15,7 @@ alias rcc_shared='cd "$RCC_SHARED"'
 alias rcm_shared='cd "$RCM_SHARED"'
 
 # refreshs for users of homebrew and one for homebrew and neovim nightly
-alias brewup='brew upgrade';
+alias brewup='brew upgrade'
 
 alias n='nvim'
 # open nvim from my nvim-config repo where i might be trying out something (does not effect next nvim open)
@@ -43,19 +43,19 @@ alias snippets='tx s snippets'
 alias lg='lazygit'
 
 # configDotFiles repo like https://www.atlassian.com/git/tutorials/dotfiles
-alias config='$CONFIG_DOT_FILES_GIT_COMMAND';
-alias cfg='$CONFIG_DOT_FILES_GIT_COMMAND';
-alias cfgamend='echo "cfg commit --amend -S -m"; cfg commit --amend -S -m';
-alias cfgb='cp ~/.extra ~/backup.extra';
+alias config='$CONFIG_DOT_FILES_GIT_COMMAND'
+alias cfg='$CONFIG_DOT_FILES_GIT_COMMAND'
+alias cfgamend='echo "cfg commit --amend -S -m"; cfg commit --amend -S -m'
+alias cfgb='cp ~/.extra ~/backup.extra'
 alias cfgc='echo "\$CONFIG_DOT_FILES_GIT_COMMAND commit -S -m"; cfg commit -S -m'
 alias cfgd='echo "\$CONFIG_DOT_FILES_GIT_COMMAND diff"; cfg diff'
 alias cfgf='echo "Stop tracking .extra file"; config refresh-index --assume-unchanged .extra' # cfg forget .extra
-alias cfgl='echo "\$CONFIG_DOT_FILES_GIT_COMMAND log --oneline"; cfg log --oneline' # try adding -10 or -5 for last few
+alias cfgl='echo "\$CONFIG_DOT_FILES_GIT_COMMAND log --oneline"; cfg log --oneline'           # try adding -10 or -5 for last few
 alias cfglg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 alias cfgls='cfg ls-tree --full-tree -r --name-only HEAD' #list files in cconfigDotFiles repo
 alias cfgs='echo "\$CONFIG_DOT_FILES_GIT_COMMAND status"; cfg status'
-alias cfgt='cfg tag -l -n1';
-alias cfgu='echo "Stage changes to tracked cfg dot files"; cfg add --refresh';
+alias cfgt='cfg tag -l -n1'
+alias cfgu='echo "Stage changes to tracked cfg dot files"; cfg add --refresh'
 alias configlg='echo "config log graph (run type or decode on configlg for more)"; $CONFIG_DOT_FILES_GIT_COMMAND --no-pager log --graph --pretty=oneline --abbrev-commit --decorate --all'
 
 # configDotFiles install script help
@@ -71,7 +71,7 @@ alias ql='qlmanage -p '
 alias qlr='qlmanage -p README.pdf'
 
 # Grep given phrase for returns from alias command (simarlarly you can also say 'type aliasName or functionName')
-alias decode='alias | grep';
+alias decode='alias | grep'
 
 # Makes any stated .asciidoc or .adoc file into a pdf
 alias mkpdf='asciidoctor-pdf'
@@ -91,7 +91,7 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
-alias ~=go_home # see .functions
+alias ~=go_home                                             # see .functions
 alias -- -='echo "Now in previous location via cd -"; cd -' # back to previous directory
 
 # SHORTCUTS
@@ -319,14 +319,13 @@ alias pnLogin='pnpm login --registry=https://npm.pkg.github.com'
 alias pnUNINSTALL='rm -rf $PNPM_HOME'
 # install standalone - On POSIX systems, you may install pnpm even if you don't have Node.js installed, using the following script
 alias pnINSTALL='curl -fsSL https://get.pnpm.io/install.sh | sh -'
-alias pnUPGRADE='pnpm add -g pnpm';
+alias pnUPGRADE='pnpm add -g pnpm'
 alias px="pnpm dlx"
 alias pnl='echo "pnpm ls"; pnpm ls'
 alias pnlg='echo "pnpm ls -g"; pnpm ls -g'
 alias db='echo "edgedb"; edgedb'
 # inspect what a npm published package will include
 alias mktar='tar xf $(npm pack) && tar -xf $(ls *.tgz) --directory ~/Downloads/ && mv $(ls *.tgz) ~/Downloads/'
-
 
 # expected svelt kit script run from pnpm which node not requiare run word; command expects build already
 alias pv='pnpm preview'
@@ -375,4 +374,3 @@ alias functions='show_functions | column'
 
 # see relate script
 alias watch_project_adocs='bun -b run ~/.cfg_bun_script_collection/watch_project_adocs.js'
-
