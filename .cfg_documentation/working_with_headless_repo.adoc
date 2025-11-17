@@ -1,0 +1,35 @@
+== Headless Repo: LazyGit Tips
+
+Here are two essential tips for working with LazyGit in your headless dotfiles repository.
+
+=== 1. Fix: LazyGit '?' Branch Icons
+
+If your local branches (e.g., `main`, `develop`) show a `?` next to them, it means LazyGit can't find their remote counterparts (like `origin/main`). This is common in bare repositories.
+
+* **The Problem:** Your bare repo (in `.cfg` or `.dot`) was cloned without the default "fetch" rule that maps remote branches to local tracking branches.
+* **The One-Line Fix:** Run this command in your terminal *once* to permanently add the correct mapping.
+
+[source,bash]
+----
+# Use your 'dot' alias to update the config
+dot config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+----
+
+After running this, open `dot-lazy` and the `?` icons should disappear as LazyGit will now correctly see and track the remote branches.
+
+=== 2. Warning: Avoid "Stage All" (UI Hang)
+
+Note that if you used the script to install your repo that untracked files are not shown. You must add new files manually to stage them.
+
+* **The Problem:** In your setup, you **must** set `git config status.showUntrackedFiles no` to prevent `git status` from lagging in your home directory. However, LazyGit's "Stage All" command (the `a` key) seems to *ignore* this setting. It attempts to scan your entire home directory for untracked files, causing the UI to freeze or hang.
+
+* **The Workaround:** **Do not use the `a` key to stage all files.**
+
+    Instead, stage your changed files individually. In the `Files` panel (panel `2`), highlight each file you want to stage and press the **`spacebar`**. This is safe and will not hang the UI.
+
+* **Issue Tracking:** This is a known issue. You can track its progress here:
+    * **Main Issue:** https://github.com/jesseduffield/lazygit/issues/1191
+    * **Related Issue (Slow performance):** https://github.com/jesseduffield/lazygit/issues/1052
+
+=== 3. TODO add remote fetch to updated install script
+
