@@ -386,6 +386,20 @@ alias dot='git --git-dir=$DOTFILES_GIT_DIR --work-tree=$DOTFILES_WORK_TREE'
 
 # 3. Your 'dot-lazy' alias (your idea, but using the variables)
 alias dot-lazy='lazygit --git-dir=$DOTFILES_GIT_DIR --work-tree=$DOTFILES_WORK_TREE'
+alias dlg='dot-lazy'
 
 # 4. Your 'dot-nvim' alias (which is independent of Git)
 alias dot-nvim="nvim --cmd 'cd $HOME'"
+
+# 5. When you luanch lazygit with dot-lazy, only the first time on a new setup;
+# you will need to initialize the dev flow as follows
+#
+# from command prompt ':' inside dot-lazy:
+# 'dot-initial-lazygit-origin-fetch'
+# then 'git flow init'
+# then from checked out main and then develop, use 'p' to pull and choose the same name origin offered you
+# Now you can continue with the usual git flow to work; one gotcha is do not pres 'a' to
+# stage all files as we have tracked files off in headless repo in home so that will hang
+# on the many files available;
+alias dot-initial-lazygit-origin-fetch='dot config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"'
+# TODO write up in updated new install adoc topic

@@ -1,6 +1,6 @@
 {
   "//": "dummy file for semver workflow by @rudimusmaximus part of configDotFiles",
-  "version": "0.4.95",
+  "version": "0.4.96-dot-initial-lazygit-origin-fetch.0",
   "dependencies": {
     "@openai/codex": "^0.58.0",
     "cowsay": "^1.6.0",
