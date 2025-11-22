@@ -169,7 +169,7 @@ alias copen="clasp open"
 # 	colorflag="-G"
 # 	export LSCOLORS='BxBxhxDxfxhxhxhxhxcxcx'
 # fi
-alias ls='ls -G' # enable color everywhere we use ls
+alias ls='ls -G --color=always' # enable color everywhere we use ls
 
 ## List all files colorized in long format, excluding . and ..
 #alias la="ls -lAF ${colorflag}"
