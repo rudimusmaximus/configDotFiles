@@ -1,6 +1,6 @@
 {
   "//": "dummy file for semver workflow by @rudimusmaximus part of configDotFiles",
-  "version": "0.4.98-release-finish.0",
+  "version": "0.4.98",
   "dependencies": {
     "@openai/codex": "^0.63.0",
     "cowsay": "^1.6.0",
