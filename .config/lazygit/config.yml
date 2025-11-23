@@ -1,13 +1,13 @@
 # https://github.com/jesseduffield/lazygit/blob/master/docs/configuration.md
-# basically start lazygit and from it's status window 1, paste the config below
-# save and reload lazygit. If you have installed delta, you can also use delta as pager
-# plus with this config click on a line number in the diff to open your lazygit editor
-#
 # yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
+# Nov 2025 disregard error on subprocess as schema is out of synch with actual config
+
 git:
   pagers:
     - colorArg: always
-      pager: delta --dark --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+      pager: >
+        delta --dark --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+
   autoForwardBranches: none
 quitOnTopLevelReturn: true
 os:
@@ -17,17 +17,20 @@ gui:
     selectedLineBgColor:
       - reverse
 customCommands:
-  # finish release in editor for annotation  of tag
+  # --- Finish Release (Force Editor Strategy) ---
   - key: "F"
     context: "localBranches"
-    description: "Finish release (interactive)"
-    # shell logic checks if branch is release and then runs git flow release with nvim
-    # if no echo error
-    command: 'case "{{.SelectedLocalBranch.Name}}" in release/*) GIT_EDITOR=nvim git flow release finish "{{.SelectedLocalBranch.Name}}";; *) echo "Error: Not a release branch"; exit 1;; esac'
+    description: "Finish release (Interactive)"
+    # using '>' folds the lines below into one single line separated by spaces
+    command: >
+      FINISH_RELEASE_MSG_FILE=$(mktemp); nvim "$FINISH_RELEASE_MSG_FILE"; git flow release finish -m "$(cat "$FINISH_RELEASE_MSG_FILE")" {{.SelectedLocalBranch.Name}}; rm "$FINISH_RELEASE_MSG_FILE"
+
     output: terminal
-  # finish hotfix in editor for annotation  of tag
+  # --- Finish Hotfix (Force Editor Strategy) ---
   - key: "H"
     context: "localBranches"
-    description: "Finish hotfix (interactive)"
-    command: 'case "{{.SelectedLocalBranch.Name}}" in hotfix/*) GIT_EDITOR=nvim git flow hotfix finish "{{.SelectedLocalBranch.Name}}";; *) echo "Error: Not a release branch"; exit 1;; esac'
+    description: "Finish hotfix (Interactive)"
+    command: >
+      FINISH_RELEASE_MSG_FILE=$(mktemp); nvim "$FINISH_RELEASE_MSG_FILE"; git flow hotfix finish -m "$(cat "$FINISH_RELEASE_MSG_FILE")" {{.SelectedLocalBranch.Name}}; rm "$FINISH_RELEASE_MSG_FILE"
+
     output: terminal
