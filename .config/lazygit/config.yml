@@ -9,13 +9,25 @@ git:
     - colorArg: always
       pager: delta --dark --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
   autoForwardBranches: none
-
 quitOnTopLevelReturn: true
-
 os:
   shellFunctionsFile: ~/.config/lazygit/.shell_startup_file
-
 gui:
   theme:
     selectedLineBgColor:
       - reverse
+customCommands:
+  # finish release in editor for annotation  of tag
+  - key: "F"
+    context: "localBranches"
+    description: "Finish release (interactive)"
+    # shell logic checks if branch is release and then runs git flow release with nvim
+    # if no echo error
+    command: 'case "{{.SelectedLocalBranch.Name}}" in release/*) GIT_EDITOR=nvim git flow release finish "{{.SelectedLocalBranch.Name}}";; *) echo "Error: Not a release branch"; exit 1;; esac'
+    output: terminal
+  # finish hotfix in editor for annotation  of tag
+  - key: "H"
+    context: "localBranches"
+    description: "Finish hotfix (interactive)"
+    command: 'case "{{.SelectedLocalBranch.Name}}" in hotfix/*) GIT_EDITOR=nvim git flow hotfix finish "{{.SelectedLocalBranch.Name}}";; *) echo "Error: Not a release branch"; exit 1;; esac'
+    output: terminal
