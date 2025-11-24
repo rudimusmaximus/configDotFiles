@@ -59,6 +59,9 @@ customCommands:
 
     # STRICT MODE: Literal block '|' + Explicit Semicolons
     command: |
+      # --- FIX: Prevent git flow from popping open editors for merge commits ---
+      export GIT_MERGE_AUTOEDIT=no;
+
       # --- Setup Common Variables ---
       ACTION="{{index .PromptResponses 0}}";
       CURRENT_BRANCH="{{.SelectedLocalBranch.Name}}";
@@ -116,6 +119,7 @@ customCommands:
           TEMP_MSG_FILE=$(write_tag_message) || exit 1;
 
           # 3. Git Flow Finish (No Tag)
+          # Note: GIT_MERGE_AUTOEDIT=no (at top) stops the merge editor from hanging this step
           git flow release finish -n -m "finishing release" "$VERSION" || { rm "$TEMP_MSG_FILE"; exit 1; };
 
           # 4. Manual Tag & Push
