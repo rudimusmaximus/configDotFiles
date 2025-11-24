@@ -1,6 +1,6 @@
 # https://github.com/jesseduffield/lazygit/blob/master/docs/configuration.md
 # yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
-# Nov 2025 disregard error on subprocess as schema is out of synch with actual config
+# Nov 2025: Disregard error on 'subprocess' (schema is out of sync)
 
 git:
   pagers:
@@ -17,20 +17,28 @@ gui:
     selectedLineBgColor:
       - reverse
 customCommands:
-  # --- Finish Release (Force Editor Strategy) ---
-  - key: "F"
+  # --- Finish Release (Strips 'release/' passes plain version so prefix logic works) ---
+  - key: "I" # Shift + i
     context: "localBranches"
     description: "Finish release (Interactive)"
-    # using '>' folds the lines below into one single line separated by spaces
     command: >
-      FINISH_RELEASE_MSG_FILE=$(mktemp); nvim "$FINISH_RELEASE_MSG_FILE"; git flow release finish -m "$(cat "$FINISH_RELEASE_MSG_FILE")" {{.SelectedLocalBranch.Name}}; rm "$FINISH_RELEASE_MSG_FILE"
+      BRANCH_NAME="{{.SelectedLocalBranch.Name}}"; VERSION="${BRANCH_NAME#release/}"; MSG_FILE=$(mktemp); nvim "$MSG_FILE"; git flow release finish -m "$(cat "$MSG_FILE")" "$VERSION"; rm "$MSG_FILE";
 
     output: terminal
-  # --- Finish Hotfix (Force Editor Strategy) ---
-  - key: "H"
+  # --- Finish Hotfix (Strips 'hotfix/' passes plain version so prefix logic works) ---
+  - key: "H" # Shift + h
     context: "localBranches"
     description: "Finish hotfix (Interactive)"
     command: >
-      FINISH_RELEASE_MSG_FILE=$(mktemp); nvim "$FINISH_RELEASE_MSG_FILE"; git flow hotfix finish -m "$(cat "$FINISH_RELEASE_MSG_FILE")" {{.SelectedLocalBranch.Name}}; rm "$FINISH_RELEASE_MSG_FILE"
+      BRANCH_NAME="{{.SelectedLocalBranch.Name}}"; VERSION="${BRANCH_NAME#hotfix/}"; MSG_FILE=$(mktemp); nvim "$MSG_FILE"; git flow hotfix finish -m "$(cat "$MSG_FILE")" "$VERSION"; rm "$MSG_FILE";
+
+    output: terminal
+  # --- Sync (Push Main and Tags) ---
+  - key: "S" # Shift + s
+    context: "localBranches"
+    description: "Sync (Push main with tags)"
+    loadingText: "Pushing to origin..."
+    command: >
+      git push origin main; git push origin --tags;
 
     output: terminal
