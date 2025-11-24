@@ -1,5 +1,6 @@
 # https://github.com/jesseduffield/lazygit/blob/master/docs/configuration.md
 # yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
+
 git:
   pagers:
     - colorArg: always
@@ -23,40 +24,126 @@ gui:
       - reverse
 
 customCommands:
-  # --- Finish Release (Dynamic: Reads prefix from git config) ---
+  # =====================================================================
+  #  GIT FLOW NEXT SUPER-MENU (Shift+I)
+  # =====================================================================
   - key: "I" # Shift + i
     context: "localBranches"
-    description: "Finish release (Interactive)"
+    description: "Git Flow Next Menu - RCM Edition"
     output: terminal
+    prompts:
+      - type: "menu"
+        title: "Opinionated git flow by Red Crow Methods"
+        options:
+          # --- FEATURES ---
+          - name: "Feature start (pre-sync develop)"
+            description: "git flow feature start <name>"
+            value: "start_feature"
+          - name: "Feature finish (post-sync develop)"
+            description: "merge -> push develop"
+            value: "finish_feature"
+          # --- HOTFIXES ---
+          - name: "Hotfix start (pre-sync main)"
+            description: "git flow hotfix start <version>"
+            value: "start_hotfix"
+          - name: "Hotfix finish (post-tag & push all)"
+            description: "<tag> -> merge -> push main/develop/tags"
+            value: "finish_hotfix"
+          # --- RELEASES ---
+          - name: "Release start (pre-sync develop)"
+            description: "git flow release start <version>"
+            value: "start_release"
+          - name: "Release finish (post-tag & push all)"
+            description: "<tag> -> merge -> push main/develop/tags"
+            value: "finish_release"
     command: >
-      BRANCH_NAME="{{.SelectedLocalBranch.Name}}";
-      VERSION="${BRANCH_NAME#release/}";
+      # --- Setup Common Variables ---
+      ACTION="{{index .PromptResponses 0}}";
+      CURRENT_BRANCH="{{.SelectedLocalBranch.Name}}";
       TAG_PREFIX=$(git config --get gitflow.prefix.versiontag);
-      MSG_FILE=$(mktemp);
-      nvim "$MSG_FILE";
-      git flow release finish -m "$(cat "$MSG_FILE")" "${TAG_PREFIX}${VERSION}";
-      rm "$MSG_FILE";
+      MASTER_BRANCH=$(git config --get gitflow.branch.master);
+      DEVELOP_BRANCH=$(git config --get gitflow.branch.develop);
 
-  # --- Finish Hotfix (Dynamic: Reads prefix from git config) ---
-  - key: "H" # Shift + h
-    context: "localBranches"
-    description: "Finish hotfix (Interactive)"
-    output: terminal
-    command: >
-      BRANCH_NAME="{{.SelectedLocalBranch.Name}}";
-      VERSION="${BRANCH_NAME#hotfix/}";
-      TAG_PREFIX=$(git config --get gitflow.prefix.versiontag);
-      MSG_FILE=$(mktemp);
-      nvim "$MSG_FILE";
-      git flow hotfix finish -m "$(cat "$MSG_FILE")" "${TAG_PREFIX}${VERSION}";
-      rm "$MSG_FILE";
+      # --- Helper Function for Tagging Messages ---
+      write_tag_message() {
+          MSG_FILE=$(mktemp);
+          nvim "$MSG_FILE";
+          # SAFETY CHECK: If file is empty, script dies here.
+          if [ ! -s "$MSG_FILE" ]; then
+               echo "Empty tag message. Aborting finish."; rm "$MSG_FILE"; exit 1;
+          fi
+          echo "$MSG_FILE";
+      }
 
-  # --- Sync (Push Main and Tags) ---
-  - key: "S" # Shift + s
-    context: "localBranches"
-    description: "Sync (Push main with tags)"
-    loadingText: "Pushing to origin..."
-    output: terminal
-    command: >
-      git push origin main;
-      git push origin --tags;
+      # --- Main Logic Switch ---
+      case "$ACTION" in
+
+        # ============ FEATURES ============
+        start_feature)
+          echo "Syncing $DEVELOP_BRANCH..." && git checkout "$DEVELOP_BRANCH" && git pull origin "$DEVELOP_BRANCH" || exit 1;
+          read -e -p "Enter Feature Name (e.g. login-fix): " NAME
+          [ -z "$NAME" ] && echo "No name provided. Aborting." && exit 1;
+          git flow feature start "$NAME"
+          ;;
+
+        finish_feature)
+          # 1. Finish the feature (merges to local develop)
+          git flow feature finish || exit 1;
+          # 2. Push develop immediately so teammates get the code
+          echo "Pushing $DEVELOP_BRANCH to origin..."
+          git push origin "$DEVELOP_BRANCH"
+          ;;
+
+
+        # ============ RELEASES ============
+        start_release)
+          echo "Syncing $DEVELOP_BRANCH..." && git checkout "$DEVELOP_BRANCH" && git pull origin "$DEVELOP_BRANCH" || exit 1;
+          read -e -p "Enter Release Version (e.g. 0.5.0): " VERSION
+          [ -z "$VERSION" ] && echo "No version provided. Aborting." && exit 1;
+          git flow release start "$VERSION"
+          ;;
+
+        finish_release)
+          # 1. Verify branch type
+          VERSION="${CURRENT_BRANCH#release/}";
+          if [ "$VERSION" == "$CURRENT_BRANCH" ]; then echo "Error: Not a release branch."; exit 1; fi;
+
+          # 2. Get message (Aborts if empty)
+          TEMP_MSG_FILE=$(write_tag_message) || exit 1;
+
+          # 3. Git Flow Finish (No Tag)
+          git flow release finish -n -m "finishing release" "$VERSION" || { rm "$TEMP_MSG_FILE"; exit 1; }
+
+          # 4. Manual Tag & Push
+          git tag -a "${TAG_PREFIX}${VERSION}" -F "$TEMP_MSG_FILE" "$MASTER_BRANCH" &&
+          rm "$TEMP_MSG_FILE" &&
+          echo "Pushing main, develop, and tags to origin..." &&
+          git push origin "$MASTER_BRANCH" &&
+          git push origin "$DEVELOP_BRANCH" &&
+          git push origin --tags
+          ;;
+
+
+        # ============ HOTFIXES ============
+        start_hotfix)
+          echo "Syncing $MASTER_BRANCH..." && git checkout "$MASTER_BRANCH" && git pull origin "$MASTER_BRANCH" || exit 1;
+          read -e -p "Enter Hotfix Version (e.g. 0.4.101): " VERSION
+          [ -z "$VERSION" ] && echo "No version provided. Aborting." && exit 1;
+          git flow hotfix start "$VERSION"
+          ;;
+
+        finish_hotfix)
+          VERSION="${CURRENT_BRANCH#hotfix/}";
+          if [ "$VERSION" == "$CURRENT_BRANCH" ]; then echo "Error: Not a hotfix branch."; exit 1; fi;
+
+          TEMP_MSG_FILE=$(write_tag_message) || exit 1;
+          git flow hotfix finish -n -m "finishing hotfix" "$VERSION" || { rm "$TEMP_MSG_FILE"; exit 1; }
+
+          git tag -a "${TAG_PREFIX}${VERSION}" -F "$TEMP_MSG_FILE" "$MASTER_BRANCH" &&
+          rm "$TEMP_MSG_FILE" &&
+          echo "Pushing main, develop, and tags to origin..." &&
+          git push origin "$MASTER_BRANCH" &&
+          git push origin "$DEVELOP_BRANCH" &&
+          git push origin --tags
+          ;;
+      esac
