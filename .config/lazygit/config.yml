@@ -1,44 +1,62 @@
 # https://github.com/jesseduffield/lazygit/blob/master/docs/configuration.md
 # yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
-# Nov 2025: Disregard error on 'subprocess' (schema is out of sync)
-
 git:
   pagers:
     - colorArg: always
       pager: >
-        delta --dark --paging=never --line-numbers --hyperlinks --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+        delta --dark
+        --paging=never
+        --line-numbers
+        --hyperlinks
+        --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
 
   autoForwardBranches: none
+
 quitOnTopLevelReturn: true
+
 os:
   shellFunctionsFile: ~/.config/lazygit/.shell_startup_file
+
 gui:
   theme:
     selectedLineBgColor:
       - reverse
+
 customCommands:
-  # --- Finish Release (Strips 'release/' passes plain version so prefix logic works) ---
+  # --- Finish Release (Dynamic: Reads prefix from git config) ---
   - key: "I" # Shift + i
     context: "localBranches"
     description: "Finish release (Interactive)"
-    command: >
-      BRANCH_NAME="{{.SelectedLocalBranch.Name}}"; VERSION="${BRANCH_NAME#release/}"; MSG_FILE=$(mktemp); nvim "$MSG_FILE"; git flow release finish -m "$(cat "$MSG_FILE")" "$VERSION"; rm "$MSG_FILE";
-
     output: terminal
-  # --- Finish Hotfix (Strips 'hotfix/' passes plain version so prefix logic works) ---
+    command: >
+      BRANCH_NAME="{{.SelectedLocalBranch.Name}}";
+      VERSION="${BRANCH_NAME#release/}";
+      TAG_PREFIX=$(git config --get gitflow.prefix.versiontag);
+      MSG_FILE=$(mktemp);
+      nvim "$MSG_FILE";
+      git flow release finish -m "$(cat "$MSG_FILE")" "${TAG_PREFIX}${VERSION}";
+      rm "$MSG_FILE";
+
+  # --- Finish Hotfix (Dynamic: Reads prefix from git config) ---
   - key: "H" # Shift + h
     context: "localBranches"
     description: "Finish hotfix (Interactive)"
-    command: >
-      BRANCH_NAME="{{.SelectedLocalBranch.Name}}"; VERSION="${BRANCH_NAME#hotfix/}"; MSG_FILE=$(mktemp); nvim "$MSG_FILE"; git flow hotfix finish -m "$(cat "$MSG_FILE")" "$VERSION"; rm "$MSG_FILE";
-
     output: terminal
+    command: >
+      BRANCH_NAME="{{.SelectedLocalBranch.Name}}";
+      VERSION="${BRANCH_NAME#hotfix/}";
+      TAG_PREFIX=$(git config --get gitflow.prefix.versiontag);
+      MSG_FILE=$(mktemp);
+      nvim "$MSG_FILE";
+      git flow hotfix finish -m "$(cat "$MSG_FILE")" "${TAG_PREFIX}${VERSION}";
+      rm "$MSG_FILE";
+
   # --- Sync (Push Main and Tags) ---
   - key: "S" # Shift + s
     context: "localBranches"
     description: "Sync (Push main with tags)"
     loadingText: "Pushing to origin..."
-    command: >
-      git push origin main; git push origin --tags;
-
     output: terminal
+    command: >
+      git push origin main;
+      git push origin --tags;
