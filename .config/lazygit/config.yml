@@ -1,5 +1,6 @@
 # https://github.com/jesseduffield/lazygit/blob/master/docs/configuration.md
 # yaml-language-server: $schema=https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json
+
 git:
   pagers:
     - colorArg: always
@@ -23,40 +24,37 @@ gui:
       - reverse
 
 customCommands:
-  # --- Finish Release (Dynamic: Reads prefix from git config) ---
+  # =====================================================================
+  #  GIT FLOW NEXT SUPER-MENU (Shift+I)
+  # =====================================================================
   - key: "I" # Shift + i
     context: "localBranches"
-    description: "Finish release (Interactive)"
+    description: "Git Flow Next Menu - RCM Edition"
     output: terminal
-    command: >
-      BRANCH_NAME="{{.SelectedLocalBranch.Name}}";
-      VERSION="${BRANCH_NAME#release/}";
-      TAG_PREFIX=$(git config --get gitflow.prefix.versiontag);
-      MSG_FILE=$(mktemp);
-      nvim "$MSG_FILE";
-      git flow release finish -m "$(cat "$MSG_FILE")" "${TAG_PREFIX}${VERSION}";
-      rm "$MSG_FILE";
-
-  # --- Finish Hotfix (Dynamic: Reads prefix from git config) ---
-  - key: "H" # Shift + h
-    context: "localBranches"
-    description: "Finish hotfix (Interactive)"
-    output: terminal
-    command: >
-      BRANCH_NAME="{{.SelectedLocalBranch.Name}}";
-      VERSION="${BRANCH_NAME#hotfix/}";
-      TAG_PREFIX=$(git config --get gitflow.prefix.versiontag);
-      MSG_FILE=$(mktemp);
-      nvim "$MSG_FILE";
-      git flow hotfix finish -m "$(cat "$MSG_FILE")" "${TAG_PREFIX}${VERSION}";
-      rm "$MSG_FILE";
-
-  # --- Sync (Push Main and Tags) ---
-  - key: "S" # Shift + s
-    context: "localBranches"
-    description: "Sync (Push main with tags)"
-    loadingText: "Pushing to origin..."
-    output: terminal
-    command: >
-      git push origin main;
-      git push origin --tags;
+    prompts:
+      - type: "menu"
+        title: "Opinionated 'git flow' by Red Crow Methods"
+        options:
+          # --- FEATURES ---
+          - name: "Feature start (pre-sync develop)"
+            description: "git flow feature start <name>"
+            value: "start_feature"
+          - name: "Feature finish (post-sync develop)"
+            description: "merge -> push develop"
+            value: "finish_feature"
+          # --- HOTFIXES ---
+          - name: "Hotfix start (pre-sync main)"
+            description: "git flow hotfix start <version>"
+            value: "start_hotfix"
+          - name: "Hotfix finish (post-tag & push all)"
+            description: "<tag> -> merge -> push main/develop/tags"
+            value: "finish_hotfix"
+          # --- RELEASES ---
+          - name: "Release start (pre-sync develop)"
+            description: "git flow release start <version>"
+            value: "start_release"
+          - name: "Release finish (post-tag & push all)"
+            description: "<tag> -> merge -> push main/develop/tags"
+            value: "finish_release"
+    # Pass the Action (value) and Current Branch Name to Bun
+    command: 'bun run ~/.cfg_bun_script_collection/rcm_git_flow_branching_for_lazygit.mjs "{{index .PromptResponses 0}}" "{{.SelectedLocalBranch.Name}}"'
