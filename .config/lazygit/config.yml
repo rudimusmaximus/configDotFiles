@@ -36,7 +36,6 @@ customCommands:
         title: "Opinionated 'git flow' by Red Crow Methods"
         options:
           # --- BUGFIXES ---
-          # --- BUGFIXES ---
           - name: "Bugfix start (pre-sync develop)"
             description: "git flow bugfix start <name>"
             value: "start_bugfix"
