@@ -2,8 +2,9 @@
  * @fileoverview This script automates the initialization of a new project repository.
  * It performs the following actions:
  * 1. Initializes a Git repository with a 'main' branch.
- * 2. Configures Git Flow to use 'main' as the production branch.
- * 3. Initializes Git Flow with the specified configuration.
+ * 2. Creates an initial empty commit to allow git-flow to create branches.
+ * 3. Initializes Git Flow using git-flow-next's classic preset when available
+ *    (falling back to legacy config if needed).
  * 4. Starts a new feature branch named 'baseline'.
  * 5. Initializes a Bun project.
  * 6. Modifies the generated package.json to set the version to "0.1.0".
@@ -15,6 +16,7 @@
 
 import { which } from 'bun';
 import { $ } from 'bun';
+import { runInteractiveBash } from './gitflow_helpers.mjs';
 
 try {
   await gitCoreEditorIsSet(); // Ensure core.editor is set
@@ -109,33 +111,22 @@ async function initializeGitAndGitFlow(spec) {
     logStep(`Initializing Git repository naming primary branch "${primaryBranchName}" branch...`);
     await $`git init --initial-branch=${primaryBranchName}`;
 
-    // Step 2: Configure Git Flow to use the preferred primary branch name
-    logStep(`Configuring Git Flow to use "${primaryBranchName}" and "develop" branches...`);
-    await $`git config gitflow.branch.master ${primaryBranchName}`;
-    await $`git config gitflow.branch.develop develop`;
+    // Step 2: Initialize Git Flow preferring git-flow-next's preset command
+    await initializeGitFlow();
 
-    // Step 3: Configure Git Flow version tag prefix
-    logStep('Configuring Git Flow version tag prefix to "v"...');
-    await $`git config gitflow.prefix.versiontag v`;
-
-    // Step 4: Initialize Git Flow using the new configuration
-    logStep('Initializing Git Flow with configured settings...');
-    // The -d flag accepts the default settings
-    await $`git flow init -d`;
-
-    // Step 5: Start a new feature branch
+    // Step 3: Start a new feature branch
     logStep(`Starting Git Flow feature branch: "${featureBranchName}"...`);
-    await $`git flow feature start ${featureBranchName}`;
+    await $`git flow -v feature start ${featureBranchName}`;
 
-    // Step 6: Initialize Bun project
+    // Step 4: Initialize Bun project
     logStep('Initializing Bun project...');
     await $`bun init -y`;
 
-    // Step 7: Modify package.json's version
+    // Step 5: Modify package.json's version
     logStep(`Updating ${packageJsonPath}'s version...`);
-    await $`bash -ic "source ~/.functions; vp ${featureBranchName}"`
+    await runInteractiveBash(`source ~/.functions && vp ${featureBranchName}`);
 
-    // Step 8: Sort package.json if the tool is available
+    // Step 6: Sort package.json if the tool is available
     logStep('Checking for sort-package-json...');
     if (which('sort-package-json')) {
       logStep('Sorting package.json...');
@@ -146,7 +137,7 @@ async function initializeGitAndGitFlow(spec) {
       console.log(`   bun add -g sort-package-json@latest`);
     }
 
-    // Step 9: Stage and commit the initial project files
+    // Step 7: Stage and commit the initial project files
     logStep('Staging initial project files...');
     await $`git add .`;
     logStep('Committing initial project files...');
@@ -157,29 +148,29 @@ async function initializeGitAndGitFlow(spec) {
  - ok to use js with jsdoc for types if writing javascript
 "`;
 
-    // Step 10: Finish the feature branch
+    // Step 8: Finish the feature branch
     logStep(`Finishing Git Flow feature branch: "${featureBranchName}"...`);
-    await $`GIT_EDITOR=true git flow feature finish ${featureBranchName}`;
+    await $`GIT_EDITOR=true git flow -v feature finish ${featureBranchName}`;
 
-    // Step 11: Start the release branch
+    // Step 9: Start the release branch
     const releaseVersion = currentVersion.split('-')[0];
     logStep(`Starting Git Flow release branch: "${releaseVersion}"...`);
-    await $`git flow release start ${releaseVersion}`;
+    await $`git flow -v release start ${releaseVersion}`;
 
-    // Step 12: Update package.json to the release version
+    // Step 10: Update package.json to the release version
     logStep(`Updating ${packageJsonPath}'s version...`);
-    await $`bash -ic "source ~/.functions; v ${releaseVersion}"`
+    await runInteractiveBash(`source ~/.functions && v ${releaseVersion}`);
 
-    // Step 13: Commit the version change
+    // Step 11: Commit the version change
     logStep('Committing release version...');
     await $`git add ${packageJsonPath}`;
     await $`git commit -m "chore: v${releaseVersion} RC.0 semver only"`;
 
-    // Step 14: Finish the release but DON'T create a tag yet
+    // Step 12: Finish the release but DON'T create a tag yet
     logStep(`Finishing Git Flow release branch: "${releaseVersion}" (no tag)...`);
-    await $`GIT_MERGE_AUTOEDIT=no git flow release finish -n ${releaseVersion}`;
+    await $`GIT_MERGE_AUTOEDIT=no git flow -v release finish -n ${releaseVersion}`;
 
-    // Step 15: Tag the release
+    // Step 13: Tag the release
     // Create an annotated tag with a clean message (no quotes added by git)
     await $`git tag -a v${releaseVersion} -m "Project is git-flow ready"`;
 
@@ -240,9 +231,28 @@ Use this method if you do not have 'gh' installed.
 
 \x1b[36m4. Push your initial code to GitHub:\x1b[0m
 
-   \x1b[35mgit push -u origin --all && git push -u origin --tags\x1b[0m
+\x1b[35mgit push -u origin --all && git push -u origin --tags\x1b[0m
 `);
 
+  }
+
+  /**
+   * Initialize Git Flow using the git-flow-next preset if available.
+   * Falls back to the legacy configuration if the preset is not supported.
+   */
+  async function initializeGitFlow() {
+    logStep('Initializing Git Flow (prefer git-flow-next preset "classic")...');
+    try {
+      await $`git flow -v init -p classic --main ${primaryBranchName} --develop develop --tag v --defaults`;
+      logStep('Git Flow configured via preset "classic".');
+    } catch (error) {
+      logWarning('Preset-based Git Flow init failed; falling back to legacy git flow config.');
+      await $`git config gitflow.branch.master ${primaryBranchName}`;
+      await $`git config gitflow.branch.develop develop`;
+      await $`git config gitflow.prefix.versiontag v`;
+      // The -d flag accepts the default settings
+      await $`git flow -v init -d`;
+    }
   }
 
   /**
@@ -259,4 +269,3 @@ Use this method if you do not have 'gh' installed.
     return Object.freeze(snapshot);
   }
 }
-
