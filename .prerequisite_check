@@ -35,16 +35,6 @@ function check_bash_completion() {
   fi
 }
 
-# Function to check if git-flow bash completion is loaded
-function check_git_flow_completion() {
-  if [[ $(type -t _git_flow) == "function" ]]; then
-    printf "[LOG] ✔✔ %s\n" "git-flow bash completion is loaded."
-  else
-    printf "⚠️ %s\n" "git-flow bash completion is NOT loaded."
-    printf "%s\n" "configDotFile '.git-flow-completion.sh' was not sourced."
-  fi
-}
-
 # Verify Node.js availability after initializing asdf
 # TODO: add notes for installing
 function check_node_availability() {
@@ -79,7 +69,6 @@ function check_tmuxifier_installed() {
 # Run the checks
 check_git_flow
 check_bash_completion
-# check_git_flow_completion
 check_node_availability
 check_tpm_installed
 check_tmuxifier_installed

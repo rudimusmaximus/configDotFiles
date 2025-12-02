@@ -50,13 +50,6 @@ function enhance_bash_completion() {
   else
     printf "⚠️ %s\n" "expected .git-completion is NOT available."
   fi
-
-  if [[ -r "${HOME}/.git-flow-completion" ]]; then
-    source "${HOME}/.git-flow-completion"
-    verbLog 2 ".git-flow-completion is available and has been sourced."
-  else
-    printf "⚠️ %s\n" "expected .git-flow-completion is NOT available."
-  fi
 }
 
 # Darwin (macOS)-specific items
