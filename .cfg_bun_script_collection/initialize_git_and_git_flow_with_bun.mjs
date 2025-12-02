@@ -241,17 +241,16 @@ Use this method if you do not have 'gh' installed.
    * Falls back to the legacy configuration if the preset is not supported.
    */
   async function initializeGitFlow() {
-    logStep('Initializing Git Flow (prefer git-flow-next preset "classic")...');
+    logStep('Initializing Git Flow (prefer git-flow-next preset "classic" and add tag prefixes)...');
     try {
       await $`git flow -v init -p classic --main ${primaryBranchName} --develop develop --tag v --defaults`;
       logStep('Git Flow configured via preset "classic".');
+      await $`git config gitflow.branch.release.tagprefix v`;
+      await $`git config gitflow.branch.hotfix.tagprefix v`;
+      logStep('Git Flow configured to use v prefix for release and hotfix tags on finish.');
+      logStep(`Remember gitflow.prefix.versiontag is deprecated see 'git flow overview' for current settings.`);
     } catch (error) {
-      logWarning('Preset-based Git Flow init failed; falling back to legacy git flow config.');
-      await $`git config gitflow.branch.master ${primaryBranchName}`;
-      await $`git config gitflow.branch.develop develop`;
-      await $`git config gitflow.prefix.versiontag v`;
-      // The -d flag accepts the default settings
-      await $`git flow -v init -d`;
+      console.error(error);
     }
   }
 

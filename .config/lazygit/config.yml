@@ -63,5 +63,9 @@ customCommands:
           - name: "Release finish (post-tag & push all)"
             description: "<tag> -> merge -> push main/develop/tags"
             value: "finish_release"
+          # --- META ---
+          - name: "View config as list"
+            description: "View all git flow configuration variables"
+            value: "list_all_config"
     # Pass the Action (value) and Current Branch Name to Bun
     command: 'bun run ~/.cfg_bun_script_collection/rcm_git_flow_branching_for_lazygit.mjs "{{index .PromptResponses 0}}" "{{.SelectedLocalBranch.Name}}"'
