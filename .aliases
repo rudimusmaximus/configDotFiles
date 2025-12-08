@@ -4,6 +4,7 @@
 alias rts='refresh_terminal_session'
 alias ff='clear && fastfetch'
 alias buninit='br ~/.cfg_bun_script_collection/initialize_git_and_git_flow_with_bun.mjs'
+alias git-flow-init-with-prefix='git flow -v init -p classic --main main --develop develop --tag v --defaults'
 
 alias cloud='cd "$CLOUD"'
 alias cld='cd "$CLOUD"'
@@ -21,6 +22,7 @@ alias n='nvim'
 # open nvim from my nvim-config repo where i might be trying out something (does not effect next nvim open)
 alias nvimConfig='NVIM_APPNAME=nvim-config nvim'
 alias ncon='NVIM_APPNAME=nvim-config nvim'
+alias nlite='NVIM_APPNAME=nvim-lite nvim'
 
 alias tm='tmux'
 alias tmls='tmux ls'
