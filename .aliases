@@ -389,6 +389,8 @@ alias dot='git --git-dir=$DOTFILES_GIT_DIR --work-tree=$DOTFILES_WORK_TREE'
 # 3. Your 'dot-lazy' alias (your idea, but using the variables)
 alias dot-lazy='lazygit --git-dir=$DOTFILES_GIT_DIR --work-tree=$DOTFILES_WORK_TREE'
 alias dlg='dot-lazy'
+alias dot-nvim='GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$DOTFILES_WORK_TREE nvim'
+alias dn='GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$DOTFILES_WORK_TREE nvim'
 
 # 4. Your 'dot-nvim' alias (which is independent of Git)
 alias dot-nvim="nvim --cmd 'cd $HOME'"
