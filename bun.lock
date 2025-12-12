@@ -4,11 +4,11 @@
   "workspaces": {
     "": {
       "dependencies": {
-        "@openai/codex": "^0.65.0",
+        "@openai/codex": "^0.66.0",
         "cowsay": "^1.6.0",
         "js-yaml": "^4.1.1",
         "lighthouse": "^13.0.1",
-        "npm-check-updates": "^19.1.2",
+        "npm-check-updates": "^19.2.0",
         "sort-package-json": "^3.5.1",
       },
     },
@@ -24,7 +24,7 @@
 
     "@formatjs/intl-localematcher": ["@formatjs/intl-localematcher@0.6.2", "", { "dependencies": { "tslib": "^2.8.0" } }, "sha512-XOMO2Hupl0wdd172Y06h6kLpBz6Dv+J4okPLl4LPtzbr8f66WbIoy4ev98EBuZ6ZK4h5ydTN6XneT4QVpD7cdA=="],
 
-    "@openai/codex": ["@openai/codex@0.65.0", "", { "bin": { "codex": "bin/codex.js" } }, "sha512-Rfac4ytxRKiJXIIOJxp/6tOSYc7CDwhbmccbcgsQDN26J9ToKRram0Z//dAHdqeVj8laP+elTJO7ZsHBg7QoLg=="],
+    "@openai/codex": ["@openai/codex@0.66.0", "", { "bin": { "codex": "bin/codex.js" } }, "sha512-J87q0jGObDbMdwD+OBjwyKUhtADoGucgnxPVHYfT7DVrumhBbg5wPtCAiAm23NxZW39NsHAjNB1ybXkLIuvvSw=="],
 
     "@opentelemetry/api": ["@opentelemetry/api@1.9.0", "", {}, "sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg=="],
 
@@ -310,7 +310,7 @@
 
     "netmask": ["netmask@2.0.2", "", {}, "sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg=="],
 
-    "npm-check-updates": ["npm-check-updates@19.1.2", "", { "bin": { "npm-check-updates": "build/cli.js", "ncu": "build/cli.js" } }, "sha512-FNeFCVgPOj0fz89hOpGtxP2rnnRHR7hD2E8qNU8SMWfkyDZXA/xpgjsL3UMLSo3F/K13QvJDnbxPngulNDDo/g=="],
+    "npm-check-updates": ["npm-check-updates@19.2.0", "", { "bin": { "npm-check-updates": "build/cli.js", "ncu": "build/cli.js" } }, "sha512-XSIuL0FNgzXPDZa4lje7+OwHjiyEt84qQm6QMsQRbixNY5EHEM9nhgOjxjlK9jIbN+ysvSqOV8DKNS0zydwbdg=="],
 
     "once": ["once@1.4.0", "", { "dependencies": { "wrappy": "1" } }, "sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w=="],
 
