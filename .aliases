@@ -3,10 +3,8 @@
 
 alias rts='refresh_terminal_session'
 alias ff='clear && fastfetch'
-alias buninit='br ~/.cfg_bun_script_collection/initialize_git_and_git_flow_with_bun.mjs'
-alias git-flow-init-with-prefix='git flow -v init -p classic --main main --develop develop --tag v --defaults'
-
 alias cloud='cd "$CLOUD"'
+
 alias cld='cd "$CLOUD"'
 alias rcc_root='cd "$RCC_ROOT"'
 alias rcm_root='cd "$RCM_ROOT"'
@@ -383,27 +381,46 @@ alias watch_project_adocs='bun -b run ~/.cfg_bun_script_collection/watch_project
 export DOTFILES_GIT_DIR="$HOME/.cfg"
 export DOTFILES_WORK_TREE="$HOME"
 
-# 2. Your 'dot' alias for regular Git commands
+# 2. Your 'dot' alias for regular Git commands (see also cfg)
 alias dot='git --git-dir=$DOTFILES_GIT_DIR --work-tree=$DOTFILES_WORK_TREE'
 
 # 3. Your 'dot-lazy' alias (your idea, but using the variables)
 alias dot-lazy='lazygit --git-dir=$DOTFILES_GIT_DIR --work-tree=$DOTFILES_WORK_TREE'
 alias dlg='dot-lazy'
-alias dot-nvim='GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$DOTFILES_WORK_TREE nvim'
+alias dot-nvim="cd $HOME && GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$DOTFILES_WORK_TREE nvim"
 alias dn='GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$DOTFILES_WORK_TREE nvim'
 
-# 4. Your 'dot-nvim' alias (which is independent of Git)
-alias dot-nvim="nvim --cmd 'cd $HOME'"
-
-# 5. When you luanch lazygit with dot-lazy, only the first time on a new setup;
+# 4. When you launch lazygit with dot-lazy, only the first time on a new setup;
 # you will need to initialize the dev flow as follows
+# from command prompt ':' inside dot-lazy OR from dot-nvim terminal
+# - open lazygit or neovim with one of the shortcuts in 3
+# - initialize git flow with alias 'git-flow-init-with-prefix'
+# - confirm where you are in tracking remote with 'init-or-fix-git-remote-tracking'
 #
-# from command prompt ':' inside dot-lazy:
-# 'dot-initial-lazygit-origin-fetch'
-# then 'git flow init'
-# then from checked out main and then develop, use 'p' to pull and choose the same name origin offered you
-# Now you can continue with the usual git flow to work; one gotcha is do not pres 'a' to
+# Now you can continue with the usual git flow to work; one gotcha is do not press 'a' to
 # stage all files as we have tracked files off in headless repo in home so that will hang
 # on the many files available;
-alias dot-initial-lazygit-origin-fetch='dot config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"'
-# TODO write up in updated new install adoc topic
+
+# ==============================================================================
+# REMOTE TRACKING: Set Remote Origin Tracking for all branches and fetch local
+# branches (usually develop and main following setup)
+# ==============================================================================
+# usage: init-or-fix-git-tracking
+#
+# 1. EXPAND FETCH: Reconfigures 'origin' to fetch ALL branches (wildcard),
+#    fixing repos that were cloned with `--single-branch`.
+# 2. UPDATE DATA: Runs 'git fetch' to download the latest remote history
+#    (updates origin/main, origin/develop, etc.) without merging.
+# 3. LINK BRANCHES: Forces local 'main' and 'develop' to track their
+#    remote counterparts so 'git status' shows ahead/behind counts.
+# 4. Fails silently if no develop branch yet completing the rest
+alias init-or-fix-git-remote-tracking='git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*" && git fetch && git branch -u origin/main main && (git branch -u origin/develop develop || true)'
+# ==============================================================================
+# GIT FLOW INIT (assumes gittower/git-flow-next installed as git flow)
+# ==============================================================================
+# Usage: Run via Lazygit ':' prompt to initialize without questions.
+# verbose flag at end
+alias git-flow-init-with-prefix='git flow init -p classic --main main --develop develop --tag v --defaults -v'
+# new projects not yet initialized and not yet hosted on remote origin
+alias buninit='br ~/.cfg_bun_script_collection/initialize_git_and_git_flow_with_bun.mjs'
+

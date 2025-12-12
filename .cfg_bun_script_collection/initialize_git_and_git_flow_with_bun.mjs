@@ -243,7 +243,7 @@ Use this method if you do not have 'gh' installed.
   async function initializeGitFlow() {
     logStep('Initializing Git Flow (prefer git-flow-next preset "classic" and add tag prefixes)...');
     try {
-      await $`git flow -v init -p classic --main ${primaryBranchName} --develop develop --tag v --defaults`;
+      await $`git flow init -p classic --main ${primaryBranchName} --develop develop --tag v --defaults -v`;
       logStep('Git Flow configured via preset "classic".');
       await $`git config gitflow.branch.release.tagprefix v`;
       await $`git config gitflow.branch.hotfix.tagprefix v`;
