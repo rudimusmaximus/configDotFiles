@@ -1033,3 +1033,16 @@ function fix-ghostty-theme-viewer() {
     cd ~
   rm -rf "$tmpdir"
 }
+
+# for the yazi file manager
+# shell wrapper that provides the ability to change the current working directory when
+# exiting Yazi; enables use of 'y' instead of 'yazi' to start, and press q to quit, you'll
+# see the CWD changed. Sometimes, you don't want to change, press Q to quit.
+# for installation see https://yazi-rs.github.io/docs/installation
+function y() {
+  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+  command yazi "$@" --cwd-file="$tmp"
+  IFS= read -r -d '' cwd <"$tmp"
+  [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+  rm -f -- "$tmp"
+}
