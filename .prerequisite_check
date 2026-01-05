@@ -70,7 +70,7 @@ function check_tmuxifier_installed() {
 # if not found, tells user to check https://yazi-rs.github.io/docs/installation to install
 # with prerequisites and that the y function is already defined in functions for these dot files
 function check_yazi_installed() {
-  if command_exists y; then
+  if command_exists yazi; then
     printf "[LOG] ✔✔ %s\n" "Yazi is installed and available."
   else
     printf "⚠️ %s\n" "Yazi is NOT installed or not in PATH. Please check https://yazi-rs.github.io/docs/installation for installation instructions."
