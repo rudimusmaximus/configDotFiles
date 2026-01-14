@@ -186,52 +186,38 @@ async function initializeGitAndGitFlow(spec) {
     console.log(`
 \x1b[1m\x1b[32m✅  Git and Git Flow initialized successfully!\x1b[0m
 
-\x1b[1m\x1b[33mNext Steps: Connect to a Private GitHub Repository\x1b[0m
+\x1b[1m\x1b[33mNext Steps: Connect to a Private Remote Repository\x1b[0m
 
-Your local repository is ready. Use one of the following methods to create a
-private repository on GitHub and set it as your remote 'origin'.
+Your local repository is ready. Choose your platform below to push your code.
 
 \x1b[1m------------------------------------------------------------------\x1b[0m
-\x1b[1mMethod 1: Using the GitHub CLI ('gh') - (Recommended)\x1b[0m
+\x1b[1mOption A: Using the GitLab CLI ('glab')\x1b[0m
 \x1b[1m------------------------------------------------------------------\x1b[0m
-This is the fastest and most efficient method.
+\x1b[36m1. Create the Private Project:\x1b[0m
+   \x1b[35mglab repo create [group]/[repo-name] --private\x1b[0m
 
-\x1b[36m1. Set 'gh' to use SSH:\x1b[0m
-   Run this command to ensure 'gh' uses SSH for new repositories:
-   \x1b[35mgh config set git_protocol ssh\x1b[0m
-
-\x1b[36m2. Create the repository and set the remote:\x1b[0m
-   Replace '[your-org]/[repo-name]' with your GitHub username/organization
-   and desired repository name.
-
-   \x1b[35mgh repo create [your-org]/[repo-name] --private --source=. --remote=origin\x1b[0m
-
-\x1b[36m3. Push your code to GitHub:\x1b[0m
-   This pushes your 'main' and 'develop' branches, and all tags.
-
+\x1b[36m2. Confirm Remote was set and Push:\x1b[0m
+   \x1b[35mgit remote -v\x1b[0m
    \x1b[35mgit push -u origin --all && git push -u origin --tags\x1b[0m
 
 \x1b[1m------------------------------------------------------------------\x1b[0m
-\x1b[1mMethod 2: Manual Setup (Without the GitHub CLI)\x1b[0m
+\x1b[1mOption B: Using the GitHub CLI ('gh')\x1b[0m
 \x1b[1m------------------------------------------------------------------\x1b[0m
-Use this method if you do not have 'gh' installed.
+\x1b[36m1. Configure and Create:\x1b[0m
+   \x1b[35mgh config set git_protocol ssh\x1b[0m
+   \x1b[35mgh repo create [org]/[repo-name] --private --source=. --remote=origin\x1b[0m
 
-\x1b[36m1. Create a new repository on GitHub:\x1b[0m
-   Go to \x1b[4mhttps://github.com/new\x1b[0m and create a new \x1b[1mPRIVATE\x1b[0m repository.
-   Do \x1b[1mNOT\x1b[0m initialize it with a README, .gitignore, or license.
+\x1b[36m2. Push:\x1b[0m
+   \x1b[35mgit push -u origin --all && git push -u origin --tags\x1b[0m
 
-\x1b[36m2. Copy the repository URL (SSH is recommended):\x1b[0m
-   \x1b[1mSSH:\x1b[0m   git@github.com:[your-org]/[repo-name].git
-   \x1b[1mHTTPS:\x1b[0m https://github.com/[your-org]/[repo-name].git
-
-\x1b[36m3. Add the remote to your local repository:\x1b[0m
-   Use the URL you copied in the previous step.
-
-   \x1b[35mgit remote add origin [the-url-you-copied]\x1b[0m
-
-\x1b[36m4. Push your initial code to GitHub:\x1b[0m
-
-\x1b[35mgit push -u origin --all && git push -u origin --tags\x1b[0m
+\x1b[1m------------------------------------------------------------------\x1b[0m
+\x1b[1mOption C: Manual Setup (No CLI)\x1b[0m
+\x1b[1m------------------------------------------------------------------\x1b[0m
+1. Create a \x1b[1mPRIVATE\x1b[0m repo on GitHub/GitLab (Do NOT initialize with README).
+2. Copy the SSH URL (e.g., git@gitlab.com:user/repo.git).
+3. Run:
+   \x1b[35mgit remote add origin [url]\x1b[0m
+   \x1b[35mgit push -u origin --all && git push -u origin --tags\x1b[0m
 `);
 
   }
